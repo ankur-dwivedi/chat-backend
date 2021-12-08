@@ -1,5 +1,5 @@
 const track_Model = require("../../models/Track/index")
-const {trackColor1,trackColor2} = require("../../utils/constants") 
+const {trackColorFill,trackColorBorder} = require("../../utils/constants") 
 module.exports = {
     get:{
         fetchUserTrack:async(req,res)=>{
@@ -23,14 +23,15 @@ module.exports = {
                 let userData = req.user;
                 const getRandomInt=(max)=>{
                     return Math.floor(Math.random() * max);
-                  }                
+                  }
+                let randomNumber = getRandomInt(3);                 
                 let data = {
                     userId:userData._id,
                     trackName:req.body.trackName,
                     groupName:req.body.groupName,
                     selectedTheme:req.body.selectedTheme,
-                    trackColor1:trackColor1[getRandomInt(3)],
-                    trackColor2:trackColor2[getRandomInt(3)]
+                    trackColorFill:trackColorFill[randomNumber],
+                    trackColorBorder:trackColorBorder[randomNumber]
                 }
                 let savedData = await track_Model.create(data)
                 return  res.status(201).json({"status":"success","message":`successfully saved the data in db`})              
