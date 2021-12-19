@@ -1,4 +1,5 @@
 const {update,get,create,deleteOrganization} = require("../../models/organization/services");
+const { uploadFiles } = require(".././../libs/aws/upload")
 
 exports.getOrganizations = async(req,res) => 
     get(req.query)
@@ -41,3 +42,21 @@ exports.update = async(req,res) => {
     return res.send(updateOrganization);
     
 };
+
+exports.uploadLogo = async function (req, res) {
+  try {
+     const { files } = req
+     if (!files.length) res.status(400).send('No file uploaded.')
+
+     let finalbucket = `${process.env.AWS_BUCKET_NAME}` +"/" +`${req.query.org}`+"/logo"
+     let uploadedFiles = await uploadFiles(finalbucket, files)
+      const queryObject = { $and: [{ _id: req.query.org }] };
+      const updateObject = { logo:uploadedFiles[0].Location, updatedAt: new Date() };
+      delete updateObject.id;
+      await update(queryObject, updateObject).then((organization) =>organization)
+     res.status(200)
+        .send({ status: 'success', message: 'files uploaded successfully', uploadedFiles: uploadedFiles })
+  } catch (error) {
+     throw error
+  }
+}
