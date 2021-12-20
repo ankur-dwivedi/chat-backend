@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const userRouter = require("../modules/user/router.js");
 const trackRouter = require("../modules/Track/router.js");
-const groupRouter = require("../modules/Group/router.js")
+const groupRouter = require("../modules/Grouped/router.js")
 const router = Router();
 
 
