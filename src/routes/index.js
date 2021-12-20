@@ -8,7 +8,7 @@ const router = Router();
 
 router.get("/", (_, res) => res.send());
 router.use("/user", userRouter);
-//router.use("/track", trackRouter);
+router.use("/track", trackRouter);
 router.use("/organization", organizationRouter);
 router.use("/group", groupRouter);
 
