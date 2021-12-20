@@ -5,6 +5,11 @@ exports.EmployeeDataSchema = new Schema({
   value: { type: String, required: true},
 });
 
+exports.OtpSchema = new Schema({
+  expiry: { type: Date, required: true },
+  value: { type: Number, required: true },
+});
+
 exports.createGroupFilterQuery = (org,property)=>{
   const filterData=property.map(value=>{
     const object={}

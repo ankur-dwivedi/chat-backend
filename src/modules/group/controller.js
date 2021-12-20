@@ -28,7 +28,6 @@ exports.create = async (req, res) =>{
     console.log(error)
     res.status(400).send({ message: `group already exists` });
   }
-  
   }
 
 exports.deleteGroup = async (req, res) => 

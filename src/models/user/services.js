@@ -1,6 +1,7 @@
 const { generateError } = require("../../utils/error");
 const User = require("./");
 const { createGroupFilterQuery } = require("./utils");
+const md5 = require("md5");
 
 exports.get = async (query) =>
   query.id
@@ -33,13 +34,15 @@ exports.getGroupEmployee = (organization,property) =>
           .then((response) =>response)
           .catch((error) => error);
 
-exports.create = (userData) =>
-  User.create({ ...userData, createdAt: new Date() })
+exports.create = (userData) =>{
+  if(userData?.password)
+  userData.password = md5(userData.password)
+  return User.create({ ...userData, createdAt: new Date() })
     .then((response) => response)
     .catch((error) => {
       console.error(error);
       return error;
-    });
+    });}
 
 exports.findUsers = (query) =>
   User.find({ createdBy: query.createdBy })

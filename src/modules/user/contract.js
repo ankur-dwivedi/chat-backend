@@ -24,6 +24,11 @@ exports.loginContract = Joi.object({
   password: Joi.string().required(),
 });
 
+exports.learnerLoginContract = Joi.object({
+  employeeId: Joi.string().required(),
+  password: Joi.string().required(),
+});
+
 exports.editUserContract = Joi.object({
   id:Joi.string().required(),
   employeeId: Joi.string().required(),
