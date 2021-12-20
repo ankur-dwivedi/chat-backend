@@ -1,7 +1,8 @@
 const {update,get,create,deleteUser} = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
-const { generateAuthToken } = require("../../utils/general");
+const { generateAuthToken,generateOtp } = require("../../utils/general");
 const md5 = require("md5");
+const { OTP_EXPIRY } = require("../../models/user/constants");
 
 exports.getUsers = async(req,res) => 
     get(req.query)
@@ -67,6 +68,7 @@ exports.deleteUser = async (req, res) =>
       : res.send("User aleready deleted or doesnt exist")
   );
 
+
 exports.update = async(req,res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
   const updateObject = { ...req.body, updatedAt: new Date() };
@@ -81,3 +83,42 @@ exports.update = async(req,res) => {
     return res.send(updateUser);
     
 };
+
+const sendOtp = (phone, message) =>message
+
+exports.requestOtp = async ({ body },res) => {
+  const { employeeId } = body;
+  const otp = generateOtp();
+  const message = `your otp is ${otp}`;
+  const User=await get({ employeeId: body.employeeId })
+  const result=await update({ employeeId },{ otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } })
+  sendOtp(User.phoneNumber, message)
+  return res.send(message)
+};
+
+
+exports.verifyOtp = async ({ body },res) =>get({ employeeId: body.employeeId }).then((user) => {
+    const savedOtp = user.otp.value;
+    const { expiry } = user.otp;
+    const currentDate = new Date();
+    const difference = expiry - currentDate.getTime();
+    const status =
+      body.otp === savedOtp
+        ? difference > 0
+          ? "Success"
+          : "Otp has expired"
+        : "Otp doesnt match";
+    status === "Success"
+      ? res.send({
+          status: 200,
+          success: true,
+          data: {
+            ...JSON.parse(JSON.stringify(user)),
+            token: generateAuthToken(user._id),
+          }})
+        :res.status(400).send( {
+          success: false,
+          data: null,
+          message: status,
+        })
+  });
