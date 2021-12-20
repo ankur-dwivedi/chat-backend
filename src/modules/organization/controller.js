@@ -1,5 +1,9 @@
 const {update,get,create,deleteOrganization} = require("../../models/organization/services");
+const {create:userCreate} = require("../../models/user/services");
 const { uploadFiles } = require(".././../libs/aws/upload")
+const { csvToJson } = require("../../utils/general")
+const { createUserObject } = require("./utils")
+
 
 exports.getOrganizations = async(req,res) => 
     get(req.query)
@@ -54,6 +58,24 @@ exports.uploadLogo = async function (req, res) {
       const updateObject = { logo:uploadedFiles[0].Location, updatedAt: new Date() };
       delete updateObject.id;
       await update(queryObject, updateObject).then((organization) =>organization)
+     res.status(200)
+        .send({ status: 'success', message: 'files uploaded successfully', uploadedFiles: uploadedFiles })
+  } catch (error) {
+     throw error
+  }
+}
+
+exports.uploadEmployeeData = async function (req, res) {
+  try {
+     const { files } = req
+     if (!files.length) res.status(400).send('No file uploaded.')
+    const finalbucket = `${process.env.AWS_BUCKET_NAME}` +"/" +`${req.query.org}`+"/employee-data"
+    const uploadedFiles = await uploadFiles(finalbucket, files)
+    const employeeData = await csvToJson(uploadedFiles[0].Location)
+    const updatedData=employeeData.map( value=>createUserObject(req.query.org,value))
+    const createData=updatedData.map(async value=>await userCreate({...value}))
+    await Promise.all(createData)
+
      res.status(200)
         .send({ status: 'success', message: 'files uploaded successfully', uploadedFiles: uploadedFiles })
   } catch (error) {
