@@ -1,7 +1,8 @@
 const { generateError } = require("../../utils/error");
 const User = require("./");
-const { createGroupFilterQuery } = require("./utils");
+const { createGroupFilterQuery,createUserIdQuery,createUserIdFindQuery } = require("./utils");
 const md5 = require("md5");
+const { Types } = require("mongoose");
 
 exports.get = async (query) =>
   query.id
@@ -72,3 +73,19 @@ exports.deleteUser = async (id) =>
   User.deleteOne({_id : id })
     .then((response) => (response ? response : null))
     .catch((error) => error);
+
+exports.updateUserByIds = (org,employeeIds,groupId) =>
+  User.updateMany(createUserIdQuery(org,employeeIds),{ $push: { groups:groupId  } })
+  .then((response) => response )
+
+exports.exist = (id,org) =>
+  User.findOne({ $and:[{employeeId: id},{organization:Types.ObjectId(org)}] })
+    .then((user) => (!user ? false : true))
+    .catch((err) => false);
+
+exports.findIdByEmloyeeId = (employeeIds,org) =>
+    User.find({...createUserIdFindQuery(employeeIds,org)})
+      .then((user) => {
+        return user.map(value=>value._id)
+      })
+      .catch((err) => false);

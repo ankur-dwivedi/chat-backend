@@ -7,6 +7,7 @@ const { validate } = require("../../middlewares/schema");
 const trackRouter = Router();
 
 trackRouter.get("/fetchUserTrack",withAuthUser, trackController.get.fetchUserTrack);
+trackRouter.get("/fetchTrackByGroup",withAuthUser, trackController.get.fetchUserTrackByGroup);
 trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser, trackController.post.createTrack);
 
 

@@ -1,6 +1,8 @@
 const {get,create,deleteGroup,update} = require("../../models/group/services");
-const {getGroupEmployee,addGroupId} = require("../../models/user/services");
+const {getGroupEmployee,addGroupId,updateUserByIds,exist,findIdByEmloyeeId} = require("../../models/user/services");
 const { createGroupFilterQuery } = require("../../models/user/utils");
+const { csvToJson } = require("../../utils/general")
+const { uploadFiles } = require(".././../libs/aws/upload")
 
 exports.getGroups = async(req,res) => 
     get(req.query)
@@ -36,3 +38,26 @@ exports.deleteGroup = async (req, res) =>
       ? res.send("Group deleted")
       : res.send("Group aleready deleted or doesnt exist")
   );
+
+
+  exports.createGroupEmployee = async (req, res) =>{
+    try{
+      const { files} = req
+       if (!files.length) res.status(400).send('No file uploaded.')
+      const finalbucket = `${process.env.AWS_BUCKET_NAME}` +"/" +`${req.query.org}`+"/employee-data"
+      const uploadedFiles = await uploadFiles(finalbucket, files)
+      const employeeData = await csvToJson(uploadedFiles[0].Location)
+      let employeeIds=await findIdByEmloyeeId(employeeData,req.body.organization);
+      const group=await create({ ...req.body,employees:employeeIds})
+      await updateUserByIds(req.body.organization,employeeIds,group._id)
+      return res.send({
+        status: 200,
+        success: true,
+        data: group,
+      })
+    }
+    catch(error){
+      console.log(error)
+      res.status(400).send({ message: `group already exists` });
+    }
+    }

@@ -5,7 +5,8 @@ const GroupSchema = new Schema({
   name: { type: String, required: true},
   employees:{ type: [Schema.Types.ObjectId] },
   organization:{ type: Schema.Types.ObjectId },
-  properties:{type: [PropertiesSchema], required: true},
+  description: { type: String },
+  properties:{type: [PropertiesSchema]},
   createdAt: { type: Date,required: true },
   upatedAt: { type: Date },
 });

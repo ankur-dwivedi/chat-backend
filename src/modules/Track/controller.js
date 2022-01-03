@@ -1,11 +1,26 @@
 const track_Model = require("../../models/Track/index")
-const {trackColorFill,trackColorBorder} = require("../../utils/constants") 
+const {trackColorFill,trackColorBorder} = require("../../utils/constants")
+const { Types } = require("mongoose");
+
 module.exports = {
     get:{
         fetchUserTrack:async(req,res)=>{
             try {
                 let userData = req.user;
                 let userTrackData =  await track_Model.find({userId:userData._id})
+                if(userTrackData===null){
+                    return res.status(201).json({"status":"success","message":`no Data in db`})
+                }
+                return res.status(201).json({"status":"success","message":userTrackData})               
+            } catch (err) {
+                console.log(err.name)
+                console.log(err.message)
+                res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
+            }
+        },
+        fetchUserTrackByGroup:async(req,res)=>{
+            try {
+                let userTrackData =  await track_Model.find({groupId:Types.ObjectId(req.body.groupId)})
                 if(userTrackData===null){
                     return res.status(201).json({"status":"success","message":`no Data in db`})
                 }
