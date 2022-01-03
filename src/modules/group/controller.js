@@ -1,5 +1,5 @@
 const {get,create,deleteGroup,update} = require("../../models/group/services");
-const {getGroupEmployee,addGroupId,updateUserByIds,exist,findIdByEmloyeeId} = require("../../models/user/services");
+const {getGroupEmployee,addGroupId,updateUserByIds,findIdByEmloyeeId} = require("../../models/user/services");
 const { createGroupFilterQuery } = require("../../models/user/utils");
 const { csvToJson } = require("../../utils/general")
 const { uploadFiles } = require(".././../libs/aws/upload")

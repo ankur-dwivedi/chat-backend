@@ -78,11 +78,6 @@ exports.updateUserByIds = (org,employeeIds,groupId) =>
   User.updateMany(createUserIdQuery(org,employeeIds),{ $push: { groups:groupId  } })
   .then((response) => response )
 
-exports.exist = (id,org) =>
-  User.findOne({ $and:[{employeeId: id},{organization:Types.ObjectId(org)}] })
-    .then((user) => (!user ? false : true))
-    .catch((err) => false);
-
 exports.findIdByEmloyeeId = (employeeIds,org) =>
     User.find({...createUserIdFindQuery(employeeIds,org)})
       .then((user) => {
