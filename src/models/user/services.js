@@ -42,7 +42,7 @@ exports.getGroupEmployee = (organization,property) =>
           .catch((error) => error);
 
 exports.create = (userData) =>{
-  if(userData?.password)
+  if(userData && userData.password)
   userData.password = md5(userData.password)
   return User.create({ ...userData, createdAt: new Date() })
     .then((response) => response)
