@@ -15,6 +15,21 @@ module.exports = {
                 console.log(err.message)
                 res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
             }
+        },
+        fetchTrackByGroups:async(req,res)=>{
+            try {
+                let userData = req.user;
+                let groupId = req.body.groupId
+                let GroupTrackData =  await track_Model.find({groupId})
+                if(GroupTrackData===null){
+                    return res.status(201).json({"status":"success","message":`no Data in db`})
+                }
+                return res.status(201).json({"status":"success","message":GroupTrackData})               
+            } catch (err) {
+                console.log(err.name)
+                console.log(err.message)
+                res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
+            }
         }
     },
     post:{
