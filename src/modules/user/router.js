@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const {register,getUsers,login,deleteUser,update,learnerLogin,requestOtp,verifyOtp} = require("./controller");
+const {register,getUsers,login,deleteUser,update,learnerLogin,requestOtp,verifyOtp,requestpass,resetpass} = require("./controller");
 const { withAuthUser } = require("../../middlewares/auth");
 const { validate } = require("../../middlewares/schema");
 
@@ -16,5 +16,7 @@ userRouter.post("/request-otp",validate(requestOtpContract), requestOtp);
 userRouter.post("/verify-otp",validate(verifyOtpContract), verifyOtp);
 userRouter.delete("/",validate(deleteContract), deleteUser);
 userRouter.patch("/",validate(editUserContract), update);
+userRouter.post("/resetpass", requestpass);
+userRouter.patch("/resetpass",withAuthUser, resetpass);
 
 module.exports = userRouter;

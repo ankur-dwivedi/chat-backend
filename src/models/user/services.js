@@ -31,6 +31,12 @@ exports.get = async (query) =>
             ? response
             : generateError("invalid employeeId or password")
         )
+        : query.username
+        ? User.findOne({ username: query.username })
+            .then((response) =>response
+                ? response
+                : generateError("invalid employeeId or password")
+            )
     : User.find()
         .then((response) => response)
         .catch((error) => error);

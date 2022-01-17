@@ -3,6 +3,7 @@ const { generateError } = require("../../utils/error");
 const { generateAuthToken,generateOtp } = require("../../utils/general");
 const md5 = require("md5");
 const { OTP_EXPIRY } = require("../../models/user/constants");
+const { sendMail } = require("../user/util");
 
 exports.getUsers = async(req,res) => 
     get(req.query)
@@ -92,6 +93,9 @@ exports.requestOtp = async ({ body },res) => {
   const message = `your otp is ${otp}`;
   const User=await get({ employeeId: body.employeeId })
   const result=await update({ employeeId },{ otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } })
+  if(User.email)
+  await sendMail(otp,User.email,"")
+  else
   sendOtp(User.phoneNumber, message)
   return res.send(message)
 };
@@ -122,3 +126,35 @@ exports.verifyOtp = async ({ body },res) =>get({ employeeId: body.employeeId }).
           message: status,
         })
   });
+
+  exports.requestpass = async(req, res) => {
+    try{
+      let query = {};
+      query.username = req.body.username;
+      const user=await get({ ...query })
+      const mail=await sendMail(0, user.email, generateAuthToken(user._id))
+        res.send(mail) 
+    }
+    catch(error){
+      res.status(statuscode).send({ error: error.message });
+    }
+    
+  };
+  exports.resetpass = (req, res, next) => {
+ 
+        update(
+            { _id: req.user._id },
+            {
+              password: md5(req.body.password),
+            }
+          )
+      
+      .then((user) =>
+        user
+          ? res.send("Password Reset Succesfully")
+          : generateError("Unable to reset Password")
+      )
+      .catch((err) => {
+        res.status(400).send({ message: `${err.message} Already exists` });
+      });
+  };
