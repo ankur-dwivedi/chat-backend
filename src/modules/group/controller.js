@@ -1,9 +1,4 @@
-const {
-  get,
-  create,
-  deleteGroup,
-  update,
-} = require("../../models/group/services");
+const { get, create, deleteGroup, update } = require("../../models/group/services");
 const {
   getGroupEmployee,
   addGroupId,
@@ -26,19 +21,10 @@ exports.getGroups = async (req, res) =>
 exports.create = async (req, res) => {
   try {
     const group = await create({ ...req.body }).then((group) => group);
-    const employees = await getGroupEmployee(
-      req.body.organization,
-      req.body.properties
-    );
+    const employees = await getGroupEmployee(req.body.organization, req.body.properties);
     const employeeIds = employees.map((value) => value._id);
-    await update(
-      { $and: [{ _id: group._id }] },
-      { employees: employeeIds, updatedAt: new Date() }
-    );
-    await addGroupId(
-      createGroupFilterQuery(req.body.organization, req.body.properties),
-      group._id
-    );
+    await update({ $and: [{ _id: group._id }] }, { employees: employeeIds, updatedAt: new Date() });
+    await addGroupId(createGroupFilterQuery(req.body.organization, req.body.properties), group._id);
     res.send({
       status: 200,
       success: true,
@@ -62,18 +48,28 @@ exports.createGroupEmployee = async (req, res) => {
     const { files } = req;
     if (!files.length) res.status(400).send("No file uploaded.");
     const finalbucket =
-      `${process.env.AWS_BUCKET_NAME}` +
-      "/" +
-      `${req.query.org}` +
-      "/employee-data";
+      `${process.env.AWS_BUCKET_NAME}` + "/" + `${req.query.org}` + "/employee-data";
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
-    let employeeIds = await findIdByEmloyeeId(
-      employeeData,
-      req.body.organization
-    );
+    let employeeIds = await findIdByEmloyeeId(employeeData, req.body.organization);
     const group = await create({ ...req.body, employees: employeeIds });
     await updateUserByIds(req.body.organization, employeeIds, group._id);
+    return res.send({
+      status: 200,
+      success: true,
+      data: group,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: `group already exists` });
+  }
+};
+
+exports.createGpByEmpList = async (req, res) => {
+  try {
+    const { employeeId } = req.body;
+    const group = await create({ ...req.body, employees: employeeId });
+    await updateUserByIds(req.body.organization, employeeId, group._id);
     return res.send({
       status: 200,
       success: true,
