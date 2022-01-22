@@ -46,7 +46,8 @@ module.exports = {
                     groupName:req.body.groupName,
                     selectedTheme:req.body.selectedTheme,
                     trackColorFill:trackColorFill[randomNumber],
-                    trackColorBorder:trackColorBorder[randomNumber]
+                    trackColorBorder:trackColorBorder[randomNumber],
+                    skillTag:req.body.skillTag
                 }
                 let savedData = await track_Model.create(data)
                 return  res.status(201).json({"status":"success","message":`successfully saved the data in db`})              
