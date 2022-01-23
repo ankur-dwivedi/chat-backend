@@ -38,7 +38,7 @@ module.exports = {
             } catch (err) {
                 console.log(err.name)
                 console.log(err.message)
-                res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
+                res.status(200).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
             }
         }
     },

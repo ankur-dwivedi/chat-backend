@@ -7,13 +7,13 @@ module.exports = {
                 let userData = req.user;
                 let userTrackData =  await track_Model.find({userId:userData._id})
                 if(userTrackData===null){
-                    return res.status(201).json({"status":"success","message":`no Data in db`})
+                    return res.status(200).json({"status":"success","message":`no Data in db`})
                 }
-                return res.status(201).json({"status":"success","message":userTrackData})               
+                return res.status(200).json({"status":"success","message":userTrackData})               
             } catch (err) {
                 console.log(err.name)
                 console.log(err.message)
-                res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
+                res.status(200).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
             }
         },
         fetchTrackByGroups:async(req,res)=>{
@@ -22,13 +22,13 @@ module.exports = {
                 let groupId = req.body.groupId
                 let GroupTrackData =  await track_Model.find({groupId})
                 if(GroupTrackData===null){
-                    return res.status(201).json({"status":"success","message":`no Data in db`})
+                    return res.status(200).json({"status":"success","message":`no Data in db`})
                 }
-                return res.status(201).json({"status":"success","message":GroupTrackData})               
+                return res.status(200).json({"status":"success","message":GroupTrackData})               
             } catch (err) {
                 console.log(err.name)
                 console.log(err.message)
-                res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
+                res.status(200).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
             }
         }
     },
@@ -41,8 +41,9 @@ module.exports = {
                   }
                 let randomNumber = getRandomInt(3);                 
                 let data = {
-                    userId:userData._id,
+                    creatorUserId:userData._id,
                     trackName:req.body.trackName,
+                    groupId:req.body.groupId,    // for now added if needed any change do let me know
                     groupName:req.body.groupName,
                     selectedTheme:req.body.selectedTheme,
                     trackColorFill:trackColorFill[randomNumber],
@@ -54,7 +55,7 @@ module.exports = {
             } catch (err) {
                 console.log(err.name)
                 console.log(err.message)
-                res.status(201).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
+                res.status(200).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
             }
         }
     },
