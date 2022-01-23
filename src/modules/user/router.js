@@ -1,17 +1,7 @@
 const { Router } = require("express");
-const {
-  register,
-  getUsers,
-  login,
-  deleteUser,
-  update,
-  learnerLogin,
-  requestOtp,
-  verifyOtp,
-  requestpass,
-  resetpass,
-  searchUser,
-} = require("./controller");
+const { register, getUsers, login, deleteUser, update, learnerLogin } = require("./controller");
+const { requestOtp, verifyOtp, requestpass, resetpass, searchUser } = require("./controller");
+const { getFilteredEmp } = require("./controller");
 const { withAuthUser } = require("../../middlewares/auth");
 const { validate } = require("../../middlewares/schema");
 
@@ -23,6 +13,7 @@ const {
   learnerLoginContract,
   requestOtpContract,
   verifyOtpContract,
+  getFilEmpContract,
 } = require("./contract");
 
 const userRouter = Router();
@@ -38,5 +29,6 @@ userRouter.delete("/", validate(deleteContract), deleteUser);
 userRouter.patch("/", validate(editUserContract), update);
 userRouter.post("/resetpass", requestpass);
 userRouter.patch("/resetpass", withAuthUser, resetpass);
+userRouter.get("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilteredEmp);
 
 module.exports = userRouter;

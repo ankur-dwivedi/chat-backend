@@ -1,4 +1,5 @@
-const { update, get, create, deleteUser } = require("../../models/user/services");
+const { update, get, create, deleteUser, getGroupEmployee } = require("../../models/user/services");
+const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
 const { generateAuthToken, generateOtp } = require("../../utils/general");
 const md5 = require("md5");
@@ -26,6 +27,7 @@ exports.searchUser = async (req, res) => {
     )
     .catch((error) => res.status(400).send({ message: error }));
 };
+
 exports.register = async (req, res) =>
   create({ ...req.body })
     .then((user) =>
@@ -147,6 +149,7 @@ exports.requestpass = async (req, res) => {
   } catch (error) {
     res.status(statuscode).send({ error: error.message });
   }
+  getOrgEmployee;
 };
 exports.resetpass = (req, res, next) => {
   update(
@@ -161,4 +164,20 @@ exports.resetpass = (req, res, next) => {
     .catch((err) => {
       res.status(400).send({ message: `${err.message} Already exists` });
     });
+};
+
+exports.getFilteredEmp = async (req, res) => {
+  try {
+    let employees = [];
+    if (req.body.data && req.body.data.length)
+      employees = await getGroupEmployee(req.user.organization, req.body.data);
+    else employees = await getOrgEmployee({ organization: req.user.organization });
+    res.send({
+      status: 200,
+      success: true,
+      data: employees,
+    });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 };

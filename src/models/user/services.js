@@ -46,6 +46,11 @@ exports.getGroupEmployee = (organization, property) =>
     .then((response) => response)
     .catch((error) => error);
 
+exports.getOrgEmployee = ({ organization }) =>
+  User.find({ organization: Types.ObjectId(organization) })
+    .then((response) => response)
+    .catch((error) => error);
+
 exports.create = (userData) => {
   if (userData && userData.password) userData.password = md5(userData.password);
   return User.create({ ...userData, createdAt: new Date() })
