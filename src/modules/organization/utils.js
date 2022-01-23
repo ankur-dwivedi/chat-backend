@@ -1,3 +1,5 @@
+const { ROLE } = require("../../models/user/constants")
+
 const userKeys={
     username:"",
     email:"",
@@ -22,6 +24,8 @@ exports.createUserObject=(org,userData)=>{
             delete userData[value];
         }
     })
+    if(!userData['role'])
+    userData['role']=ROLE.LEARNER
     return userData
 }
 

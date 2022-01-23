@@ -1,5 +1,5 @@
-const track_Model = require("../../models/Track/index")
-const {trackColorFill,trackColorBorder} = require("../../utils/constants") 
+const track_Model = require("../../models/Track/index");
+const { trackColorFill, trackColorBorder } = require("../../utils/constants");
 module.exports = {
     get:{
         fetchUserTrack:async(req,res)=>{
@@ -57,8 +57,8 @@ module.exports = {
                 console.log(err.message)
                 res.status(200).json({"status":"failed","message":`err.name : ${err.name}, err.message:${err.message}`})
             }
-        }
-    },
-    put:{},
-    delete:{}
+  },
+},
+  put: {},
+  delete: {},
 }

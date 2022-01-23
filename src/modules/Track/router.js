@@ -6,8 +6,12 @@ const { validate } = require("../../middlewares/schema");
 
 const trackRouter = Router();
 
-trackRouter.get("/fetchUserTrack",withAuthUser, trackController.get.fetchUserTrack);
-trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser, trackController.post.createTrack);
-
+trackRouter.get("/fetchUserTrack", withAuthUser, trackController.get.fetchUserTrack);
+trackRouter.post(
+  "/createTrack",
+  validate(createTrackContract),
+  withAuthUser,
+  trackController.post.createTrack
+);
 
 module.exports = trackRouter;
