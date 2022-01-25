@@ -31,5 +31,8 @@
     "nodemon": "^2.0.15",
     "passport": "^0.4.1",
     "request": "^2.88.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
