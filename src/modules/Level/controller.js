@@ -12,19 +12,16 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res
-          .status(201)
-          .json({
-            status: "failed",
-            message: `err.name : ${err.name}, err.message:${err.message}`,
-          });
+        res.status(201).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
       }
     },
     fetchUserLevelByTrack: async (req, res) => {
       try {
-        let userData = req.user;
         let trackId = req.body.trackId;
-        let userTrackData = await level_Model.find({ trakId });
+        let userTrackData = await level_Model.find({ trackId });
         if (userTrackData === null) {
           return res.status(201).json({ status: "success", message: `no Data in db` });
         }
@@ -32,12 +29,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res
-          .status(201)
-          .json({
-            status: "failed",
-            message: `err.name : ${err.name}, err.message:${err.message}`,
-          });
+        res.status(201).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
       }
     },
   },
@@ -65,12 +60,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res
-          .status(200)
-          .json({
-            status: "failed",
-            message: `err.name : ${err.name}, err.message:${err.message}`,
-          });
+        res.status(200).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
       }
     },
   },
