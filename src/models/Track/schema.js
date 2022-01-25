@@ -8,7 +8,7 @@ const trackSchema = new Schema({
     selectedTheme:{type:String,trim:true,required:true},
     trackColorFill:{type:String,trim:true,required:true},
     trackColorBorder:{type:String,trim:true,required:true},
-    skillTtag:{type:Array,trim:true,required:true}
+    skillTag:{type:Array,trim:true,required:true}
 },{timestamps:true});
 
 module.exports = trackSchema;

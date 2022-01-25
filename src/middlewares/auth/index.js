@@ -1,11 +1,33 @@
 const expressJwt = require("express-jwt");
 const User = require("../../models/user");
 const { createUnauthorizedError } = require("../../utils/general");
+const { ROLE_ENUM } = require("../../models/user/constants");
 
 const verifyAuthToken = expressJwt({
   secret: "testing",
   algorithms: ["HS256"],
 });
+
+//-----added by rahul
+const saveLastRoleStatus = async (req,res,next) => {
+  let lastRole = req.body.lastRole;
+  let userData = req.user;
+  let fetchUserData = await User.findOne({_id:userData._id}).lean()
+  if(fetchUserData===null){
+    return res.status(200).json({'status':'failed','message':'please send a valid token / user data not present in db'})
+  }else{
+    if(ROLE_ENUM.includes(lastRole)){
+      fetchUserData.lastRole = lastRole
+      let updatedData = await User.findOne({_id:userData._id}).updateOne(fetchUserData)
+      if(updatedData.n == 1 && updatedData.ok == 1 && updatedData.nModified == 1){
+       return next()
+      }
+      return res.status(200).json({'status':'failed','message':'something went wrong while updating db please contact admin'})
+    }
+    return res.status(200).json({'status':'failed','message':'please send a valid user role'})  
+  }
+}
+//------end 
 
 const assocAuthUser = (req, res, next) =>
   User.findById(req.user.userId)
@@ -81,4 +103,5 @@ module.exports = {
   withAuthUser,
   withAdminAuthUser,
   withOptionalAuthUser,
+  saveLastRoleStatus
 };
