@@ -43,11 +43,13 @@ exports.getByEmpIdOrName = async (query) =>
 
 exports.getGroupEmployee = (organization, property) =>
   User.find({ ...createGroupFilterQuery(organization, property) })
+    .sort({ createdAt: -1 })
     .then((response) => response)
     .catch((error) => error);
 
 exports.getOrgEmployee = ({ organization }) =>
   User.find({ organization: Types.ObjectId(organization) })
+    .sort({ createdAt: -1 })
     .then((response) => response)
     .catch((error) => error);
 

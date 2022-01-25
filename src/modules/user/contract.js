@@ -45,7 +45,6 @@ exports.editUserContract = Joi.object({
   phoneNumber: Joi.number(),
   email: Joi.string(),
   name: Joi.string(),
-  organization: Joi.string().allow(""),
   role: Joi.string(),
   password: Joi.string(),
 });

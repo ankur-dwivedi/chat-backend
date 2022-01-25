@@ -1,5 +1,5 @@
 const { Schema } = require("mongoose");
-const { ROLE_ENUM } = require("./constants");
+const { ROLE_ENUM, ROLE } = require("./constants");
 const { EmployeeDataSchema } = require("./utils");
 const { OtpSchema } = require("./utils");
 
@@ -11,8 +11,9 @@ const UserSchema = new Schema({
   name: { type: String, required: true },
   employeeData: { type: [EmployeeDataSchema] },
   groups: [{ type: Schema.Types.ObjectId, ref: "group" }],
-  organization: { type: Schema.Types.ObjectId, trim: true, ref: "organization" },
-  role: { type: String, enum: ROLE_ENUM },
+  organization: { type: Schema.Types.ObjectId, trim: true, ref: "organization", required: true },
+  role: { type: String, enum: ROLE_ENUM, default: ROLE.ADMIN },
+  lastRole: { type: String, enum: ROLE_ENUM, default: ROLE.LEARNER },
   otp: { type: OtpSchema },
   password: { type: String },
   createdAt: { type: Date, required: true },

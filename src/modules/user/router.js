@@ -18,16 +18,16 @@ const {
 
 const userRouter = Router();
 
-userRouter.get("/", getUsers);
+userRouter.get("/", withAuthUser, getUsers);
 userRouter.get("/search", withAuthUser, searchUser);
-userRouter.post("/", validate(registerUserContract), register);
-userRouter.post("/admin-login", validate(loginContract), login);
-userRouter.post("/learner-login", validate(learnerLoginContract), learnerLogin);
-userRouter.post("/request-otp", validate(requestOtpContract), requestOtp);
-userRouter.post("/verify-otp", validate(verifyOtpContract), verifyOtp);
-userRouter.delete("/", validate(deleteContract), deleteUser);
-userRouter.patch("/", validate(editUserContract), update);
-userRouter.post("/resetpass", requestpass);
+userRouter.post("/", withAuthUser, validate(registerUserContract), register);
+userRouter.post("/admin-login", withAuthUser, validate(loginContract), login);
+userRouter.post("/learner-login", withAuthUser, validate(learnerLoginContract), learnerLogin);
+userRouter.post("/request-otp", withAuthUser, validate(requestOtpContract), requestOtp);
+userRouter.post("/verify-otp", withAuthUser, validate(verifyOtpContract), verifyOtp);
+userRouter.delete("/", withAuthUser, validate(deleteContract), deleteUser);
+userRouter.patch("/", withAuthUser, validate(editUserContract), update);
+userRouter.post("/resetpass", withAuthUser, requestpass);
 userRouter.patch("/resetpass", withAuthUser, resetpass);
 userRouter.get("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilteredEmp);
 

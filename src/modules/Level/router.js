@@ -6,8 +6,8 @@ const { validate } = require("../../middlewares/schema");
 
 const trackRouter = Router();
 //validate(createLevelContract)
-trackRouter.get("/fetchUserLevel",withAuthUser, levelController.get.fetchUserLevel);
-trackRouter.post("/createLevel",withAuthUser, levelController.post.createLevel);
-
+trackRouter.get("/fetchUserLevel", withAuthUser, levelController.get.fetchUserLevel);
+trackRouter.get("/fetchUserLevelByTrack", withAuthUser, levelController.get.fetchUserLevelByTrack);
+trackRouter.post("/createLevel", withAuthUser, levelController.post.createLevel);
 
 module.exports = trackRouter;

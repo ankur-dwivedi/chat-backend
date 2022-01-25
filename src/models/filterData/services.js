@@ -1,10 +1,11 @@
 const { generateError } = require("../../utils/error");
 const FilterData = require(".");
+const { Types } = require("mongoose");
 
 exports.get = async (query) =>
   query.organization
-    ? FilterData.findOne({ _id: query.organization })
-        .then((response) => (response ? response : generateError()))
+    ? FilterData.findOne({ organization: Types.ObjectId(query.organization) })
+        .then((response) => (response ? response : null))
         .catch((error) => error)
     : FilterData.find()
         .then((response) => response)

@@ -29,7 +29,7 @@ exports.searchUser = async (req, res) => {
 };
 
 exports.register = async (req, res) =>
-  create({ ...req.body })
+  create({ ...req.body, organization: req.user.organization })
     .then((user) =>
       res.send({
         status: 200,
@@ -38,7 +38,7 @@ exports.register = async (req, res) =>
       })
     )
     .catch((err) => {
-      res.status(400).send({ message: `user already exists` });
+      res.status(400).send({ message: `Invalid Data` });
     });
 
 exports.login = (req, res, next) => {
