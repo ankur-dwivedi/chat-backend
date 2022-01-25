@@ -4,7 +4,7 @@ module.exports = {
     fetchUserLevel: async (req, res) => {
       try {
         let userData = req.user;
-        let userTrackData = await level_Model.find({ userId: userData._id });
+        let userTrackData = await level_Model.find({ creatorUserId: userData._id });
         if (userTrackData === null) {
           return res.status(201).json({ status: "success", message: `no Data in db` });
         }
@@ -41,7 +41,7 @@ module.exports = {
       try {
         let userData = req.user;
         let data = {
-          userId: userData._id,
+          creatorUserId: userData._id,
           trackId: req.body.trackId,
           levelName: req.body.levelName,
           levelDescription: req.body.levelDescription,

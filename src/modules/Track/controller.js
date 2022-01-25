@@ -5,7 +5,7 @@ module.exports = {
         fetchUserTrack:async(req,res)=>{
             try {
                 let userData = req.user;
-                let userTrackData =  await track_Model.find({userId:userData._id})
+                let userTrackData =  await track_Model.find({creatorUserId:userData._id})
                 if(userTrackData===null){
                     return res.status(200).json({"status":"success","message":`no Data in db`})
                 }

@@ -1,7 +1,7 @@
 const { Schema } = require("mongoose");
 
 const levelSchema = new Schema({
-    userId: { type: Schema.Types.ObjectId,trim:true , ref: "user",required:true },
+    creatorUserId: { type: Schema.Types.ObjectId,trim:true , ref: "user",required:true },
     // groupId: {type: Schema.Types.ObjectId,trim:true , ref: "group"},
     templatesId: [{type: Schema.Types.ObjectId,trim:true , ref: "template"}],
     trackId: {type: Schema.Types.ObjectId,trim:true , ref: "track"},
