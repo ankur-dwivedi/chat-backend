@@ -8,8 +8,8 @@ const sendMail = async (from , email,  subject,body) => {
     const transporter =await nodemailer.createTransport({
         service: "gmail",
         auth: {
-        user: "himalig11@gmail.com",
-        pass: "byysktxgklbjmjld"
+        user: "", // add credentials
+        pass: ""
         },
     });
 
@@ -59,7 +59,6 @@ module.exports = {
         const creatorData = await get({"id":creatorId})
         subject = `User Email Stats for level ${levelName} Creation`
         let body = `Following users could not be notified : \n\n${usersEmailFailed}`
-        console.log(creatorData)
         let creatorMailingStatus = await sendMail("cascade<>",creatorData.email,subject,body)
         if (creatorMailingStatus) {
             console.log("Creator Notified of user mails")
