@@ -4,10 +4,10 @@ const { withAuthUser } = require("../../middlewares/auth");
 const { createLevelContract } = require("./contract");
 const { validate } = require("../../middlewares/schema");
 
-const trackRouter = Router();
+const levelRouter = Router();
 //validate(createLevelContract)
-trackRouter.get("/fetchUserLevel", withAuthUser, levelController.get.fetchUserLevel);
-trackRouter.get("/fetchUserLevelByTrack", withAuthUser, levelController.get.fetchUserLevelByTrack);
-trackRouter.post("/createLevel", withAuthUser, levelController.post.createLevel);
+levelRouter.get("/fetchUserLevel", withAuthUser, levelController.get.fetchUserLevel);
+levelRouter.get("/fetchUserLevelByTrack", withAuthUser, levelController.get.fetchUserLevelByTrack);
+levelRouter.post("/createLevel", withAuthUser, levelController.post.createLevel);
 
-module.exports = trackRouter;
+module.exports = levelRouter;
