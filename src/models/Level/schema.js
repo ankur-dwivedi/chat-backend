@@ -11,8 +11,10 @@ const levelSchema = new Schema({
     dueDate: {type:Date,trim:true},
     setTotalTimeForLevel:{type:Boolean,trim:true,default:false},
     totalMinutes:{type:Number,trim:true},
-    levelState:{type:String,trim:true,default:"Saved"},
-    passingScore:{type:Number,trim:true}
+    levelState:{type:String,trim:true,default:"Saved"},  // create enums 
+    passingScore:{type:Number,trim:true},
+    levelType:{type:String,trim:true,required:true},
+    levelTags:{type:Array,trim:true}  // test it afterwards   
 },{timestamps:true});
 
 module.exports = levelSchema;
