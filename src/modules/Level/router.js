@@ -8,6 +8,11 @@ const levelRouter = Router();
 //validate(createLevelContract)
 levelRouter.get("/fetchUserLevel", withAuthUser, levelController.get.fetchUserLevel);
 levelRouter.get("/fetchUserLevelByTrack", withAuthUser, levelController.get.fetchUserLevelByTrack);
-levelRouter.post("/createLevel", withAuthUser, levelController.post.createLevel);
+levelRouter.post(
+  "/createLevel",
+  validate(createLevelContract),
+  withAuthUser,
+  levelController.post.createLevel
+);
 
 module.exports = levelRouter;

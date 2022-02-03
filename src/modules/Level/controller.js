@@ -1,5 +1,5 @@
 const level_Model = require("../../models/Level/index");
-const {sendLevelCreationMailsToUsers} = require("./util")
+const { sendLevelCreationMailsToUsers } = require("./util");
 module.exports = {
   get: {
     fetchUserLevel: async (req, res) => {
@@ -53,12 +53,14 @@ module.exports = {
           levelState: req.body.levelState,
           templates: req.body.templates,
           passingScore: req.body.passingScore,
+          levelType: req.body.levelType,
+          organization: req.user.organization,
         };
         let savedData = await level_Model.create(data);
-        sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName,userData._id);
+        sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
         return res
           .status(201)
-          .json({ status: "success", message: `successfully saved the data in db`});
+          .json({ status: "success", message: `successfully saved the data in db` });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);

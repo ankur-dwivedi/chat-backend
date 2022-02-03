@@ -7,7 +7,6 @@ const organizationRouter = require("../modules/organization/router.js");
 const groupRouter = require("../modules/group/router.js");
 const templateRouter = require("../modules/template/router.js");
 const filterDataRouter = require("../modules/filterData/router.js");
-const levelRouter = require("../modules/Level/router.js")
 
 const router = Router();
 
@@ -15,7 +14,7 @@ router.get("/", (_, res) => res.send());
 router.use("/user", userRouter);
 router.use("/track", trackRouter);
 router.use("/level", levelRouter);
-router.use("/journey",journeyRouter);
+router.use("/journey", journeyRouter);
 router.use("/organization", organizationRouter);
 router.use("/group", groupRouter);
 router.use("/template", templateRouter);
