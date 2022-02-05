@@ -43,6 +43,7 @@ module.exports = {
         let userData = req.user;
         let data = {
           creatorUserId: userData._id,
+          templatesId:req.body.templates,
           trackId: req.body.trackId,
           levelName: req.body.levelName,
           levelDescription: req.body.levelDescription,
