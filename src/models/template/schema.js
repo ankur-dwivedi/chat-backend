@@ -11,7 +11,7 @@ const TemplateSchema = new Schema({
   options: { type: [QuestionSchema] },
   answer: { type: [String] },
   importance: { type: Number },
-  templateOrder: { type: Number, required: true, unique: true },
+  templateOrder: { type: Number, required: true },
   information: { type: InformationSchema },
   revealOption: { type: Boolean },
   createdAt: { type: Date, required: true },
