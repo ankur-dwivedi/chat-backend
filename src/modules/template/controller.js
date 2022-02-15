@@ -17,7 +17,8 @@ exports.getTemplates = async (req, res) => {
           const templateOrder = prevTemplate.templateOrder + 1;
           const template = await get({ templateOrder, levelId: req.user.currentState.level });
           if (template) {
-            await updateUserState({ id: req.user._id, template });
+            const updatedUserState = await updateUserState({ id: req.user._id, template });
+            req.user.currentState = updatedUserState.currentState;
             return res.send({
               status: 200,
               success: true,
@@ -25,7 +26,12 @@ exports.getTemplates = async (req, res) => {
             });
           } else {
             //update current state  completed property of user
-            await updateUserState({ id: req.user._id, template: prevTemplate, completed: true });
+            const updatedUserState = await updateUserState({
+              id: req.user._id,
+              template: prevTemplate,
+              completed: true,
+            });
+            req.user.currentState = updatedUserState.currentState;
             return res.send({
               status: 200,
               success: true,
@@ -36,7 +42,8 @@ exports.getTemplates = async (req, res) => {
         } else {
           const template = await get({ templateOrder: 1, levelId: req.body.levelId });
           if (template) {
-            await updateUserState({ id: req.user._id, template });
+            const updatedUserState = await updateUserState({ id: req.user._id, template });
+            req.user.currentState = updatedUserState.currentState;
             return res.send({
               status: 200,
               success: true,
@@ -53,7 +60,8 @@ exports.getTemplates = async (req, res) => {
       } else {
         const template = await get({ templateOrder: 1, levelId: req.body.levelId });
         if (template) {
-          await updateUserState({ id: req.user._id, template });
+          const updatedUserState = await updateUserState({ id: req.user._id, template });
+          req.user.currentState = updatedUserState.currentState;
           return res.send({
             status: 200,
             success: true,
@@ -75,7 +83,7 @@ exports.getTemplates = async (req, res) => {
 };
 
 const updateUserState = async ({ id, template, completed }) => {
-  await User.update(
+  return await User.update(
     { _id: Types.ObjectId(id) },
     {
       currentState: {

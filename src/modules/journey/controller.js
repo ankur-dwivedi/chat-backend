@@ -42,7 +42,7 @@ const saveJourneyData = async ({
 module.exports = {
   get: {},
   post: {
-    createJourney: async (req, res) => {
+    createJourney: async (req, res, next) => {
       try {
         const template = await Template.get({ id: req.body.templateId });
         console.log({ template });
@@ -84,11 +84,8 @@ module.exports = {
             });
             break;
         }
-
-        return res.status(201).json({
-          status: "success",
-          message: `successfully saved the data in db`,
-        });
+        req.body.levelId = String(template.levelId);
+        return next();
       } catch (err) {
         console.log(err);
         res.status(200).json({

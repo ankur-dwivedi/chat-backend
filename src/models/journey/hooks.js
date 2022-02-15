@@ -4,7 +4,6 @@ const Level = require("../Level/services");
 
 exports.initHooks = (JourneySchema) => {
   JourneySchema.post("save", async (docs) => {
-    console.log({ docs });
     const { attemptId, levelId } = docs;
     //calculate percentage score
     const templateData = await Template.get({ levelId });
@@ -17,7 +16,6 @@ exports.initHooks = (JourneySchema) => {
     //get level passing score
     const levelData = await Level.get({ id: levelId });
     let passStatus = {};
-    console.log({ levelData }, templateData.length === userLevelData.templateAttempted + 1);
     if (levelData.passingScore && templateData.length === userLevelData.templateAttempted + 1)
       passStatus["levelStatus"] = levelData.passingScore <= percentageScore ? "Pass" : "Fail";
     //update score in userLevel

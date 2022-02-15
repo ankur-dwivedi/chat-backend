@@ -71,8 +71,8 @@ exports.findUsers = (query) =>
     });
 
 exports.update = (queryObject, updateObject) =>
-  User.updateOne(queryObject, { $set: updateObject })
-    .then((response) => (response && response.n ? response : generateError()))
+  User.findOneAndUpdate(queryObject, { $set: updateObject }, { new: true })
+    .then((response) => response)
     .catch((error) => {
       throw Error(error);
     });
