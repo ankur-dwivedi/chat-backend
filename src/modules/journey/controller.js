@@ -1,10 +1,10 @@
 const journey_Model = require("../../models/journey/index");
 const Template = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
+const Journey = require("../../models/journey/services");
 
 //template is first
-const checkIfFirstAttempt = async ({ levelId, templateId }) => {
-  const template = await Template.get({ id: templateId });
+const checkIfFirstAttempt = async ({ levelId, template }) => {
   const templateOrder = template.templateOrder - 1;
   const nextTemplate = await Template.get({ templateOrder, levelId });
   if (nextTemplate) return false;
@@ -45,10 +45,9 @@ module.exports = {
     createJourney: async (req, res, next) => {
       try {
         const template = await Template.get({ id: req.body.templateId });
-        console.log({ template });
         const isFirstAttempt = await checkIfFirstAttempt({
           levelId: template.levelId,
-          templateId: template._id,
+          template,
         });
         switch (isFirstAttempt) {
           case true:
@@ -72,6 +71,7 @@ module.exports = {
             const userLevelData = await UserLevel.getLatestUserLevelByLevel({
               levelId: template.levelId,
             });
+
             //save journey data
             await saveJourneyData({
               template,
@@ -88,7 +88,12 @@ module.exports = {
         return next();
       } catch (err) {
         console.log(err);
-        res.status(200).json({
+        if (err.message.indexOf("attemptId_1_templateId_1 dup key") !== -1)
+          return res.status(400).json({
+            status: "failed",
+            message: `Template allready submitted in current attempt`,
+          });
+        return res.status(400).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,
         });

@@ -19,3 +19,6 @@ exports.deleteJourney = async (id) =>
   Journey.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);
+
+exports.getTemplateByAttemptId = ({ levelId, templateId, attemptId }) =>
+  Journey.findOne({ levelId, templateId, attemptId }).then((response) => response);
