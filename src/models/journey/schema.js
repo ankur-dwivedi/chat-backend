@@ -12,6 +12,7 @@ const journeySchema = new Schema(
     timeSpend: { type: Number, trim: true, required: true },
     anyIssue: { type: String, trim: true },
     score: { type: Number, required: true, default: 0 },
+    maxScore: { type: Number, required: true, default: 0 },
     attemptId: { type: Schema.Types.ObjectId, trim: true, ref: "userLevel", required: true },
   },
   { timestamps: true }

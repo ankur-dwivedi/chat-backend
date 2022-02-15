@@ -7,7 +7,11 @@ const { Types } = require("mongoose");
 exports.getTemplates = async (req, res) => {
   try {
     if (req.body && req.body.levelId) {
-      if (req.user.currentState && req.user.currentState.level == req.body.levelId) {
+      if (
+        req.user.currentState &&
+        req.user.currentState.level == req.body.levelId &&
+        req.user.currentState.completed === false
+      ) {
         const prevTemplate = await get({ id: req.user.currentState.template });
         if (prevTemplate && prevTemplate.templateOrder) {
           const templateOrder = prevTemplate.templateOrder + 1;
@@ -19,13 +23,16 @@ exports.getTemplates = async (req, res) => {
               success: true,
               data: template,
             });
-          } else
+          } else {
+            //update current state  completed property of user
+            await updateUserState({ id: req.user._id, template: prevTemplate, completed: true });
             return res.send({
               status: 200,
               success: true,
               message: "level completed",
               data: {},
             });
+          }
         } else {
           const template = await get({ templateOrder: 1, levelId: req.body.levelId });
           if (template) {
@@ -62,14 +69,22 @@ exports.getTemplates = async (req, res) => {
       }
     } else generateError("levelId is required");
   } catch (err) {
+    console.log(err);
     res.status(400).send(err.message);
   }
 };
 
-const updateUserState = async ({ id, template }) => {
+const updateUserState = async ({ id, template, completed }) => {
   await User.update(
     { _id: Types.ObjectId(id) },
-    { currentState: { level: template.levelId, track: template.trackId, template: template._id } }
+    {
+      currentState: {
+        level: template.levelId,
+        track: template.trackId,
+        template: template._id,
+        completed: completed ? completed : false,
+      },
+    }
   );
 };
 

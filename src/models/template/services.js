@@ -1,25 +1,25 @@
 const { generateError } = require("../../utils/error");
-const Tempelate = require(".");
+const Template = require(".");
 
 exports.get = async (query) =>
   query.id
-    ? Tempelate.findOne({ _id: query.id }).then((response) => response)
-    : query.templateOrder && query.levelId
-    ? Tempelate.findOne({ templateOrder: query.templateOrder, levelId: query.levelId }).then(
+    ? Template.findOne({ _id: query.id }).then((response) => response)
+    : (query.templateOrder || query.templateOrder === 0) && query.levelId
+    ? Template.findOne({ templateOrder: query.templateOrder, levelId: query.levelId }).then(
         (response) => response
       )
     : query.levelId
-    ? Tempelate.findOne({ levelId: query.levelId })
+    ? Template.find({ levelId: query.levelId })
         .then((response) => response)
         .catch((error) => error)
-    : Tempelate.find()
+    : Template.find()
         .then((response) => response)
         .catch((error) => error);
 
 exports.create = (templateData) =>
-  Tempelate.create({ ...templateData, createdAt: new Date() }).then((response) => response);
+  Template.create({ ...templateData, createdAt: new Date() }).then((response) => response);
 
-exports.deleteTempelate = async (id) =>
-  Tempelate.deleteOne({ _id: id })
+exports.deleteTemplate = async (id) =>
+  Template.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);

@@ -6,6 +6,11 @@ const { validate } = require("../../middlewares/schema");
 
 const journeyRouter = Router();
 
-journeyRouter.post("/createJourney",withAuthUser,validate(createJourneyContract),journeyController.post.createJourney);
+journeyRouter.post(
+  "/submit",
+  withAuthUser,
+  validate(createJourneyContract),
+  journeyController.post.createJourney
+);
 
 module.exports = journeyRouter;
