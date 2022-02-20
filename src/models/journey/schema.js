@@ -2,7 +2,7 @@ const { Schema } = require("mongoose");
 
 const journeySchema = new Schema(
   {
-    creatorUserId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
+    learnerId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
     groupId: { type: Schema.Types.ObjectId, trim: true, ref: "group", required: true },
     trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track", required: true },
     levelId: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },

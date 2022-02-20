@@ -22,7 +22,7 @@ const saveJourneyData = async ({
   attemptId,
 }) => {
   const data = {
-    creatorUserId: user._id,
+    learnerId: user._id,
     groupId: groupId,
     trackId: template.trackId,
     levelId: template.levelId,
@@ -52,7 +52,7 @@ module.exports = {
         switch (isFirstAttempt) {
           case true:
             const useLevelData = await UserLevel.create({
-              creatorUserId: req.user._id,
+              learnerId: req.user._id,
               levelId: template.levelId,
             });
             //save journeyData
