@@ -6,6 +6,10 @@ exports.get = async (query) =>
     ? Organization.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
+    : query.domain
+    ? Organization.findOne({ domain: query.domain })
+        .then((response) => (response ? response : generateError()))
+        .catch((error) => error)
     : Organization.find()
         .then((response) => response)
         .catch((error) => error);
@@ -33,6 +37,6 @@ exports.update = (queryObject, updateObject) =>
     });
 
 exports.deleteOrganization = async (id) =>
-  Organization.deleteOne({_id : id })
+  Organization.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);
