@@ -1,21 +1,24 @@
 const { Schema } = require("mongoose");
+const { LEVEL_TYPE_ENUM, LEVEL_STATE_ENUM, LEVEL_STATE } = require("./constants");
 
 const levelSchema = new Schema(
   {
     creatorUserId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
-    // groupId: {type: Schema.Types.ObjectId,trim:true , ref: "group"},
-    templatesId: [{ type: Schema.Types.ObjectId, trim: true, ref: "template" }],
     trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track" },
     levelName: { type: String, trim: true, required: true },
     levelDescription: { type: String, trim: true, required: true },
-    employeeRetryInDays: { type: Number, trim: true, default: 0 },
-    dueDate: { type: Date, trim: true },
-    setTotalTimeForLevel: { type: Boolean, trim: true, default: false },
-    totalMinutes: { type: Number, trim: true },
-    levelState: { type: String, trim: true, default: "Saved" }, // create enums
+    levelState: {
+      type: String,
+      trim: true,
+      enum: LEVEL_STATE_ENUM,
+      default: LEVEL_STATE.INPROGRESS,
+    },
     passingScore: { type: Number, trim: true },
-    levelType: { type: String, trim: true, required: true },
-    levelTags: { type: Array, trim: true }, // test it afterwards
+    employeeRetryInDays: { type: Number, trim: true, default: 0 },
+    totalMinutes: { type: Number, trim: true },
+    dueDate: { type: Date, trim: true },
+    levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM },
+    levelTags: [{ type: Array, trim: true }],
     organization: { type: Schema.Types.ObjectId, required: true, trim: true, ref: "organization" },
   },
   { timestamps: true }

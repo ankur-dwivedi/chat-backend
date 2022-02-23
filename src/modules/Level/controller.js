@@ -1,4 +1,7 @@
+const { LEVEL_STATE, LOCKED_STATE } = require("../../models/Level/constants");
 const level_Model = require("../../models/Level/index");
+const { LEVEL_STATUS } = require("../../models/userLevel/constants");
+const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
 module.exports = {
   get: {
@@ -36,6 +39,60 @@ module.exports = {
         });
       }
     },
+    learnerLevelInfo: async (req, res) => {
+      try {
+        let trackId = req.query.trackId;
+        let levelData = await level_Model.find({ trackId, levelState: LEVEL_STATE.LAUNCH });
+        if (levelData === null) {
+          return res.status(201).json({ status: "success", message: `no Data in db` });
+        }
+        const updatedLevlelData = levelData.map(async (data, index) => {
+          const userLevelData = await getLatestUserLevelByLevel({ levelId: data._id });
+
+          //calculate lock state
+          let lockedState;
+          if (index == 0) lockedState = LOCKED_STATE.UNLOCKED;
+          else {
+            const previousLevel = levelData[index - 1];
+            const prevUserLevelData = await getLatestUserLevelByLevel({
+              levelId: previousLevel._id,
+            });
+            if (
+              prevUserLevelData[0] &&
+              previousLevel.passingScore &&
+              prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS
+            )
+              lockedState = LOCKED_STATE.UNLOCKED;
+            else if (prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate)
+              lockedState = LOCKED_STATE.UNLOCKED;
+            else lockedState = LOCKED_STATE.LOCKED;
+          }
+
+          if (userLevelData && userLevelData[0]) {
+            const score = userLevelData[0].levelScore;
+            const completed =
+              (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
+            const passState = userLevelData[0].levelStatus;
+            return {
+              ...JSON.parse(JSON.stringify(data)),
+              score,
+              completed,
+              passState,
+              lockedState,
+            };
+          }
+
+          return { ...JSON.parse(JSON.stringify(data)), lockedState };
+        });
+        levelData = await Promise.all(updatedLevlelData);
+        return res.status(201).json({ status: "success", data: levelData });
+      } catch (err) {
+        res.status(201).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
   },
   post: {
     createLevel: async (req, res) => {
@@ -43,21 +100,19 @@ module.exports = {
         let userData = req.user;
         let data = {
           creatorUserId: userData._id,
-          templatesId:req.body.templates,
           trackId: req.body.trackId,
           levelName: req.body.levelName,
           levelDescription: req.body.levelDescription,
-          employeeRetryInDays: req.body.employeeRetryInDays,
-          dueDate: req.body.dueDate,
-          setTotalTimeForLevel: req.body.setTotalTimeForLevel,
-          totalMinutes: req.body.totalMinutes,
           levelState: req.body.levelState,
-          templates: req.body.templates,
           passingScore: req.body.passingScore,
+          employeeRetryInDays: req.body.employeeRetryInDays,
+          totalMinutes: req.body.totalMinutes,
+          dueDate: req.body.dueDate,
           levelType: req.body.levelType,
+          levelTags: req.body.levelTags,
           organization: req.user.organization,
         };
-        let savedData = await level_Model.create(data);
+        await level_Model.create(data);
         sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
         return res
           .status(201)

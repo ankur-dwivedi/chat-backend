@@ -14,5 +14,6 @@ levelRouter.post(
   withAuthUser,
   levelController.post.createLevel
 );
+levelRouter.get("/learner-level-info", withAuthUser, levelController.get.learnerLevelInfo);
 
 module.exports = levelRouter;
