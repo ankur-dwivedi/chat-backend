@@ -1,4 +1,5 @@
 const { get, create, deleteTemplate } = require("../../models/template/services");
+const UserLevel = require("../../models/userLevel/services");
 const { generateError } = require("../../utils/error");
 const { uploadFiles } = require(".././../libs/aws/upload");
 const User = require("../../models/user/services");
@@ -32,13 +33,15 @@ exports.getTemplates = async (req, res) => {
               completed: true,
             });
             req.user.currentState = updatedUserState.currentState;
+            const levelCompleteData = await levelComplete({ levelId: req.body.levelId });
             return res.send({
               status: 200,
               success: true,
               message: "level completed",
-              data: {},
+              data: { ...levelCompleteData },
             });
           }
+          UserLevel;
         } else {
           const template = await get({ templateOrder: 1, levelId: req.body.levelId });
           if (template) {
@@ -94,6 +97,15 @@ const updateUserState = async ({ id, template, completed }) => {
       },
     }
   );
+};
+
+const levelComplete = async ({ levelId }) => {
+  const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId });
+  if (userLevelData && userLevelData[0]) {
+    const score = userLevelData[0].levelScore;
+    const passState = userLevelData[0].levelStatus;
+    return { score, passState };
+  }
 };
 
 exports.create = async (req, res) => {
