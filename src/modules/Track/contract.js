@@ -1,10 +1,8 @@
 const Joi = require("joi");
 
-
 exports.createTrackContract = Joi.object({
-    trackName:Joi.string().required(),
-    groupName:Joi.string().required(),
-    groupId: Joi.string().required(),
-    selectedTheme:Joi.string().required(),
-    skillTag:Joi.array()
-})
+  trackName: Joi.string().required(),
+  groupId: Joi.array().items(Joi.string().required()).required(),
+  selectedTheme: Joi.string().required(),
+  skillTag: Joi.array(),
+});
