@@ -1,7 +1,6 @@
 const Joi = require("joi");
 
 exports.registerUserContract = Joi.object({
-  username: Joi.string().required(),
   employeeId: Joi.string(),
   phoneNumber: Joi.number().required(),
   email: Joi.string().required(),
@@ -19,17 +18,16 @@ exports.registerUserContract = Joi.object({
 });
 
 exports.loginContract = Joi.object({
-  username: Joi.string().required(),
-  password: Joi.string().required(),
-});
-
-exports.learnerLoginContract = Joi.object({
   employeeId: Joi.string().required(),
   password: Joi.string().required(),
 });
 
-exports.requestOtpContract = Joi.object({
+exports.reqOtpForgetPassContract = Joi.object({
   employeeId: Joi.string().required(),
+});
+
+exports.setSessionContract = Joi.object({
+  role: Joi.string().required(),
 });
 
 exports.verifyOtpContract = Joi.object({
@@ -40,7 +38,6 @@ exports.verifyOtpContract = Joi.object({
 exports.editUserContract = Joi.object({
   id: Joi.string().required(),
   employeeId: Joi.string().required(),
-  username: Joi.string(),
   employeeId: Joi.string().allow(""),
   phoneNumber: Joi.number(),
   email: Joi.string(),

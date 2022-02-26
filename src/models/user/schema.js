@@ -5,7 +5,6 @@ const { OtpSchema } = require("./utils");
 
 const UserSchema = new Schema(
   {
-    username: { type: String, unique: true, required: true },
     employeeId: { type: String, unique: true, required: true },
     phoneNumber: { type: Number, unique: true, required: true },
     email: { type: String },

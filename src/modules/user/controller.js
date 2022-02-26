@@ -43,26 +43,6 @@ exports.register = async (req, res) =>
 
 exports.login = (req, res, next) => {
   let query = {};
-  query.username = req.body.username;
-  query.password = md5(req.body.password);
-  return get({ ...query })
-    .then((user) =>
-      user
-        ? res.send({
-            status: 200,
-            success: true,
-            data: user,
-            token: generateAuthToken(user._id),
-          })
-        : generateError()
-    )
-    .catch((err) => {
-      res.status(400).send({ message: `invalid username or password` });
-    });
-};
-
-exports.learnerLogin = (req, res, next) => {
-  let query = {};
   query.employeeId = req.body.employeeId;
   query.password = md5(req.body.password);
   return get({ ...query })
@@ -88,7 +68,7 @@ exports.deleteUser = async (req, res) =>
 
 exports.update = async (req, res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
-  const updateObject = { ...req.body, updatedAt: new Date() };
+  const updateObject = { ...req.body };
   delete updateObject.id;
   if (updateObject.password) updateObject.password = md5(updateObject.password);
   const updateUser = await update(queryObject, updateObject).then((user) => ({
@@ -139,18 +119,19 @@ exports.verifyOtp = async ({ body }, res) =>
         });
   });
 
-exports.requestpass = async (req, res) => {
+exports.forgetPassword = async (req, res) => {
   try {
     let query = {};
-    query.username = req.body.username;
+    query.employeeId = req.body.employeeId;
     const user = await get({ ...query });
     const mail = await sendMail(0, user.email, generateAuthToken(user._id));
-    res.send(mail);
+    res.send({ message: "link sed to registered email" });
   } catch (error) {
     res.status(statuscode).send({ error: error.message });
   }
   getOrgEmployee;
 };
+
 exports.resetpass = (req, res, next) => {
   update(
     { _id: req.user._id },
@@ -177,6 +158,21 @@ exports.getFilteredEmp = async (req, res) => {
       success: true,
       data: employees,
     });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+exports.setSession = async (req, res) => {
+  try {
+    const queryObject = { $and: [{ _id: req.user._id }] };
+    const updateObject = { lastRole: req.body.role };
+    await update(queryObject, updateObject).then((user) => ({
+      status: 200,
+      success: true,
+      data: user,
+    }));
+    return res.send({ message: "session set successfully" });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
