@@ -1,6 +1,7 @@
 const expressJwt = require("express-jwt");
 const User = require("../../models/user");
 const Level = require("../../models/Level");
+const Template = require("../../models/template");
 const Track = require("../../models/Track");
 const { createUnauthorizedError } = require("../../utils/general");
 const { ROLE_ENUM } = require("../../models/user/constants");
@@ -57,14 +58,24 @@ const assocAuthLearner = (req, res, next) =>
         res.send(createUnauthorizedError("User not found"));
       } else {
         req.user = user;
-        if (req.body.levelId) {
+        if (req.body.templateId) {
+          const template = await Template.findById(req.body.templateId);
+          const track = await Track.findById(template.trackId);
+          const filteredArray = track.groupId.filter(function (n) {
+            return user.groups.indexOf(n) !== -1;
+          });
+          if (filteredArray && filteredArray.length) {
+            req.template = template;
+            next();
+          } else return res.status(401).send({ message: "User not Authorised for template" });
+        } else if (req.body.levelId) {
           const level = await Level.findById(req.body.levelId);
           const track = await Track.findById(level.trackId);
           const filteredArray = track.groupId.filter(function (n) {
             return user.groups.indexOf(n) !== -1;
           });
           if (filteredArray && filteredArray.length) next();
-          else res.status(401).send(createUnauthorizedError("User not Authorised for level"));
+          else return res.status(401).send({ message: "User not Authorised for level" });
         } else next();
       }
     })

@@ -41,7 +41,6 @@ exports.getTemplates = async (req, res) => {
               data: { ...levelCompleteData },
             });
           }
-          UserLevel;
         } else {
           const template = await get({ templateOrder: 1, levelId: req.body.levelId });
           if (template) {

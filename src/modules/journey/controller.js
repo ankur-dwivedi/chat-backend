@@ -44,7 +44,7 @@ module.exports = {
   post: {
     createJourney: async (req, res, next) => {
       try {
-        const template = await Template.get({ id: req.body.templateId });
+        const template = req.template;
         const isFirstAttempt = await checkIfFirstAttempt({
           levelId: template.levelId,
           template,
