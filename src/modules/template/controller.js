@@ -8,10 +8,10 @@ const { LEVEL_TYPE } = require("../../models/Level/constants");
 
 const getTemplates = async (req, res) => {
   try {
-    if (req.body && req.body.levelId) {
+    if (req.query && req.query.levelId) {
       if (
         req.user.currentState &&
-        req.user.currentState.level == req.body.levelId &&
+        req.user.currentState.level == req.query.levelId &&
         req.user.currentState.completed === false
       ) {
         const prevTemplate = await get({ id: req.user.currentState.template });
@@ -34,7 +34,7 @@ const getTemplates = async (req, res) => {
               completed: true,
             });
             req.user.currentState = updatedUserState.currentState;
-            const levelCompleteData = await levelComplete({ levelId: req.body.levelId });
+            const levelCompleteData = await levelComplete({ levelId: req.query.levelId });
             return res.send({
               status: 200,
               success: true,
@@ -43,7 +43,7 @@ const getTemplates = async (req, res) => {
             });
           }
         } else {
-          const template = await get({ templateOrder: 1, levelId: req.body.levelId });
+          const template = await get({ templateOrder: 1, levelId: req.query.levelId });
           if (template) {
             const updatedUserState = await updateUserState({ id: req.user._id, template });
             req.user.currentState = updatedUserState.currentState;
@@ -61,7 +61,7 @@ const getTemplates = async (req, res) => {
             });
         }
       } else {
-        const template = await get({ templateOrder: 1, levelId: req.body.levelId });
+        const template = await get({ templateOrder: 1, levelId: req.query.levelId });
         if (template) {
           const updatedUserState = await updateUserState({ id: req.user._id, template });
           req.user.currentState = updatedUserState.currentState;
@@ -87,7 +87,7 @@ const getTemplates = async (req, res) => {
 
 const getNonAssesmentTypeTemplate = async (req, res) => {
   try {
-    const templates = await get({ levelId: req.body.levelId });
+    const templates = await get({ levelId: req.query.levelId });
     return res.send({
       status: 200,
       success: true,

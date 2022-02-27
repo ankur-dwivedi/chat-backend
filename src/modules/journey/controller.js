@@ -84,7 +84,7 @@ module.exports = {
             });
             break;
         }
-        req.body.levelId = String(template.levelId);
+        req.query.levelId = String(template.levelId);
         return next();
       } catch (err) {
         console.log(err);
