@@ -74,8 +74,10 @@ const assocAuthLearner = (req, res, next) =>
           const filteredArray = track.groupId.filter(function (n) {
             return user.groups.indexOf(n) !== -1;
           });
-          if (filteredArray && filteredArray.length) next();
-          else return res.status(401).send({ message: "User not Authorised for level" });
+          if (filteredArray && filteredArray.length) {
+            req.level = level;
+            next();
+          } else return res.status(401).send({ message: "User not Authorised for level" });
         } else next();
       }
     })

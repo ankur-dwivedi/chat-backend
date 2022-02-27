@@ -4,8 +4,9 @@ const { generateError } = require("../../utils/error");
 const { uploadFiles } = require(".././../libs/aws/upload");
 const User = require("../../models/user/services");
 const { Types } = require("mongoose");
+const { LEVEL_TYPE } = require("../../models/Level/constants");
 
-exports.getTemplates = async (req, res) => {
+const getTemplates = async (req, res) => {
   try {
     if (req.body && req.body.levelId) {
       if (
@@ -84,6 +85,29 @@ exports.getTemplates = async (req, res) => {
   }
 };
 
+const getNonAssesmentTypeTemplate = async (req, res) => {
+  try {
+    const templates = await get({ levelId: req.body.levelId });
+    return res.send({
+      status: 200,
+      success: true,
+      data: templates,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+};
+
+exports.checkLevelType = (req, res) => {
+  try {
+    if (req.level.levelType === LEVEL_TYPE.ASSESMENT) getTemplates(req, res);
+    else getNonAssesmentTypeTemplate(req, res);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err.message);
+  }
+};
 const updateUserState = async ({ id, template, completed }) => {
   return await User.update(
     { _id: Types.ObjectId(id) },
@@ -150,3 +174,5 @@ exports.uploadTemplateMedia = async (req, res) => {
     res.status(400).send({ message: `invalid file` });
   }
 };
+
+exports.getTemplates = getTemplates;

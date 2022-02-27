@@ -1,5 +1,11 @@
 const { Router } = require("express");
-const { create, getTemplates, deleteTemplate, uploadTemplateMedia } = require("./controller");
+const {
+  create,
+  getTemplates,
+  deleteTemplate,
+  uploadTemplateMedia,
+  checkLevelType,
+} = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const { createContract, deleteContract } = require("./contract");
 const multer = require("multer");
@@ -18,7 +24,7 @@ var upload = multer({
 
 const templateRouter = Router();
 
-templateRouter.get("/", withAuthLearner, getTemplates);
+templateRouter.get("/", withAuthLearner, checkLevelType);
 templateRouter.post("/", withAuthUser, validate(createContract), create);
 templateRouter.delete("/", withAuthUser, validate(deleteContract), deleteTemplate);
 templateRouter.post("/upload", withAuthUser, upload.array("files"), uploadTemplateMedia);
