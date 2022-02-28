@@ -2,6 +2,7 @@ const journey_Model = require("../../models/journey/index");
 const Template = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
 const Journey = require("../../models/journey/services");
+const { updateUserState } = require("../template/controller");
 
 //template is first
 const checkIfFirstAttempt = async ({ levelId, template }) => {
@@ -37,6 +38,12 @@ const saveJourneyData = async ({
   };
   const savedData = await journey_Model.create(data);
   return savedData;
+};
+
+//save  user current submited  Template
+const saveUserCurrentState = async ({ template, userId }) => {
+  const updatedUserState = await updateUserState({ id: userId, template });
+  return updatedUserState;
 };
 
 module.exports = {
@@ -84,6 +91,12 @@ module.exports = {
             });
             break;
         }
+        //update current state of user
+        const updatedUserState = await saveUserCurrentState({
+          template,
+          userId: req.user._id,
+        });
+        req.user.currentState = updatedUserState.currentState;
         req.query.levelId = String(template.levelId);
         return next();
       } catch (err) {

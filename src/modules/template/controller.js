@@ -6,6 +6,19 @@ const User = require("../../models/user/services");
 const { Types } = require("mongoose");
 const { LEVEL_TYPE } = require("../../models/Level/constants");
 
+const updateUserState = async ({ id, template, completed }) => {
+  return await User.update(
+    { _id: Types.ObjectId(id) },
+    {
+      currentState: {
+        level: template.levelId,
+        track: template.trackId,
+        template: template._id,
+        completed: completed ? completed : false,
+      },
+    }
+  );
+};
 const getTemplates = async (req, res) => {
   try {
     if (req.query && req.query.levelId) {
@@ -18,15 +31,13 @@ const getTemplates = async (req, res) => {
         if (prevTemplate && prevTemplate.templateOrder) {
           const templateOrder = prevTemplate.templateOrder + 1;
           const template = await get({ templateOrder, levelId: req.user.currentState.level });
-          if (template) {
-            const updatedUserState = await updateUserState({ id: req.user._id, template });
-            req.user.currentState = updatedUserState.currentState;
+          if (template)
             return res.send({
               status: 200,
               success: true,
               data: template,
             });
-          } else {
+          else {
             //update current state  completed property of user
             const updatedUserState = await updateUserState({
               id: req.user._id,
@@ -44,15 +55,13 @@ const getTemplates = async (req, res) => {
           }
         } else {
           const template = await get({ templateOrder: 1, levelId: req.query.levelId });
-          if (template) {
-            const updatedUserState = await updateUserState({ id: req.user._id, template });
-            req.user.currentState = updatedUserState.currentState;
+          if (template)
             return res.send({
               status: 200,
               success: true,
               data: template,
             });
-          } else
+          else
             return res.send({
               status: 200,
               success: true,
@@ -63,8 +72,6 @@ const getTemplates = async (req, res) => {
       } else {
         const template = await get({ templateOrder: 1, levelId: req.query.levelId });
         if (template) {
-          const updatedUserState = await updateUserState({ id: req.user._id, template });
-          req.user.currentState = updatedUserState.currentState;
           return res.send({
             status: 200,
             success: true,
@@ -107,19 +114,6 @@ exports.checkLevelType = (req, res) => {
     console.log(err);
     res.status(400).send(err.message);
   }
-};
-const updateUserState = async ({ id, template, completed }) => {
-  return await User.update(
-    { _id: Types.ObjectId(id) },
-    {
-      currentState: {
-        level: template.levelId,
-        track: template.trackId,
-        template: template._id,
-        completed: completed ? completed : false,
-      },
-    }
-  );
 };
 
 const levelComplete = async ({ levelId }) => {
@@ -176,3 +170,4 @@ exports.uploadTemplateMedia = async (req, res) => {
 };
 
 exports.getTemplates = getTemplates;
+exports.updateUserState = updateUserState;

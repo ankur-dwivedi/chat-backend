@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const journeyController = require("./controller");
-const { withAuthLearner } = require("../../middlewares/auth");
+const { withAuthLearner, withAuthUser } = require("../../middlewares/auth");
 const { createJourneyContract } = require("./contract");
 const { validate } = require("../../middlewares/schema");
 const { getTemplates } = require("../template/controller");
