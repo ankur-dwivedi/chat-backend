@@ -4,6 +4,7 @@ const UserLevel = require("../../models/userLevel/services");
 const Journey = require("../../models/journey/services");
 const { updateUserState } = require("../template/controller");
 const { TEMPLATE_TYPE } = require("../../models/template/constants");
+const { LEVEL_TYPE } = require("../../models/level/constants");
 
 //template is first
 const checkIfFirstAttempt = async ({ levelId, template }) => {
@@ -34,14 +35,25 @@ const saveJourneyData = async ({
     anyIssue,
     attemptId,
     templateType: template.type,
+    levelType: template.levelType,
   };
-  if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA) {
+  if (
+    template.levelType === LEVEL_TYPE.ASSESMENT &&
+    (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
+  ) {
     data["isSubmittedAnswerCorrect"] =
       template.answer.indexOf(submittedAnswer) != -1 ? true : false;
     data["score"] = template.answer.indexOf(submittedAnswer) != -1 ? template.importance * 10 : 0;
     data["maxScore"] = template.importance * 10;
   }
-  const savedData = await journey_Model.create(data);
+  let savedData = await journey_Model.create(data);
+  if (
+    template.levelType !== LEVEL_TYPE.ASSESMENT &&
+    (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
+  )
+    savedData = {
+      isSubmittedAnswerCorrect: template.answer.indexOf(submittedAnswer) != -1 ? true : false,
+    };
   return savedData;
 };
 
@@ -61,6 +73,7 @@ module.exports = {
           levelId: template.levelId,
           template,
         });
+        let saveData;
         switch (isFirstAttempt) {
           case true:
             const useLevelData = await UserLevel.create({
@@ -68,7 +81,7 @@ module.exports = {
               levelId: template.levelId,
             });
             //save journeyData
-            await saveJourneyData({
+            saveData = await saveJourneyData({
               template,
               user: req.user,
               groupId: req.body.groupId,
@@ -85,7 +98,7 @@ module.exports = {
             });
 
             //save journey data
-            await saveJourneyData({
+            saveData = await saveJourneyData({
               template,
               user: req.user,
               groupId: req.body.groupId,
@@ -101,14 +114,20 @@ module.exports = {
           template,
           userId: req.user._id,
         });
-        if (template.information) {
-          return res.json({
-            answerExplainer: template.information,
-          });
+        if (template.levelType !== LEVEL_TYPE.ASSESMENT) {
+          if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
+            return res.json({ ...saveData });
+          else return res.json({ message: `Template submitted successfully` });
         } else {
-          req.user.currentState = updatedUserState.currentState;
-          req.query.levelId = String(template.levelId);
-          return next();
+          if (template.information) {
+            return res.json({
+              answerExplainer: template.information,
+            });
+          } else {
+            req.user.currentState = updatedUserState.currentState;
+            req.query.levelId = String(template.levelId);
+            return next();
+          }
         }
       } catch (err) {
         console.log(err);

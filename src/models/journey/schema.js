@@ -8,11 +8,11 @@ const journeySchema = new Schema(
     groupId: { type: Schema.Types.ObjectId, trim: true, ref: "group", required: true },
     trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track", required: true },
     levelId: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },
-    // levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM },
+    levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM }, // added to get it in hook
     submittedAnswer: { type: String, trim: true },
     isSubmittedAnswerCorrect: { type: Boolean, trim: true },
     templateId: { type: Schema.Types.ObjectId, trim: true, ref: "template", required: true },
-    templateType: { type: String, enum: TEMPLATE_TYPE_ENUM, required: true },
+    templateType: { type: String, enum: TEMPLATE_TYPE_ENUM, required: true }, // added to get it in hook
     timeSpend: { type: Number, trim: true, required: true },
     anyIssue: { type: String, trim: true },
     score: { type: Number, required: true, default: 0 },

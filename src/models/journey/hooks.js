@@ -3,11 +3,15 @@ const UserLevel = require("../userLevel/services");
 const Level = require("../level/services");
 const { LEVEL_STATUS } = require("../userLevel/constants");
 const { TEMPLATE_TYPE } = require("../template/constants");
+const { LEVEL_TYPE } = require("../level/constants");
 
 exports.initHooks = (JourneySchema) => {
   JourneySchema.post("save", async (docs) => {
-    const { attemptId, levelId, templateType } = docs;
-    if (templateType === TEMPLATE_TYPE.MCQ_TEXT || templateType === TEMPLATE_TYPE.MCQ_MEDIA) {
+    const { attemptId, levelId, templateType, levelType } = docs;
+    if (
+      levelType === LEVEL_TYPE.ASSESMENT &&
+      (templateType === TEMPLATE_TYPE.MCQ_TEXT || templateType === TEMPLATE_TYPE.MCQ_MEDIA)
+    ) {
       //calculate percentage score
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
@@ -44,6 +48,8 @@ exports.initHooks = (JourneySchema) => {
       await UserLevel.update(
         { _id: attemptId },
         {
+          levelScore: 0,
+          totalObtainScore: 0,
           totalTemplate: templateData.length,
           templateAttempted: userLevelData.templateAttempted + 1,
         }
