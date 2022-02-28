@@ -4,7 +4,7 @@ const { generateError } = require("../../utils/error");
 const { uploadFiles } = require(".././../libs/aws/upload");
 const User = require("../../models/user/services");
 const { Types } = require("mongoose");
-const { LEVEL_TYPE } = require("../../models/Level/constants");
+const { LEVEL_TYPE } = require("../../models/level/constants");
 
 const updateUserState = async ({ id, template, completed }) => {
   return await User.update(

@@ -3,6 +3,7 @@ const Template = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
 const Journey = require("../../models/journey/services");
 const { updateUserState } = require("../template/controller");
+const { TEMPLATE_TYPE } = require("../../models/template/constants");
 
 //template is first
 const checkIfFirstAttempt = async ({ levelId, template }) => {
@@ -28,14 +29,18 @@ const saveJourneyData = async ({
     trackId: template.trackId,
     levelId: template.levelId,
     submittedAnswer: submittedAnswer,
-    isSubmittedAnswerCorrect: template.answer.indexOf(submittedAnswer) != -1 ? true : false,
-    score: template.answer.indexOf(submittedAnswer) != -1 ? template.importance * 10 : 0,
-    maxScore: template.importance * 10,
     templateId: template._id,
     timeSpend,
     anyIssue,
     attemptId,
+    templateType: template.type,
   };
+  if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA) {
+    data["isSubmittedAnswerCorrect"] =
+      template.answer.indexOf(submittedAnswer) != -1 ? true : false;
+    data["score"] = template.answer.indexOf(submittedAnswer) != -1 ? template.importance * 10 : 0;
+    data["maxScore"] = template.importance * 10;
+  }
   const savedData = await journey_Model.create(data);
   return savedData;
 };
@@ -96,9 +101,15 @@ module.exports = {
           template,
           userId: req.user._id,
         });
-        req.user.currentState = updatedUserState.currentState;
-        req.query.levelId = String(template.levelId);
-        return next();
+        if (template.information) {
+          return res.json({
+            answerExplainer: template.information,
+          });
+        } else {
+          req.user.currentState = updatedUserState.currentState;
+          req.query.levelId = String(template.levelId);
+          return next();
+        }
       } catch (err) {
         console.log(err);
         if (err.message.indexOf("attemptId_1_templateId_1 dup key") !== -1)

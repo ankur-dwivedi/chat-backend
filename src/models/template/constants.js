@@ -1,16 +1,16 @@
-exports.TemplateType={
-    macqText:"mcq-text",
-    mcqMedia:"mcq-media",
-    doc:"doc"
+exports.TEMPLATE_TYPE = {
+  MCQ_TEXT: "mcq-text",
+  MCQ_MEDIA: "mcq-media",
+  DOC: "doc",
 };
 
-exports.TemplateTypeEnum=["mcq-text","mcq-media","doc"];
+exports.TEMPLATE_TYPE_ENUM = ["mcq-text", "mcq-media", "doc"];
 
-exports.MediaType={
-    image:"jpg",
-    gif:"gif",
-    video:"mp4",
-    text:"text"
+exports.MediaType = {
+  image: "jpg",
+  gif: "gif",
+  video: "mp4",
+  text: "text",
 };
 
-exports.MediaTypeEnum=["jpg","gif","mp4","text"];
+exports.MediaTypeEnum = ["jpg", "gif", "mp4", "text"];

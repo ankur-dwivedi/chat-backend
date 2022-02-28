@@ -1,5 +1,5 @@
-const { LEVEL_STATE, LOCKED_STATE } = require("../../models/Level/constants");
-const level_Model = require("../../models/Level/index");
+const { LEVEL_STATE, LOCKED_STATE } = require("../../models/level/constants");
+const level_Model = require("../../models/level/index");
 const { LEVEL_STATUS } = require("../../models/userLevel/constants");
 const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
 const { sendLevelCreationMailsToUsers } = require("./util");

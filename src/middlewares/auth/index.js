@@ -1,6 +1,6 @@
 const expressJwt = require("express-jwt");
 const User = require("../../models/user");
-const Level = require("../../models/Level");
+const Level = require("../../models/level");
 const Template = require("../../models/template");
 const Track = require("../../models/Track");
 const { createUnauthorizedError } = require("../../utils/general");
