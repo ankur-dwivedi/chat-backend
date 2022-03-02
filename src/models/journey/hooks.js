@@ -1,7 +1,7 @@
 const Template = require("../template/services");
 const UserLevel = require("../userLevel/services");
 const Level = require("../level/services");
-const { LEVEL_STATUS } = require("../userLevel/constants");
+const { LEVEL_STATUS, ATTEMPT_STATUS } = require("../userLevel/constants");
 const { TEMPLATE_TYPE } = require("../template/constants");
 const { LEVEL_TYPE } = require("../level/constants");
 
@@ -39,6 +39,10 @@ exports.initHooks = (JourneySchema) => {
           totalTemplate: templateData.length,
           templateAttempted: userLevelData.templateAttempted + 1,
           ...passStatus,
+          attemptStatus:
+            templateData.length === userLevelData.templateAttempted + 1
+              ? ATTEMPT_STATUS.COMPLETED
+              : ATTEMPT_STATUS.ACTIVE,
         }
       );
     } else {
@@ -52,6 +56,10 @@ exports.initHooks = (JourneySchema) => {
           totalObtainScore: 0,
           totalTemplate: templateData.length,
           templateAttempted: userLevelData.templateAttempted + 1,
+          attemptStatus:
+            templateData.length === userLevelData.templateAttempted + 1
+              ? ATTEMPT_STATUS.COMPLETED
+              : ATTEMPT_STATUS.ACTIVE,
         }
       );
     }

@@ -7,3 +7,7 @@ exports.createJourneyContract = Joi.object({
   timeSpend: Joi.number().required(),
   anyIssue: Joi.string().allow(""),
 });
+
+exports.closeAttemptContract = Joi.object({
+  levelId: Joi.string().required(),
+});

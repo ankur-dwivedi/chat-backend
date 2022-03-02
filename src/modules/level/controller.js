@@ -47,7 +47,10 @@ module.exports = {
           return res.status(201).json({ status: "success", message: `no Data in db` });
         }
         const updatedLevlelData = levelData.map(async (data, index) => {
-          const userLevelData = await getLatestUserLevelByLevel({ levelId: data._id });
+          const userLevelData = await getLatestUserLevelByLevel({
+            levelId: data._id,
+            learnerId: req.user._id,
+          });
 
           //calculate lock state
           let lockedState;
@@ -56,19 +59,21 @@ module.exports = {
             const previousLevel = levelData[index - 1];
             const prevUserLevelData = await getLatestUserLevelByLevel({
               levelId: previousLevel._id,
+              learnerId: req.user._id,
             });
-            if (
+            if (prevUserLevelData[0] && previousLevel.passingScore) {
+              if (prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS)
+                lockedState = LOCKED_STATE.UNLOCKED;
+              else lockedState = LOCKED_STATE.LOCKED;
+            } else if (
               prevUserLevelData[0] &&
-              previousLevel.passingScore &&
-              prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS
+              prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate
             )
-              lockedState = LOCKED_STATE.UNLOCKED;
-            else if (prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate)
               lockedState = LOCKED_STATE.UNLOCKED;
             else lockedState = LOCKED_STATE.LOCKED;
           }
 
-          if (userLevelData && userLevelData[0]) {
+          if (userLevelData && userLevelData.length) {
             const score = userLevelData[0].levelScore;
             const completed =
               (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
@@ -87,6 +92,7 @@ module.exports = {
         levelData = await Promise.all(updatedLevlelData);
         return res.status(201).json({ status: "success", data: levelData });
       } catch (err) {
+        console.log(err);
         res.status(201).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,

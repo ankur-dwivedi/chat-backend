@@ -1,10 +1,12 @@
 const journey_Model = require("../../models/journey/index");
 const Template = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
-const Journey = require("../../models/journey/services");
+const User = require("../../models/user/services");
 const { updateUserState } = require("../template/controller");
 const { TEMPLATE_TYPE } = require("../../models/template/constants");
 const { LEVEL_TYPE } = require("../../models/level/constants");
+const { ATTEMPT_STATUS } = require("../../models/userLevel/constants");
+const { Types } = require("mongoose");
 
 //template is first
 const checkIfFirstAttempt = async ({ levelId, template }) => {
@@ -69,46 +71,42 @@ module.exports = {
     createJourney: async (req, res, next) => {
       try {
         const template = req.template;
-        const isFirstAttempt = await checkIfFirstAttempt({
+
+        // check if active attempt exists
+        const userLevelData = await UserLevel.get({
           levelId: template.levelId,
-          template,
+          attemptStatus: ATTEMPT_STATUS.ACTIVE,
+          learnerId: req.user._id,
         });
         let saveData;
-        switch (isFirstAttempt) {
-          case true:
-            const useLevelData = await UserLevel.create({
-              learnerId: req.user._id,
-              levelId: template.levelId,
-            });
-            //save journeyData
-            saveData = await saveJourneyData({
-              template,
-              user: req.user,
-              groupId: req.body.groupId,
-              submittedAnswer: req.body.submittedAnswer,
-              timeSpend: req.body.timeSpend,
-              anyIssue: req.body.anyIssue,
-              attemptId: useLevelData._id,
-            });
-            break;
-          case false:
-            //fetch attempt id
-            const userLevelData = await UserLevel.getLatestUserLevelByLevel({
-              levelId: template.levelId,
-            });
-
-            //save journey data
-            saveData = await saveJourneyData({
-              template,
-              user: req.user,
-              groupId: req.body.groupId,
-              submittedAnswer: req.body.submittedAnswer,
-              timeSpend: req.body.timeSpend,
-              anyIssue: req.body.anyIssue,
-              attemptId: userLevelData[0]._id,
-            });
-            break;
+        if (userLevelData) {
+          //save journey data
+          saveData = await saveJourneyData({
+            template,
+            user: req.user,
+            groupId: req.body.groupId,
+            submittedAnswer: req.body.submittedAnswer,
+            timeSpend: req.body.timeSpend,
+            anyIssue: req.body.anyIssue,
+            attemptId: userLevelData._id,
+          });
+        } else {
+          const useLevelData = await UserLevel.create({
+            learnerId: req.user._id,
+            levelId: template.levelId,
+          });
+          //save journeyData
+          saveData = await saveJourneyData({
+            template,
+            user: req.user,
+            groupId: req.body.groupId,
+            submittedAnswer: req.body.submittedAnswer,
+            timeSpend: req.body.timeSpend,
+            anyIssue: req.body.anyIssue,
+            attemptId: useLevelData._id,
+          });
         }
+
         //update current state of user
         const updatedUserState = await saveUserCurrentState({
           template,
@@ -136,6 +134,40 @@ module.exports = {
             status: "failed",
             message: `Template allready submitted in current attempt`,
           });
+        return res.status(400).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    closeAttempt: async (req, res, next) => {
+      try {
+        const userLevelData = await UserLevel.get({
+          levelId: req.body.levelId,
+          attemptStatus: ATTEMPT_STATUS.ACTIVE,
+          learnerId: req.user._id,
+        });
+        if (userLevelData) {
+          await UserLevel.update(
+            { _id: userLevelData._id },
+            { attemptStatus: ATTEMPT_STATUS.CLOSED }
+          );
+          await User.update(
+            { _id: Types.ObjectId(req.user._id) },
+            {
+              currentState: null,
+            }
+          );
+          return res.json({
+            message: `Attempt closed successfully`,
+          });
+        } else
+          return res.status(400).json({
+            status: "failed",
+            message: `Level doesn't contain any active attempt`,
+          });
+      } catch (err) {
+        console.log(err);
         return res.status(400).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,

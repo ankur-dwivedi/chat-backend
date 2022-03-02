@@ -46,7 +46,10 @@ const getTemplates = async (req, res) => {
               completed: true,
             });
             req.user.currentState = updatedUserState.currentState;
-            const levelCompleteData = await levelComplete({ levelId: req.query.levelId });
+            const levelCompleteData = await levelComplete({
+              levelId: req.query.levelId,
+              learnerId: req.user._id,
+            });
             return res.send({
               status: 200,
               success: true,
@@ -117,8 +120,8 @@ exports.checkLevelType = (req, res) => {
   }
 };
 
-const levelComplete = async ({ levelId }) => {
-  const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId });
+const levelComplete = async ({ levelId, learnerId }) => {
+  const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId, learnerId });
   if (userLevelData && userLevelData[0]) {
     const score = userLevelData[0].levelScore;
     const passState = userLevelData[0].levelStatus;

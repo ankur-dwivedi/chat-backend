@@ -1,5 +1,5 @@
 const { Schema } = require("mongoose");
-const { LEVEL_STATUS_ENUM } = require("./constants");
+const { LEVEL_STATUS_ENUM, ATTEMPT_STATUS_ENUM, ATTEMPT_STATUS } = require("./constants");
 
 const userLevel = new Schema(
   {
@@ -11,6 +11,12 @@ const userLevel = new Schema(
     totalTemplate: { type: Number, trim: true, default: 0 },
     templateAttempted: { type: Number, trim: true, default: 0 },
     levelOverdue: { type: Boolean, trim: true, default: false },
+    attemptStatus: {
+      type: String,
+      trim: true,
+      default: ATTEMPT_STATUS.ACTIVE,
+      enum: ATTEMPT_STATUS_ENUM,
+    },
   },
   { timestamps: true }
 );
