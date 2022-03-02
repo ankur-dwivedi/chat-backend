@@ -5,6 +5,7 @@ const { uploadFiles } = require(".././../libs/aws/upload");
 const User = require("../../models/user/services");
 const { Types } = require("mongoose");
 const { LEVEL_TYPE } = require("../../models/level/constants");
+const Level = require("../../models/level/services");
 
 const updateUserState = async ({ id, template, completed }) => {
   return await User.update(
@@ -127,7 +128,9 @@ const levelComplete = async ({ levelId }) => {
 
 exports.create = async (req, res) => {
   try {
-    const template = await create({ ...req.body });
+    const level = await Level.get({ id: req.body.levelId });
+    const levelType = level.levelType;
+    const template = await create({ ...req.body, levelType });
     res.send({
       status: 200,
       success: true,

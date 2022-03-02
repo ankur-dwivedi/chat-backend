@@ -3,7 +3,6 @@ const Joi = require("joi");
 exports.createContract = Joi.object({
   type: Joi.string().required(),
   levelId: Joi.string().required(),
-  levelType: Joi.string().required(),
   trackId: Joi.string().required(),
   organization: Joi.string().required(),
   question: Joi.object({
