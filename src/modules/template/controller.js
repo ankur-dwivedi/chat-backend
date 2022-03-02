@@ -7,6 +7,7 @@ const { Types } = require("mongoose");
 const { LEVEL_TYPE } = require("../../models/level/constants");
 const Level = require("../../models/level/services");
 const Feedback = require("../../models/feedback/services");
+const { ATTEMPT_STATUS } = require("../../models/userLevel/constants");
 
 const updateUserState = async ({ id, template, completed }) => {
   return await User.update(
@@ -24,6 +25,18 @@ const updateUserState = async ({ id, template, completed }) => {
 const getTemplates = async (req, res) => {
   try {
     if (req.query && req.query.levelId) {
+      if (req.user.currentState && req.user.currentState.level !== req.query.levelId) {
+        const userLevelData = await UserLevel.get({
+          levelId: req.query.levelId,
+          attemptStatus: ATTEMPT_STATUS.ACTIVE,
+          learnerId: req.user._id,
+        });
+        if (userLevelData && userLevelData.lastAttemptedTemplate) {
+          req.user.currentState.level = req.query.levelId;
+          req.user.currentState.completed = false;
+          req.user.currentState.template = userLevelData.lastAttemptedTemplate;
+        }
+      }
       if (
         req.user.currentState &&
         req.user.currentState.level == req.query.levelId &&

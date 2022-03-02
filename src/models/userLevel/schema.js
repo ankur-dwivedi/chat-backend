@@ -17,6 +17,7 @@ const userLevel = new Schema(
       default: ATTEMPT_STATUS.ACTIVE,
       enum: ATTEMPT_STATUS_ENUM,
     },
+    lastAttemptedTemplate: { type: Schema.Types.ObjectId, trim: true, ref: "template" },
   },
   { timestamps: true }
 );

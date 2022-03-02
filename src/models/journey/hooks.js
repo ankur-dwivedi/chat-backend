@@ -7,7 +7,7 @@ const { LEVEL_TYPE } = require("../level/constants");
 
 exports.initHooks = (JourneySchema) => {
   JourneySchema.post("save", async (docs) => {
-    const { attemptId, levelId, templateType, levelType } = docs;
+    const { attemptId, levelId, templateType, levelType, templateId } = docs;
     if (
       levelType === LEVEL_TYPE.ASSESMENT &&
       (templateType === TEMPLATE_TYPE.MCQ_TEXT || templateType === TEMPLATE_TYPE.MCQ_MEDIA)
@@ -43,6 +43,7 @@ exports.initHooks = (JourneySchema) => {
             templateData.length === userLevelData.templateAttempted + 1
               ? ATTEMPT_STATUS.COMPLETED
               : ATTEMPT_STATUS.ACTIVE,
+          lastAttemptedTemplate: templateId,
         }
       );
     } else {
@@ -60,6 +61,7 @@ exports.initHooks = (JourneySchema) => {
             templateData.length === userLevelData.templateAttempted + 1
               ? ATTEMPT_STATUS.COMPLETED
               : ATTEMPT_STATUS.ACTIVE,
+          lastAttemptedTemplate: templateId,
         }
       );
     }
