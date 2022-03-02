@@ -84,6 +84,7 @@ module.exports = {
               completed,
               passState,
               lockedState,
+              attemptStatus: userLevelData[0].attemptStatus,
             };
           }
 

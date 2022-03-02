@@ -16,5 +16,5 @@ exports.LEVEL_STATE = {
 
 exports.LOCKED_STATE = {
   LOCKED: "locked",
-  UNLOCKED: "ublocked",
+  UNLOCKED: "unlocked",
 };

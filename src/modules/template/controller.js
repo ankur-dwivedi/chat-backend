@@ -6,6 +6,7 @@ const User = require("../../models/user/services");
 const { Types } = require("mongoose");
 const { LEVEL_TYPE } = require("../../models/level/constants");
 const Level = require("../../models/level/services");
+const Feedback = require("../../models/feedback/services");
 
 const updateUserState = async ({ id, template, completed }) => {
   return await User.update(
@@ -159,7 +160,7 @@ exports.uploadTemplateMedia = async (req, res) => {
     const finalbucket =
       `${process.env.AWS_BUCKET_NAME}` +
       "/" +
-      `${req.query.org}` +
+      file`${req.query.org}` +
       `${req.query.track}` +
       `${req.query.level}` +
       "/template";
@@ -172,6 +173,20 @@ exports.uploadTemplateMedia = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).send({ message: `invalid file` });
+  }
+};
+
+exports.createFeedback = async (req, res) => {
+  try {
+    const feedback = await Feedback.create({
+      ...req.body,
+      levelId: req.template.levelId,
+      learnerId: req.user._id,
+    });
+    res.json({ message: `feddack saved successflly` });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: `invalid data` });
   }
 };
 

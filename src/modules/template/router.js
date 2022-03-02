@@ -5,9 +5,10 @@ const {
   deleteTemplate,
   uploadTemplateMedia,
   checkLevelType,
+  createFeedback,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
-const { createContract, deleteContract } = require("./contract");
+const { createContract, deleteContract, createFeedbackContract } = require("./contract");
 const multer = require("multer");
 const { withAuthUser, withAuthLearner } = require("../../middlewares/auth");
 
@@ -28,5 +29,11 @@ templateRouter.get("/", withAuthLearner, checkLevelType);
 templateRouter.post("/", withAuthUser, validate(createContract), create);
 templateRouter.delete("/", withAuthUser, validate(deleteContract), deleteTemplate);
 templateRouter.post("/upload", withAuthUser, upload.array("files"), uploadTemplateMedia);
+templateRouter.post(
+  "/create-feedback",
+  withAuthLearner,
+  validate(createFeedbackContract),
+  createFeedback
+);
 
 module.exports = templateRouter;
