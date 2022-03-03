@@ -11,6 +11,7 @@ exports.MediaType = {
   gif: "gif",
   video: "mp4",
   text: "text",
+  youtube: "youtube",
 };
 
-exports.MediaTypeEnum = ["jpg", "gif", "mp4", "text"];
+exports.MediaTypeEnum = ["jpg", "gif", "mp4", "text", "youtube"];
