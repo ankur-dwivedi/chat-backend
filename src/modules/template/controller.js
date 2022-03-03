@@ -46,7 +46,7 @@ const getTemplates = async (req, res) => {
         if (prevTemplate && prevTemplate.templateOrder) {
           const templateOrder = prevTemplate.templateOrder + 1;
           const template = await get({ templateOrder, levelId: req.user.currentState.level });
-          if (template)
+          if (template && template.length)
             return res.send({
               status: 200,
               success: true,
@@ -73,7 +73,7 @@ const getTemplates = async (req, res) => {
           }
         } else {
           const template = await get({ templateOrder: 1, levelId: req.query.levelId });
-          if (template)
+          if (template && template.length)
             return res.send({
               status: 200,
               success: true,
@@ -89,7 +89,7 @@ const getTemplates = async (req, res) => {
         }
       } else {
         const template = await get({ templateOrder: 1, levelId: req.query.levelId });
-        if (template) {
+        if (template && template.length) {
           return res.send({
             status: 200,
             success: true,
