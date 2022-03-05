@@ -25,7 +25,7 @@ const updateUserState = async ({ id, template, completed }) => {
 const getTemplates = async (req, res) => {
   try {
     if (req.query && req.query.levelId) {
-      if (req.user.currentState && req.user.currentState.level !== req.query.levelId) {
+      if (req.user.currentState && req.user.currentState.level != req.query.levelId) {
         const userLevelData = await UserLevel.get({
           levelId: req.query.levelId,
           attemptStatus: ATTEMPT_STATUS.ACTIVE,
