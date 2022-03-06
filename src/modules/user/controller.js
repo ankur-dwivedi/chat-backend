@@ -166,7 +166,7 @@ exports.getFilteredEmp = async (req, res) => {
 exports.setSession = async (req, res) => {
   try {
     const queryObject = { $and: [{ _id: req.user._id }] };
-    const updateObject = { lastRole: req.body.role };
+    const updateObject = { lastSession: req.body.role };
     await update(queryObject, updateObject).then((user) => ({
       status: 200,
       success: true,

@@ -4,7 +4,7 @@ const Level = require("../../models/level");
 const Template = require("../../models/template");
 const Track = require("../../models/Track");
 const { createUnauthorizedError } = require("../../utils/general");
-const { ROLE_ENUM } = require("../../models/user/constants");
+const { ROLE } = require("../../models/user/constants");
 
 const verifyAuthToken = expressJwt({
   secret: "testing",
@@ -13,7 +13,7 @@ const verifyAuthToken = expressJwt({
 
 //-----added by rahul
 const saveLastRoleStatus = async (req, res, next) => {
-  let lastRole = req.body.lastRole;
+  let lastSession = req.body.lastSession;
   let userData = req.user;
   let fetchUserData = await User.findOne({ _id: userData._id }).lean();
   if (fetchUserData === null) {
@@ -22,8 +22,8 @@ const saveLastRoleStatus = async (req, res, next) => {
       message: "please send a valid token / user data not present in db",
     });
   } else {
-    if (ROLE_ENUM.includes(lastRole)) {
-      fetchUserData.lastRole = lastRole;
+    if (ROLE_ENUM.includes(lastSession)) {
+      fetchUserData.lastSession = lastSession;
       let updatedData = await User.findOne({ _id: userData._id }).updateOne(fetchUserData);
       if (updatedData.n == 1 && updatedData.ok == 1 && updatedData.nModified == 1) {
         return next();
@@ -103,7 +103,7 @@ const isAdmin = (req, _, next) =>
     .then((user) => {
       if (!user) {
         res.send(createUnauthorizedError("Not Authorized"));
-      } else if (user.role !== "admin") {
+      } else if (user.role !== ROLE.CREATOR) {
         res.send(createUnauthorizedError("Not Authorized"));
       } else {
         req.user = user;
