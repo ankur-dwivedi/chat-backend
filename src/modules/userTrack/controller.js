@@ -5,8 +5,14 @@ module.exports = {
   get: {
     fetchUserTrackInfo: async (req, res) => {
       try {
+        let isArchivedFlag = req.query.isArchived === undefined ? "null":req.query.isArchived 
         let userData = req.user;
-        let userTrackData = await userTrack_Model.find({ creatorUserId: userData._id }).lean();
+        let userTrackData=undefined;
+        if(isArchivedFlag==='null'){
+          userTrackData = await userTrack_Model.find({ creatorUserId: userData._id }).lean();
+        }else{
+          userTrackData = await userTrack_Model.find({ creatorUserId: userData._id,isArchived:isArchivedFlag }).lean();
+        }
         if (userTrackData === null) {
           return res.status(200).json({ status: "success", message: `no Data in db` });
         }
@@ -28,9 +34,17 @@ module.exports = {
       try {
         let userData = req.user;
         let body = req.body;
-        let validateTrackId = await track_Model.findOne({_id:body.trackId}).lean()
+        let validateTrackId = await track_Model.findOne({_id:body.trackId}).populate('groupId').lean()
         if(validateTrackId===null){
             throw({name:'validationError',message:'please send a valid trackId'})
+        }
+        let temp = validateTrackId.groupId.map(element=>{
+          return element.employees.filter(element1=>{
+            return element1.toString() === userData._id.toString()
+          })
+        })
+        if(temp.length===0){
+          throw({name:'authorizationError',message:'you are not assigned to this track'})
         }
         body.creatorUserId =  userData._id;
         let savedData = await userTrack_Model.create(body);
@@ -49,7 +63,7 @@ module.exports = {
             let userTrackId = req.params.userTrackId
             let body = req.body;
             let userTrackInfo = await userTrack_Model.findOne({creatorUserId:userData._id,trackId:userTrackId}).lean();
-            if(validateTrackId===null){
+            if(userTrackInfo===null){
             throw({name:'validationError',message:'please send a valid userTrackId'});
             }
             userTrackInfo.isArchived = body.isArchived;  //updating oldUserTrack Info
