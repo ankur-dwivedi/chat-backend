@@ -42,7 +42,12 @@ module.exports = {
     learnerLevelInfo: async (req, res) => {
       try {
         let trackId = req.query.trackId;
-        let levelData = await level_Model.find({ trackId, levelState: LEVEL_STATE.LAUNCH });
+        let levelData = await level_Model
+          .find({ trackId, levelState: LEVEL_STATE.LAUNCH })
+          .populate({
+            path: "trackId",
+            select: "selectedTheme",
+          });
         if (levelData === null) {
           return res.status(201).json({ status: "success", message: `no Data in db` });
         }
@@ -78,14 +83,27 @@ module.exports = {
             const completed =
               (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
             const passState = userLevelData[0].levelStatus;
-            return {
-              ...JSON.parse(JSON.stringify(data)),
-              score,
-              completed,
-              passState,
-              lockedState,
-              attemptStatus: userLevelData[0].attemptStatus,
-            };
+            let ob = {};
+            if (data.dueDate)
+              ob = {
+                ...JSON.parse(JSON.stringify(data)),
+                score,
+                completed,
+                passState,
+                lockedState,
+                attemptStatus: userLevelData[0].attemptStatus,
+                isOverdue: data.dueDate < userLevelData[0].updatedAt,
+              };
+            else
+              ob = {
+                ...JSON.parse(JSON.stringify(data)),
+                score,
+                completed,
+                passState,
+                lockedState,
+                attemptStatus: userLevelData[0].attemptStatus,
+              };
+            return ob;
           }
 
           return { ...JSON.parse(JSON.stringify(data)), lockedState };
@@ -116,7 +134,6 @@ module.exports = {
           totalMinutes: req.body.totalMinutes,
           dueDate: req.body.dueDate,
           levelType: req.body.levelType,
-          levelTags: req.body.levelTags,
           organization: req.user.organization,
         };
         await level_Model.create(data);

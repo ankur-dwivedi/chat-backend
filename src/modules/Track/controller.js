@@ -1,11 +1,12 @@
 const track_Model = require("../../models/Track/index");
-const { trackColorFill, trackColorBorder,selectedTheme } = require("../../utils/constants");
 module.exports = {
   get: {
     fetchUserTrack: async (req, res) => {
       try {
         let userData = req.user;
-        let userTrackData = await track_Model.find({ creatorUserId: userData._id }).populate('groupId');
+        let userTrackData = await track_Model
+          .find({ creatorUserId: userData._id })
+          .populate("groupId");
         if (userTrackData === null) {
           return res.status(200).json({ status: "success", message: `no Data in db` });
         }
@@ -13,19 +14,17 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res
-          .status(200)
-          .json({
-            status: "failed",
-            message: `err.name : ${err.name}, err.message:${err.message}`,
-          });
+        res.status(200).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
       }
     },
     fetchTrackByGroups: async (req, res) => {
       try {
         let userData = req.user;
         let groupId = req.body.groupId;
-        let GroupTrackData = await track_Model.find({ groupId }).populate('groupId');;
+        let GroupTrackData = await track_Model.find({ groupId }).populate("groupId");
         if (GroupTrackData === null) {
           return res.status(200).json({ status: "success", message: `no Data in db` });
         }
@@ -33,12 +32,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res
-          .status(200)
-          .json({
-            status: "failed",
-            message: `err.name : ${err.name}, err.message:${err.message}`,
-          });
+        res.status(200).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
       }
     },
   },
@@ -56,8 +53,8 @@ module.exports = {
           groupId: req.body.groupId, // for now added if needed any change do let me know
           groupName: req.body.groupName,
           selectedTheme: req.body.selectedTheme,
-          selectedTheme:selectedTheme[randomNumber],
           skillTag: req.body.skillTag,
+          description: req.body.description,
           organization: req.user.organization,
         };
         let savedData = await track_Model.create(data);
@@ -67,12 +64,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res
-          .status(200)
-          .json({
-            status: "failed",
-            message: `err.name : ${err.name}, err.message:${err.message}`,
-          });
+        res.status(200).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
       }
     },
   },

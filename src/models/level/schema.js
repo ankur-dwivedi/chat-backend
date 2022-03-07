@@ -18,7 +18,6 @@ const levelSchema = new Schema(
     totalMinutes: { type: Number, trim: true },
     dueDate: { type: Date, trim: true },
     levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM },
-    levelTags: [{ type: Array, trim: true }],
     organization: { type: Schema.Types.ObjectId, required: true, trim: true, ref: "organization" },
   },
   { timestamps: true }
