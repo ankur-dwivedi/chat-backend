@@ -27,3 +27,8 @@ exports.createContract = Joi.object({
 exports.deleteContract = Joi.object({
   id: Joi.string().required(),
 });
+
+exports.createFeedbackContract = Joi.object({
+  templateId: Joi.string().required(),
+  feedback: Joi.string().required(),
+});

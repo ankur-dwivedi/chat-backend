@@ -4,12 +4,18 @@ const UserLevel = require(".");
 exports.get = async (query) =>
   query.id
     ? UserLevel.findOne({ _id: query.id }).then((response) => response)
+    : query.levelId && query.attemptStatus && query.learnerId
+    ? UserLevel.findOne({
+        levelId: query.levelId,
+        attemptStatus: query.attemptStatus,
+        learnerId: query.learnerId,
+      }).then((response) => response)
     : UserLevel.find()
         .then((response) => response)
         .catch((error) => error);
 
-exports.getLatestUserLevelByLevel = async ({ levelId }) =>
-  UserLevel.find({ levelId })
+exports.getLatestUserLevelByLevel = async ({ levelId, learnerId }) =>
+  UserLevel.find({ levelId, learnerId })
     .sort({ createdAt: -1 })
     .then((response) => response);
 

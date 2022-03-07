@@ -9,20 +9,12 @@ exports.get = async (query) =>
     ? User.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
-    : query.password && query.username
-    ? User.findOne({
-        $and: [{ username: query.username }, { password: query.password }],
-      }).then((response) => (response ? response : generateError("invalid username or password")))
     : query.password && query.employeeId
     ? User.findOne({
         $and: [{ employeeId: query.employeeId }, { password: query.password }],
       }).then((response) => (response ? response : generateError("invalid employeeId or password")))
     : query.employeeId
     ? User.findOne({ employeeId: query.employeeId }).then((response) =>
-        response ? response : generateError("invalid employeeId or password")
-      )
-    : query.username
-    ? User.findOne({ username: query.username }).then((response) =>
         response ? response : generateError("invalid employeeId or password")
       )
     : User.find()

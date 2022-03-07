@@ -1,9 +1,17 @@
 const { Router } = require("express");
-const { create, getTemplates, deleteTemplate, uploadTemplateMedia } = require("./controller");
+const {
+  create,
+  getTemplates,
+  deleteTemplate,
+  uploadTemplateMedia,
+  checkLevelType,
+  createFeedback,
+  templateCount,
+} = require("./controller");
 const { validate } = require("../../middlewares/schema");
-const { createContract, deleteContract } = require("./contract");
+const { createContract, deleteContract, createFeedbackContract } = require("./contract");
 const multer = require("multer");
-const { withAuthUser } = require("../../middlewares/auth");
+const { withAuthUser, withAuthLearner } = require("../../middlewares/auth");
 
 var upload = multer({
   storage: multer.diskStorage({
@@ -18,9 +26,16 @@ var upload = multer({
 
 const templateRouter = Router();
 
-templateRouter.get("/", withAuthUser, getTemplates);
+templateRouter.get("/", withAuthLearner, checkLevelType);
 templateRouter.post("/", withAuthUser, validate(createContract), create);
 templateRouter.delete("/", withAuthUser, validate(deleteContract), deleteTemplate);
 templateRouter.post("/upload", withAuthUser, upload.array("files"), uploadTemplateMedia);
+templateRouter.post(
+  "/create-feedback",
+  withAuthLearner,
+  validate(createFeedbackContract),
+  createFeedback
+);
+templateRouter.get("/template-count", withAuthLearner, templateCount);
 
 module.exports = templateRouter;
