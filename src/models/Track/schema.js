@@ -11,7 +11,6 @@ const trackSchema = new Schema(
     trackColorBorder: { type: String, trim: true, required: true },
     skillTag: { type: Array, trim: true }, // test it once
     organization: { type: Schema.Types.ObjectId, required: true, trim: true, ref: "organization" },
-    isArchived:{type:Boolean,trim:true,default:false}
   },
   { timestamps: true }
 );
