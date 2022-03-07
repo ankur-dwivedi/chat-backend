@@ -6,6 +6,7 @@ const {
   uploadTemplateMedia,
   checkLevelType,
   createFeedback,
+  templateCount,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const { createContract, deleteContract, createFeedbackContract } = require("./contract");
@@ -35,5 +36,6 @@ templateRouter.post(
   validate(createFeedbackContract),
   createFeedback
 );
+templateRouter.get("/template-count", withAuthLearner, templateCount);
 
 module.exports = templateRouter;

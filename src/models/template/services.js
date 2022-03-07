@@ -49,3 +49,8 @@ exports.deleteTemplate = async (id) =>
   Template.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);
+
+exports.countTemplateInLevel = ({ levelId }) =>
+  Template.find({ levelId })
+    .count()
+    .then((response) => response);

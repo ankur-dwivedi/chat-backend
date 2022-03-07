@@ -1,4 +1,9 @@
-const { get, create, deleteTemplate } = require("../../models/template/services");
+const {
+  get,
+  create,
+  deleteTemplate,
+  countTemplateInLevel,
+} = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
 const { generateError } = require("../../utils/error");
 const { uploadFiles } = require(".././../libs/aws/upload");
@@ -8,6 +13,7 @@ const { LEVEL_TYPE } = require("../../models/level/constants");
 const Level = require("../../models/level/services");
 const Feedback = require("../../models/feedback/services");
 const { ATTEMPT_STATUS } = require("../../models/userLevel/constants");
+const Journey = require("../../models/journey/services");
 
 const updateUserState = async ({ id, template, completed }) => {
   return await User.update(
@@ -112,7 +118,24 @@ const getTemplates = async (req, res) => {
 
 const getNonAssesmentTypeTemplate = async (req, res) => {
   try {
-    const templates = await get({ levelId: req.query.levelId });
+    // check if active attempt exists
+    const userLevelData = await UserLevel.get({
+      levelId: req.query.levelId,
+      attemptStatus: ATTEMPT_STATUS.ACTIVE,
+      learnerId: req.user._id,
+    });
+    let templates = await get({ levelId: req.query.levelId });
+    if (userLevelData) {
+      templates = templates.map(async (data) => {
+        return {
+          ...JSON.parse(JSON.stringify(data)),
+          completed: (await Journey.get({ attemptId: userLevelData._id, templateId: data._id }))
+            ? true
+            : false,
+        };
+      });
+      templates = await Promise.all(templates);
+    }
     return res.send({
       status: 200,
       success: true,
@@ -202,6 +225,8 @@ exports.createFeedback = async (req, res) => {
     res.status(400).send({ message: `invalid data` });
   }
 };
-
+exports.templateCount = async (req, res) => {
+  return res.send({ templateCount: await countTemplateInLevel({ levelId: req.query.levelId }) });
+};
 exports.getTemplates = getTemplates;
 exports.updateUserState = updateUserState;
