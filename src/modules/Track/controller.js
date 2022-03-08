@@ -134,7 +134,7 @@ module.exports = {
           description: req.body.description,
           organization: req.user.organization,
         };
-        let updatedData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).updateOne(data);
+        let updatedData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).update(data);
         if(updatedData.n===1 && updatedData.nModified===1 && updatedData.ok===1)
           return res.status(200).json({ status: "success", message: `successfully updated the data in db` });
         throw({name:'updation Error',message:'something went wrong while updating data please try again or contact admin'})
