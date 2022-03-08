@@ -11,6 +11,7 @@ trackRouter.get("/fetchTrackByCreatorId", withAuthUser, trackController.get.fetc
 trackRouter.get("/fetchTrackByGroupId/:groupId", withAuthUser, trackController.get.fetchTrackByGroups);
 trackRouter.get("/fetchTrackWithNoGroups",withAuthUser,trackController.get.fetchTrackWithNoGroups);
 trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser,trackController.post.createTrack);
+trackRouter.put('/updateTrack',validate(createTrackContract),withAuthUser,trackController.put.updateTrack)
 trackRouter.delete("/deleteTrack/:trackId",withAuthUser,trackController.delete.deleteTrack);
 // apis for lerner side
 trackRouter.get("/fetchTrackAssignedToLearner",withAuthUser,trackController.get.fetchTrackAssignedToLearner);

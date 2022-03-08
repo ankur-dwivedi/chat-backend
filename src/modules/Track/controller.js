@@ -2,7 +2,6 @@ const track_Model = require("../../models/Track/index");
 const group_Model = require("../../models/group/index");
 const userTrackInfo_Model = require("../../models/userTrack/index")
 const level_Model = require("../../models/level/index")
-const {selectedTheme} = require("../../utils/constants")
 
 module.exports = {
   get: {
@@ -102,7 +101,7 @@ module.exports = {
           trackName: req.body.trackName,
           groupId: req.body.groupId, 
           groupName: req.body.groupName,
-          selectedTheme: selectedTheme[randomNumber],
+          selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
           description: req.body.description,
           organization: req.user.organization,
@@ -125,12 +124,8 @@ module.exports = {
     updateTrack: async (req, res) => {
       try {
         let userData = req.user;
-        const getRandomInt = (max) => {
-          return Math.floor(Math.random() * max);
-        };
-        let randomNumber = getRandomInt(3);
+        let trackId = req.params.trackId;
         let data = {
-          creatorUserId: userData._id,
           trackName: req.body.trackName,
           groupId: req.body.groupId, 
           groupName: req.body.groupName,
@@ -139,10 +134,10 @@ module.exports = {
           description: req.body.description,
           organization: req.user.organization,
         };
-        let savedData = await track_Model.create(data);
-        return res
-          .status(201)
-          .json({ status: "success", message: `successfully saved the data in db` });
+        let updatedData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).updateOne(data);
+        if(updatedData.n===1 && updatedData.nModified===1 && updatedData.ok===1)
+          return res.status(200).json({ status: "success", message: `successfully updated the data in db` });
+        throw({name:'updation Error',message:'something went wrong while updating data please try again or contact admin'})
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
