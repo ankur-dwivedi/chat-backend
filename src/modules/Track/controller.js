@@ -2,6 +2,7 @@ const track_Model = require("../../models/Track/index");
 const group_Model = require("../../models/group/index");
 const userTrackInfo_Model = require("../../models/userTrack/index")
 const level_Model = require("../../models/level/index")
+const {selectedTheme} = require("../../utils/constants")
 
 module.exports = {
   get: {
@@ -99,7 +100,39 @@ module.exports = {
         let data = {
           creatorUserId: userData._id,
           trackName: req.body.trackName,
-          groupId: req.body.groupId, // for now added if needed any change do let me know
+          groupId: req.body.groupId, 
+          groupName: req.body.groupName,
+          selectedTheme: selectedTheme[randomNumber],
+          skillTag: req.body.skillTag,
+          description: req.body.description,
+          organization: req.user.organization,
+        };
+        let savedData = await track_Model.create(data);
+        return res
+          .status(201)
+          .json({ status: "success", message: `successfully saved the data in db` });
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(200).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+  },
+  put: {
+    updateTrack: async (req, res) => {
+      try {
+        let userData = req.user;
+        const getRandomInt = (max) => {
+          return Math.floor(Math.random() * max);
+        };
+        let randomNumber = getRandomInt(3);
+        let data = {
+          creatorUserId: userData._id,
+          trackName: req.body.trackName,
+          groupId: req.body.groupId, 
           groupName: req.body.groupName,
           selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
@@ -120,7 +153,6 @@ module.exports = {
       }
     },
   },
-  put: {},
   delete: {
     deleteTrack: async (req, res) => {
       try {
