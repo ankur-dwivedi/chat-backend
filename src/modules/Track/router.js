@@ -6,12 +6,13 @@ const { validate } = require("../../middlewares/schema");
 
 const trackRouter = Router();
 
-trackRouter.get("/fetchUserTrack", withAuthUser, trackController.get.fetchUserTrack);
-trackRouter.post(
-  "/createTrack",
-  validate(createTrackContract),
-  withAuthUser,
-  trackController.post.createTrack
-);
+// apis for admin side
+trackRouter.get("/fetchTrackByCreatorId", withAuthUser, trackController.get.fetchTrackByCreatorId);
+trackRouter.get("/fetchTrackByGroupId", withAuthUser, trackController.get.fetchTrackByGroups);
+trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser,trackController.post.createTrack);
+
+// apis for lerner side
+trackRouter.get("/fetchTrackAssignedToLearner",withAuthUser,trackController.get.fetchTrackAssignedToLearner);
+
 
 module.exports = trackRouter;
