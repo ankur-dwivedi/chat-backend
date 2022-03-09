@@ -7,6 +7,7 @@ const GroupSchema = new Schema(
     employees: [{ type: Schema.Types.ObjectId, ref: "user" }],
     organization: { type: Schema.Types.ObjectId, trim: true, ref: "organization" },
     description: { type: String },
+    createdBy: { type: Schema.Types.ObjectId, ref: "user", required: true },
     properties: { type: [PropertiesSchema] },
   },
   { timestamps: true }

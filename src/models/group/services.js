@@ -2,7 +2,12 @@ const { generateError } = require("../../utils/error");
 const Group = require(".");
 
 exports.get = async (query) =>
-  query.id
+  query.createdBy
+    ? Group.find({ createdBy: query.createdBy }, "")
+        .select(["_id", "name"])
+        .then((response) => (response ? response : generateError()))
+        .catch((error) => error)
+    : query.id
     ? Group.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
@@ -33,6 +38,6 @@ exports.update = (queryObject, updateObject) =>
     });
 
 exports.deleteGroup = async (id) =>
-  Group.deleteOne({_id : id })
+  Group.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);

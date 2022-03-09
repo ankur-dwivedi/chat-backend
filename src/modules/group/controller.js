@@ -10,7 +10,7 @@ const { csvToJson } = require("../../utils/general");
 const { uploadFiles } = require(".././../libs/aws/upload");
 
 exports.getGroups = async (req, res) =>
-  get(req.query).then((group) =>
+  get({ ...req.query, createdBy: req.user._id }).then((group) =>
     res.send({
       status: 200,
       success: true,
