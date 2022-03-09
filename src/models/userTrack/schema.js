@@ -3,6 +3,7 @@ const {trackStateEnums} = require('./constants')
 
 const userTrack = new Schema(
   {
+    //here creatorUserId means userId 
     creatorUserId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
     trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track", required: true },
     trackProgress: {type:Number,trim:true},
