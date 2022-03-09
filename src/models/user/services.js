@@ -88,3 +88,20 @@ exports.findIdByEmloyeeId = (employeeIds, org) =>
       return user.map((value) => value._id);
     })
     .catch((err) => false);
+
+exports.findIdByEmloyeeId = (employeeIds, org) =>
+  User.find({ ...createUserIdFindQuery(employeeIds, org) })
+    .then((user) => {
+      return user.map((value) => value._id);
+    })
+    .catch((err) => false);
+
+exports.removeGroupId = ({ groupId }) =>
+  User.updateMany(
+    { groups: { $in: [groupId] } },
+    {
+      $pull: {
+        groups: groupId,
+      },
+    }
+  );

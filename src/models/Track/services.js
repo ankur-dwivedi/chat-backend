@@ -15,3 +15,13 @@ exports.getUsersByTrackId = async (query) =>
       console.error(error);
       return error;
     });
+
+exports.removeTrackGroupId = ({ groupId }) =>
+  Track.updateMany(
+    { groupId: { $in: [groupId] } },
+    {
+      $pull: {
+        groupId: groupId,
+      },
+    }
+  );
