@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e099d75a-a66d-4e67-afb9-7ccc80d9aa86",
+		"_postman_id": "5f0ac110-fc5b-433d-ac91-0208ffa10b27",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1065,7 +1065,7 @@
 					"response": []
 				},
 				{
-					"name": "fetch track",
+					"name": "fetch all track created by admin",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1080,13 +1080,153 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/track/fetchUserTrack",
+							"raw": "{{baseUrl}}/track/fetchTrackByCreatorId",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"track",
-								"fetchUserTrack"
+								"fetchTrackByCreatorId"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch Track Assigned To Learner",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/track/fetchTrackAssignedToLearner",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"fetchTrackAssignedToLearner"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch Track By Group Id",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/track/fetchTrackByGroupId/61bf814dc93b593384d3b4a3",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"fetchTrackByGroupId",
+								"61bf814dc93b593384d3b4a3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch Track With No Groups",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/track/fetchTrackWithNoGroups",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"fetchTrackWithNoGroups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete Track for admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/track/deleteTrack/621ab37f04d46bfeeb398d19",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"deleteTrack",
+								"621ab37f04d46bfeeb398d19"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update Track for admin",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"trackName\":\"track1\",\r\n    \"groupId\": [\"61bf814dc93b593384d3b4a3\"],\r\n    \"selectedTheme\":\"Mountain\",\r\n    \"skillTag\":[\"tech\"],\r\n    \"description\":\"track 1 created\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/track/updateTrack/621ab37f04d46bfeeb398d19",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"updateTrack",
+								"621ab37f04d46bfeeb398d19"
 							]
 						}
 					},
