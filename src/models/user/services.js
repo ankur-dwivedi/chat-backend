@@ -21,6 +21,21 @@ exports.get = async (query) =>
         .then((response) => response)
         .catch((error) => error);
 
+exports.searchByEmp = (query) =>
+  User.find({
+    $and: [
+      {
+        $or: [
+          { employeeId: { $regex: query.employeeId + ".*" } },
+          { name: { $regex: query.employeeId + ".*" } },
+        ],
+      },
+      { organization: query.organization },
+    ],
+  })
+    .select(["employeeId", "name"])
+    .then((response) => response);
+
 exports.getByEmpIdOrName = async (query) =>
   query.employeeId
     ? User.findOne({
@@ -35,12 +50,14 @@ exports.getByEmpIdOrName = async (query) =>
 
 exports.getGroupEmployee = (organization, property) =>
   User.find({ ...createGroupFilterQuery(organization, property) })
+    .select(["_id", "name", "email"])
     .sort({ createdAt: -1 })
     .then((response) => response)
     .catch((error) => error);
 
 exports.getOrgEmployee = ({ organization }) =>
   User.find({ organization: Types.ObjectId(organization) })
+    .select(["_id", "name", "email"])
     .sort({ createdAt: -1 })
     .then((response) => response)
     .catch((error) => error);
@@ -105,3 +122,8 @@ exports.removeGroupId = ({ groupId }) =>
       },
     }
   );
+
+exports.countEmployeeInOrg = ({ organization }) =>
+  User.find({ organization })
+    .count()
+    .then((response) => response);

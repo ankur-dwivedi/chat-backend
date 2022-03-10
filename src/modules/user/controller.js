@@ -1,4 +1,11 @@
-const { update, get, create, deleteUser, getGroupEmployee } = require("../../models/user/services");
+const {
+  update,
+  get,
+  create,
+  deleteUser,
+  getGroupEmployee,
+  searchByEmp,
+} = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
 const { generateAuthToken, generateOtp } = require("../../utils/general");
@@ -17,7 +24,7 @@ exports.getUsers = async (req, res) =>
 
 exports.searchUser = async (req, res) => {
   console.log({ ...req.query, organization: req.user.organization });
-  return get({ ...req.query, organization: req.user.organization })
+  return searchByEmp({ ...req.query, organization: req.user.organization })
     .then((user) =>
       res.send({
         status: 200,
