@@ -228,5 +228,15 @@ exports.createFeedback = async (req, res) => {
 exports.templateCount = async (req, res) => {
   return res.send({ templateCount: await countTemplateInLevel({ levelId: req.query.levelId }) });
 };
+
+exports.getCreatorTemplate = async (req, res) => {
+  const template = await get({ levelId: req.query.levelId });
+  return res.send({
+    status: 200,
+    success: true,
+    data: template,
+  });
+};
+
 exports.getTemplates = getTemplates;
 exports.updateUserState = updateUserState;

@@ -7,11 +7,12 @@ const {
   checkLevelType,
   createFeedback,
   templateCount,
+  getCreatorTemplate,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const { createContract, deleteContract, createFeedbackContract } = require("./contract");
 const multer = require("multer");
-const { withAuthUser, withAuthLearner } = require("../../middlewares/auth");
+const { withAuthUser, withAuthLearner, withAdminAuthUser } = require("../../middlewares/auth");
 
 var upload = multer({
   storage: multer.diskStorage({
@@ -37,5 +38,6 @@ templateRouter.post(
   createFeedback
 );
 templateRouter.get("/template-count", withAuthLearner, templateCount);
+templateRouter.get("/creator", withAdminAuthUser, getCreatorTemplate);
 
 module.exports = templateRouter;

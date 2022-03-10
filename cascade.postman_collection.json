@@ -1204,6 +1204,52 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get creator template",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/template/creator?levelId=6214c0ae6de8d66209bc02b1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"template",
+								"creator"
+							],
+							"query": [
+								{
+									"key": "levelId",
+									"value": "6214c0ae6de8d66209bc02b1"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
