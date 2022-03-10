@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "5f0ac110-fc5b-433d-ac91-0208ffa10b27",
+		"_postman_id": "a2efa927-e5cb-4cfc-935e-5526f29d7c4e",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -273,92 +273,6 @@
 					"response": []
 				},
 				{
-					"name": "search api",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": []
-						},
-						"url": {
-							"raw": "{{baseUrl}}/user/search?employeeId=em-12",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"search"
-							],
-							"query": [
-								{
-									"key": "employeeId",
-									"value": "em-12"
-								},
-								{
-									"key": "name",
-									"value": "abc1232",
-									"disabled": true
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get filter employees",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"data\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/user/filter-emp",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"filter-emp"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "set session",
 					"request": {
 						"auth": {
@@ -579,6 +493,256 @@
 			"name": "group",
 			"item": [
 				{
+					"name": "create gp by relationship",
+					"item": [
+						{
+							"name": "get organization filter data",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/filter-data/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"filter-data",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "create group",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\":\"Group\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\",\r\n    \"description\":\"SDE1\",\r\n    \"properties\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/group/",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"group",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "get filter employees",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"data\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/filter-emp",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"filter-emp"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "create gp by Handpick Learner ID/Name",
+					"item": [
+						{
+							"name": "create group with employee list",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\":\"Group2\",\n    \"organization\":\"61b064bee20da142b8dea48c\",\n    \"description\":\"SDE1\",\n    \"employeeId\":[\"61d2b2995fe75e27248bf470\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/group/create-by-list",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"group",
+										"create-by-list"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "total employees in org",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{baseUrl}}/filter-data/count",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"filter-data",
+										"count"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "search api",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{baseUrl}}/user/search?employeeId=em-1",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"user",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "abc1232",
+											"disabled": true
+										},
+										{
+											"key": "employeeId",
+											"value": "em-1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
 					"name": "create group with employee ids",
 					"request": {
 						"method": "POST",
@@ -662,7 +826,7 @@
 					"response": []
 				},
 				{
-					"name": "create group with employee list",
+					"name": "delete group",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -674,48 +838,11 @@
 								}
 							]
 						},
-						"method": "POST",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\":\"Group2\",\n    \"organization\":\"61b064bee20da142b8dea48c\",\n    \"description\":\"SDE1\",\n    \"employeeId\":[\"61d2b2995fe75e27248bf470\"]\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/group/create-by-list",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"group",
-								"create-by-list"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create group",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"Group\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\",\r\n    \"description\":\"SDE1\",\r\n    \"properties\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
+							"raw": "{\r\n    \"id\":\"62286b3ab42a7d98a906638e\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
