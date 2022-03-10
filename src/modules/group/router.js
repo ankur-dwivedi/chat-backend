@@ -5,6 +5,7 @@ const {
   deleteGroup,
   createGroupEmployee,
   createGpByEmpList,
+  countEmpInCsv,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const { createContract, deleteContract, createByEmpListContract } = require("./contract");
@@ -28,6 +29,7 @@ groupRouter.get("/", withAuthUser, getGroups);
 groupRouter.post("/", withAuthUser, validate(createContract), create);
 groupRouter.delete("/", withAuthUser, validate(deleteContract), deleteGroup);
 groupRouter.post("/create-custom", withAuthUser, upload.array("files"), createGroupEmployee);
+groupRouter.post("/count-employee", withAuthUser, upload.array("files"), countEmpInCsv);
 groupRouter.post(
   "/create-by-list",
   withAuthUser,

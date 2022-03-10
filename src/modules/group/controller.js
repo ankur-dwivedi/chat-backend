@@ -9,7 +9,7 @@ const {
   removeGroupId,
 } = require("../../models/user/services");
 const { createGroupFilterQuery } = require("../../models/user/utils");
-const { csvToJson } = require("../../utils/general");
+const { csvToJson, csvToJsonByStream } = require("../../utils/general");
 const { uploadFiles } = require(".././../libs/aws/upload");
 
 exports.getGroups = async (req, res) =>
@@ -67,9 +67,9 @@ exports.createGroupEmployee = async (req, res) => {
       `${process.env.AWS_BUCKET_NAME}` + "/" + `${req.query.org}` + "/employee-data";
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
-    let employeeIds = await findIdByEmloyeeId(employeeData, req.body.organization);
+    let employeeIds = await findIdByEmloyeeId(employeeData, req.user.organization);
     const group = await create({ ...req.body, employees: employeeIds, createdBy: req.user._id });
-    await updateUserByIds(req.body.organization, employeeIds, group._id);
+    await updateUserByIds(req.user.organization, employeeIds, group._id);
     return res.send({
       status: 200,
       success: true,
@@ -78,6 +78,22 @@ exports.createGroupEmployee = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(400).send({ message: `group already exists` });
+  }
+};
+
+exports.countEmpInCsv = async (req, res) => {
+  try {
+    const { files } = req;
+    if (!files.length) res.status(400).send("No file uploaded.");
+    const employeeData = await csvToJsonByStream(files[0].path);
+    return res.send({
+      status: 200,
+      success: true,
+      data: employeeData.length,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: `no employee data found` });
   }
 };
 

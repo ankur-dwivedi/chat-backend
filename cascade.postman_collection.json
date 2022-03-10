@@ -743,47 +743,103 @@
 					]
 				},
 				{
-					"name": "create group with employee ids",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "files",
-									"type": "file",
-									"src": "/C:/Users/Lenovo/Documents/Book1.csv"
+					"name": "create gp by template",
+					"item": [
+						{
+							"name": "create group with employee ids",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "files",
+											"type": "file",
+											"src": "/C:/Users/Lenovo/Documents/Book1.csv"
+										},
+										{
+											"key": "name",
+											"value": "Group",
+											"type": "text"
+										},
+										{
+											"key": "description",
+											"value": "SDE1",
+											"type": "text"
+										}
+									]
 								},
-								{
-									"key": "name",
-									"value": "Group",
-									"type": "text"
-								},
-								{
-									"key": "organization",
-									"value": "61b064bee20da142b8dea48c",
-									"type": "text"
-								},
-								{
-									"key": "description",
-									"value": "SDE1",
-									"type": "text"
+								"url": {
+									"raw": "{{baseUrl}}/group/create-custom",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"group",
+										"create-custom"
+									]
 								}
-							]
+							},
+							"response": []
 						},
-						"url": {
-							"raw": "{{baseUrl}}/group/create-custom",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"group",
-								"create-custom"
-							]
+						{
+							"name": "count employee in csv ",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "files",
+											"type": "file",
+											"src": "/home/ankur/projects/signtalk/cascade-backend/templates/Book1.csv"
+										},
+										{
+											"key": "",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										},
+										{
+											"key": "",
+											"value": "",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{baseUrl}}/group/count-employee",
+									"host": [
+										"{{baseUrl}}"
+									],
+									"path": [
+										"group",
+										"count-employee"
+									]
+								}
+							},
+							"response": []
 						}
-					},
-					"response": []
+					]
 				},
 				{
 					"name": "get group",
