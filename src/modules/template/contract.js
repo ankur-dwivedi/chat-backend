@@ -21,7 +21,7 @@ exports.createContract = Joi.object({
     mediaType: Joi.string(),
   }),
   revealOption: Joi.boolean(),
-  templateOrder: Joi.number().allow(""),
+  templateOrder: Joi.number().min(0),
 });
 
 exports.deleteContract = Joi.object({
@@ -31,4 +31,16 @@ exports.deleteContract = Joi.object({
 exports.createFeedbackContract = Joi.object({
   templateId: Joi.string().required(),
   feedback: Joi.string().required(),
+});
+
+exports.setTemplateOrder = Joi.object({
+  levelId: Joi.string().required(), //to authenticate creator
+  templateData: Joi.array()
+    .items(
+      Joi.object({
+        templateId: Joi.string().required(),
+        templateOrder: Joi.number().required().min(0),
+      })
+    )
+    .required(),
 });

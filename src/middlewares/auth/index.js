@@ -98,15 +98,21 @@ const assocAuthOtherUser = (req, res, next) =>
     })
     .catch((error) => res.send(createUnauthorizedError(error)));
 
-const isAdmin = (req, _, next) =>
+const isAdmin = (req, res, next) =>
   User.findById(req.user.userId)
-    .then((user) => {
+    .then(async (user) => {
       if (!user) {
         res.send(createUnauthorizedError("Not Authorized"));
       } else if (user.role !== ROLE.CREATOR) {
         res.send(createUnauthorizedError("Not Authorized"));
       } else {
         req.user = user;
+        if (req.body.levelId) {
+          const level = await Level.findById(req.body.levelId);
+          if (level && level.creatorUserId.toString() !== user._id.toString()) {
+            res.status(401).send({ message: "User not Authorised for level" });
+          }
+        }
         next();
       }
     })

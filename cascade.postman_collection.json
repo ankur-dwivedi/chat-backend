@@ -1233,19 +1233,55 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/template/creator?levelId=6214c0ae6de8d66209bc02b1",
+							"raw": "{{baseUrl}}/template?levelId=6216186448b6347f9735bb5a",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"template"
+							],
+							"query": [
+								{
+									"key": "levelId",
+									"value": "6216186448b6347f9735bb5a"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "set template order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"levelId\": \"6216186448b6347f9735bb5a\",\n    \"templateData\": [\n        {\n            \"templateId\": \"621adcae29071d2f337a0ac4\",\n            \"templateOrder\": 1\n        },\n        {\n            \"templateId\": \"621ae220f69697361f238a4c\",\n            \"templateOrder\": 2\n        },\n        {\n            \"templateId\": \"621d5637457b02b4a03b15c4\",\n            \"templateOrder\": 3\n        }\n    ]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/template/template-order",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"template",
-								"creator"
-							],
-							"query": [
-								{
-									"key": "levelId",
-									"value": "6214c0ae6de8d66209bc02b1"
-								}
+								"template-order"
 							]
 						}
 					},

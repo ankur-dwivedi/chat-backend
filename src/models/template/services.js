@@ -54,3 +54,12 @@ exports.countTemplateInLevel = ({ levelId }) =>
   Template.find({ levelId })
     .count()
     .then((response) => response);
+
+exports.updateTemplateOrder = ({ bulkOps }) => {
+  console.log({ bulkOps });
+  return Template.bulkWrite(bulkOps).then((bulkWriteOpResult) => {
+    console.log("BULK update OK");
+    console.log(JSON.stringify(bulkWriteOpResult, null, 2));
+    return bulkWriteOpResult;
+  });
+};

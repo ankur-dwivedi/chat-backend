@@ -8,9 +8,15 @@ const {
   createFeedback,
   templateCount,
   getCreatorTemplate,
+  templateOrder,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
-const { createContract, deleteContract, createFeedbackContract } = require("./contract");
+const {
+  createContract,
+  deleteContract,
+  createFeedbackContract,
+  setTemplateOrder,
+} = require("./contract");
 const multer = require("multer");
 const { withAuthUser, withAuthLearner, withAdminAuthUser } = require("../../middlewares/auth");
 
@@ -39,5 +45,11 @@ templateRouter.post(
 );
 templateRouter.get("/template-count", withAuthLearner, templateCount);
 templateRouter.get("/creator", withAdminAuthUser, getCreatorTemplate);
+templateRouter.patch(
+  "/template-order",
+  withAdminAuthUser,
+  validate(setTemplateOrder),
+  templateOrder
+);
 
 module.exports = templateRouter;

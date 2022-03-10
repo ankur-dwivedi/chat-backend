@@ -3,6 +3,7 @@ const {
   create,
   deleteTemplate,
   countTemplateInLevel,
+  updateTemplateOrder,
 } = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
 const { generateError } = require("../../utils/error");
@@ -219,7 +220,7 @@ exports.createFeedback = async (req, res) => {
       levelId: req.template.levelId,
       learnerId: req.user._id,
     });
-    res.json({ message: `feddack saved successflly` });
+    res.json({ message: `feedback saved successflly` });
   } catch (error) {
     console.log(error);
     res.status(400).send({ message: `invalid data` });
@@ -236,6 +237,39 @@ exports.getCreatorTemplate = async (req, res) => {
     success: true,
     data: template,
   });
+};
+
+exports.templateOrder = async (req, res) => {
+  try {
+    const tempBulkOps = req.body.templateData.map((data) => {
+      return {
+        updateOne: {
+          filter: { _id: data.templateId, levelId: req.body.levelId },
+          update: { $set: { templateOrder: data.templateOrder * -99999 } },
+          upsert: true,
+        },
+      };
+    });
+    await updateTemplateOrder({ bulkOps: tempBulkOps });
+    const bulkOps = req.body.templateData.map((data) => {
+      return {
+        updateOne: {
+          filter: { _id: data.templateId, levelId: req.body.levelId },
+          update: { $set: { templateOrder: data.templateOrder } },
+          upsert: true,
+        },
+      };
+    });
+    const update = await updateTemplateOrder({ bulkOps });
+    return res.send({
+      status: 200,
+      success: true,
+      data: update,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: error.message });
+  }
 };
 
 exports.getTemplates = getTemplates;
