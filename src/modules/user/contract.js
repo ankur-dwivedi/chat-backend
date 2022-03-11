@@ -58,3 +58,9 @@ exports.getFilEmpContract = Joi.object({
     })
     .required(),
 });
+
+// exports.analyticsContract = Joi.object({
+//   groupId: Joi.string().allow(""),
+//   trackId: Joi.string().required(),
+//   levelId: Joi.string().required(),
+// });

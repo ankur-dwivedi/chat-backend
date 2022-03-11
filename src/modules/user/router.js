@@ -1,5 +1,14 @@
 const { Router } = require("express");
-const { register, getUsers, login, deleteUser, update, setSession } = require("./controller");
+const {
+  register,
+  getUsers,
+  login,
+  deleteUser,
+  update,
+  setSession,
+  analytics,
+  analyticsEmpData,
+} = require("./controller");
 const { requestOtp, verifyOtp, forgetPassword, resetpass, searchUser } = require("./controller");
 const { getFilteredEmp } = require("./controller");
 const { withAuthUser } = require("../../middlewares/auth");
@@ -30,5 +39,7 @@ userRouter.post("/forget-password", validate(reqOtpForgetPassContract), forgetPa
 userRouter.patch("/resetpass", withAuthUser, resetpass);
 userRouter.get("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilteredEmp);
 userRouter.patch("/set-session", withAuthUser, validate(setSessionContract), setSession);
+userRouter.get("/analytics", withAuthUser, analytics);
+userRouter.get("/analytics-list", withAuthUser, analyticsEmpData);
 
 module.exports = userRouter;

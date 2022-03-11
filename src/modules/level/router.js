@@ -7,7 +7,7 @@ const { validate } = require("../../middlewares/schema");
 const levelRouter = Router();
 //validate(createLevelContract)
 levelRouter.get("/fetchUserLevel", withAuthUser, levelController.get.fetchUserLevel);
-levelRouter.get("/fetchUserLevelByTrack", withAuthUser, levelController.get.fetchUserLevelByTrack);
+levelRouter.get("/creator-level", withAuthUser, levelController.get.fetchUserLevelByTrack);
 levelRouter.post(
   "/createLevel",
   validate(createLevelContract),

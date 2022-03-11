@@ -24,12 +24,12 @@ module.exports = {
     },
     fetchUserLevelByTrack: async (req, res) => {
       try {
-        let trackId = req.body.trackId;
+        let trackId = req.query.trackId;
         let userTrackData = await level_Model.find({ trackId });
         if (userTrackData === null) {
           return res.status(201).json({ status: "success", message: `no Data in db` });
         }
-        return res.status(201).json({ status: "success", message: userTrackData });
+        return res.status(201).json({ status: "success", data: userTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);

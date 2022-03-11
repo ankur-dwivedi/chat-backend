@@ -8,7 +8,12 @@ const {
 } = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
-const { generateAuthToken, generateOtp } = require("../../utils/general");
+const {
+  generateAuthToken,
+  generateOtp,
+  analyicsData,
+  analyicslist,
+} = require("../../utils/general");
 const md5 = require("md5");
 const { OTP_EXPIRY } = require("../../models/user/constants");
 const { sendMail } = require("../user/util");
@@ -180,6 +185,34 @@ exports.setSession = async (req, res) => {
       data: user,
     }));
     return res.send({ message: "session set successfully" });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+exports.analytics = async (req, res) => {
+  try {
+    const { trackId, groupId, levelId } = req.body;
+    const data = await analyicsData({ groupId, trackId, levelId });
+    return res.send({
+      status: 200,
+      success: true,
+      data: data,
+    });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+exports.analyticsEmpData = async (req, res) => {
+  try {
+    const { trackId, groupId, levelId } = req.body;
+    const list = await analyicslist({ groupId, trackId, levelId });
+    return res.send({
+      status: 200,
+      success: true,
+      data: list,
+    });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }

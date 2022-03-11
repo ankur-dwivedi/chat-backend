@@ -308,6 +308,86 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "analytics",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelId\": \"6214c0ae6de8d66209bc02b1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/analytics",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"analytics"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "analytics list",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelId\": \"6214c0ae6de8d66209bc02b1\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/analytics-list",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"analytics-list"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1569,6 +1649,46 @@
 							"path": [
 								"level",
 								"learner-level-info"
+							],
+							"query": [
+								{
+									"key": "trackId",
+									"value": "621ab37f04d46bfeeb398d19"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch level By track Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseUrl}}/level/creator-level?trackId=621ab37f04d46bfeeb398d19",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"level",
+								"creator-level"
 							],
 							"query": [
 								{
