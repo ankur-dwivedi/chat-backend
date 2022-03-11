@@ -401,7 +401,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"organization1\"\r\n}",
+							"raw": "{\r\n    \"name\":\"organization1\",\r\n    \"domain\":\"org1\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
