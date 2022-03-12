@@ -28,9 +28,13 @@ module.exports = {
       try {
         let userData = req.user;
         let groupId = req.params.groupId;
-        let GroupTrackData = await track_Model.find({ groupId,creatorUserId:userData._id },{__v:0}).populate("groupId","-__v").lean();
+        let GroupTrackData = await track_Model.find({ groupId:{$in:[groupId]},creatorUserId:userData._id },{__v:0,createdAt:0,updatedAt:0}).populate("groupId","-__v -createdAt -updatedAt").lean();
         if (GroupTrackData === null) {
           return res.status(200).json({ status: "success", message: `no Data in db` });
+        }
+        for(let i=0;i<GroupTrackData.length;i++){
+          let levelData159 = await level_Model.find({trackId:GroupTrackData[i]._id},{__v:0,createdAt:0,updatedAt:0}).lean();
+          GroupTrackData[i].levelData = levelData159
         }
         return res.status(200).json({ status: "success", message: GroupTrackData });
       } catch (err) {
@@ -45,11 +49,15 @@ module.exports = {
     fetchTrackWithNoGroups: async (req, res) => {
       try {
         let userData = req.user;
-        let userTrackData = await track_Model.find({ creatorUserId: userData._id });
+        let userTrackData = await track_Model.find({ creatorUserId: userData._id },{__v:0,createdAt:0,updatedAt:0}).lean();
         if (userTrackData === null) {
           return res.status(200).json({ status: "success", message: `no Data in db` });
         }
         let tranformData = userTrackData.filter(element => element.groupId===undefined || element.groupId.length===0)
+        for(let i=0;i<tranformData.length;i++){
+          let levelData159 = await level_Model.find({trackId:tranformData[i]._id},{__v:0,createdAt:0,updatedAt:0}).lean();
+          tranformData[i].levelData = levelData159
+        }
         return res.status(200).json({ status: "success", message: tranformData });
       } catch (err) {
         console.log(err.name);
