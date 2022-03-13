@@ -10,7 +10,6 @@ exports.createTrackContract = Joi.object({
 
 exports.createTrackUsingLearnerIdContract = Joi.object({
   trackName: Joi.string().required(),
-  groupId: Joi.array().items(Joi.string().required()).allow(),
   selectedTheme: Joi.string().required(),
   skillTag: Joi.array(),
   description: Joi.string().required(),
