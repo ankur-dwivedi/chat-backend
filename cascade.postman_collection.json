@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a2efa927-e5cb-4cfc-935e-5526f29d7c4e",
+		"_postman_id": "20c55391-ab17-43c4-a04b-b4eb6d040d86",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1572,6 +1572,43 @@
 								"track",
 								"updateTrack",
 								"621ab37f04d46bfeeb398d19"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "{{baseUrl}}/track/createTrack",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"trackName\":\"track1\",\r\n    \"learnerId\": [\"61bf814dc93b593384d3b4a3\"],\r\n    \"selectedTheme\":\"Mountain\",\r\n    \"skillTag\":[\"tech\"],\r\n    \"description\":\"track 1 created\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/track/createTrack",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"createTrack"
 							]
 						}
 					},
