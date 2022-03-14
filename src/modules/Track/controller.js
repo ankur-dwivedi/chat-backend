@@ -81,9 +81,9 @@ module.exports = {
         for(let j=0;j<userTrackData.length;j++){
           let bar = await userTrackInfo_Model.findOne({creatorUserId:userData._id,trackId:userTrackData[j]._id}).lean();
           let foobar = await level_Model.find({trackId:userTrackData[j]._id}).lean()
-          userTrackData[j].trackProgress = bar.trackProgress===undefined?'':bar.trackProgress;
-          userTrackData[j].trackState = bar.trackState===undefined?'unattemped':bar.trackState;
-          userTrackData[j].isArchived = bar.isArchived===undefined?'':bar.isArchived;
+          userTrackData[j].trackProgress = bar===null?'':bar.trackProgress===undefined?'':bar.trackProgress;
+          userTrackData[j].trackState = bar===null?'unattemped': bar.trackState===undefined?'unattemped':bar.trackState;
+          userTrackData[j].isArchived = bar===null?'': bar.isArchived===undefined?'':bar.isArchived;
           userTrackData[j].totalLevelCount = foobar.length;
         }
         return res.status(200).json({ status: "success", message: userTrackData });
