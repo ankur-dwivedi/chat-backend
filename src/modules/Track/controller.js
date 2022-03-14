@@ -110,7 +110,7 @@ module.exports = {
           skillTag: req.body.skillTag,
           description: req.body.description,
           organization: req.user.organization,
-          botGeneratedGroup:false
+          botGeneratedGroup:req.body.groupId===undefined?undefined:false  
         };
         let savedData = await track_Model.create(data);
         return res
