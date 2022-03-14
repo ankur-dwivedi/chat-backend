@@ -11,7 +11,7 @@ const trackSchema = new Schema(
     selectedTheme: { type: String, trim: true, required: true },
     skillTag: { type: Array, trim: true },
     organization: { type: Schema.Types.ObjectId, required: true, trim: true, ref: "organization" },
-    botGenerated:{type:Boolean,default:false,trim:true,enum:booleanEnum}
+    botGeneratedGroup:{type:Boolean,trim:true,enum:booleanEnum}
   },
   { timestamps: true }
 );
