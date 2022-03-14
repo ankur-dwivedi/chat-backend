@@ -9,7 +9,7 @@ const trackRouter = Router();
 // apis for admin side
 trackRouter.get("/fetchTrackByCreatorId", withAuthUser, trackController.get.fetchTrackByCreatorId);
 trackRouter.get("/fetchTrackByGroupId/:groupId", withAuthUser, trackController.get.fetchTrackByGroups);
-trackRouter.get("/fetchTrackWithNoGroups",withAuthUser,trackController.get.fetchTrackWithNoGroups);
+trackRouter.get("/getTracksWithoutUserCreatedGroup",withAuthUser,trackController.get.getTracksWithoutUserCreatedGroup);
 
 trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser,trackController.post.createTrack);
 trackRouter.post("/createTrackUsingLearnerId",validate(createTrackUsingLearnerIdContract),withAuthUser,trackController.post.createTrackUsingLearnerId);

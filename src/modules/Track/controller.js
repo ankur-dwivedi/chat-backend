@@ -47,14 +47,16 @@ module.exports = {
         });
       }
     },
-    fetchTrackWithNoGroups: async (req, res) => {
+    getTracksWithoutUserCreatedGroup: async (req, res) => {
       try {
         let userData = req.user;
         let userTrackData = await track_Model.find({ creatorUserId: userData._id },{__v:0,createdAt:0,updatedAt:0}).lean();
         if (userTrackData === null) {
-          return res.status(200).json({ status: "success", message: `no Data in db` });
+          return res.status(200).json({ status: 200, success:false , data: `no Data in db` });
         }
-        let tranformData = userTrackData.filter(element => element.groupId===undefined || element.groupId.length===0)
+        let tranformData1 = userTrackData.filter(element => element.groupId===undefined || element.groupId.length===0)
+        let tranformData2 = userTrackData.filter(element => element.botGeneratedGroup===true)
+        let tranformData = [...tranformData1, ...tranformData2];
         for(let i=0;i<tranformData.length;i++){
           let levelData159 = await level_Model.find({trackId:tranformData[i]._id},{__v:0,createdAt:0,updatedAt:0}).lean();
           tranformData[i].levelData = levelData159
