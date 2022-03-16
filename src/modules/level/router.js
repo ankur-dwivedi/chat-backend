@@ -15,5 +15,6 @@ levelRouter.post(
   levelController.post.createLevel
 );
 levelRouter.get("/learner-level-info", withAuthUser, levelController.get.learnerLevelInfo);
+levelRouter.get("/new-unlocked", withAuthUser, levelController.get.newUnlockedLevel);
 
 module.exports = levelRouter;

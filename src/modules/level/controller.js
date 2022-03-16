@@ -1,6 +1,10 @@
-const { LEVEL_STATE, LOCKED_STATE } = require("../../models/level/constants");
+const { LEVEL_STATE, LOCKED_STATE, LEVEL_TYPE } = require("../../models/level/constants");
 const level_Model = require("../../models/level/index");
-const { LEVEL_STATUS } = require("../../models/userLevel/constants");
+const {
+  LEVEL_STATUS,
+  LEVEL_STATUS_ENUM,
+  ATTEMPT_STATUS,
+} = require("../../models/userLevel/constants");
 const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
 module.exports = {
@@ -114,6 +118,110 @@ module.exports = {
         return res.status(201).json({ status: "success", data: levelData });
       } catch (err) {
         console.log(err);
+        res.status(201).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    newUnlockedLevel: async (req, res) => {
+      try {
+        const levelId = req.query.levelId;
+        const level = await level_Model.findOne({ _id: levelId });
+        if (level === null) {
+          return res.status(201).json({ status: "success", message: `no Data in db` });
+        }
+        let levelData = await level_Model.find({
+          trackId: level.trackId,
+          levelState: LEVEL_STATE.LAUNCH,
+        });
+        let nextLevelIndex;
+        levelData.map((data, index) => {
+          console.log("temp", level._id, data._id);
+          if ("" + data._id == "" + level._id) nextLevelIndex = index;
+          return data;
+        });
+        console.log({ nextLevelIndex });
+        nextLevelIndex = nextLevelIndex + 1 < levelData.length ? nextLevelIndex + 1 : -1;
+        console.log({ level, levelData, nextLevelIndex });
+
+        let nextLevel;
+        if (nextLevelIndex !== -1) nextLevel = levelData[nextLevelIndex];
+        else
+          return res.send({
+            status: 200,
+            success: false,
+            data: "no new unlockedlevel",
+          });
+        console.log({ nextLevel });
+        const userLevelData = await getLatestUserLevelByLevel({
+          levelId,
+          learnerId: req.user._id,
+        });
+
+        if (nextLevel && nextLevel.isLocked === false)
+          return res.send({
+            status: 200,
+            success: false,
+            data: "no new unlockedlevel",
+          });
+        else if (userLevelData && userLevelData.length) {
+          if (
+            (level.levelType === LEVEL_TYPE.ASSESMENT &&
+              userLevelData[0] &&
+              userLevelData[0].levelStatus === LEVEL_STATUS.PASS) ||
+            (level.levelType !== LEVEL_TYPE.ASSESMENT &&
+              userLevelData[0] &&
+              userLevelData[0].attemptStatus === ATTEMPT_STATUS.COMPLETED)
+          ) {
+            let flag = 0;
+            userLevelData.map((data, index) => {
+              if (index !== 0 && data.levelStatus === LEVEL_STATUS.PASS) {
+                flag = 1;
+                return data;
+              }
+            });
+            if (flag == 1)
+              return res.send({
+                status: 200,
+                success: false,
+                data: "no new unlockedlevel",
+              });
+            else {
+              const nextUserLeveData = await getLatestUserLevelByLevel({
+                levelId: nextLevel._id,
+                learnerId: req.user._id,
+              });
+              if (nextUserLeveData && nextUserLeveData.length)
+                return res.send({
+                  status: 200,
+                  success: false,
+                  data: "no new unlockedlevel",
+                });
+              else
+                return res.send({
+                  status: 200,
+                  success: true,
+                  data: nextLevel,
+                });
+            }
+          } else
+            return res.send({
+              status: 200,
+              success: false,
+              data: "no new unlockedlevel",
+            });
+        } else
+          return res.send({
+            status: 200,
+            success: false,
+            data: "no new unlockedlevel",
+          });
+
+        return res.status(201).json({ status: "success", data: userTrackData });
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
         res.status(201).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,
