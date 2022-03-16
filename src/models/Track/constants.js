@@ -1,0 +1,1 @@
+exports.booleanEnum = [true,false]

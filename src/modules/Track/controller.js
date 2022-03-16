@@ -2,6 +2,7 @@ const track_Model = require("../../models/Track/index");
 const group_Model = require("../../models/group/index");
 const userTrackInfo_Model = require("../../models/userTrack/index")
 const level_Model = require("../../models/level/index")
+const randomstring = require("randomstring");
 
 module.exports = {
   get: {
@@ -28,9 +29,13 @@ module.exports = {
       try {
         let userData = req.user;
         let groupId = req.params.groupId;
-        let GroupTrackData = await track_Model.find({ groupId,creatorUserId:userData._id },{__v:0}).populate("groupId","-__v").lean();
+        let GroupTrackData = await track_Model.find({ groupId:{$in:[groupId]},creatorUserId:userData._id },{__v:0,createdAt:0,updatedAt:0}).populate("groupId","-__v -createdAt -updatedAt").lean();
         if (GroupTrackData === null) {
           return res.status(200).json({ status: "success", message: `no Data in db` });
+        }
+        for(let i=0;i<GroupTrackData.length;i++){
+          let levelData159 = await level_Model.find({trackId:GroupTrackData[i]._id},{__v:0,createdAt:0,updatedAt:0}).lean();
+          GroupTrackData[i].levelData = levelData159
         }
         return res.status(200).json({ status: "success", message: GroupTrackData });
       } catch (err) {
@@ -42,14 +47,20 @@ module.exports = {
         });
       }
     },
-    fetchTrackWithNoGroups: async (req, res) => {
+    getTracksWithoutUserCreatedGroup: async (req, res) => {
       try {
         let userData = req.user;
-        let userTrackData = await track_Model.find({ creatorUserId: userData._id });
+        let userTrackData = await track_Model.find({ creatorUserId: userData._id },{__v:0,createdAt:0,updatedAt:0}).lean();
         if (userTrackData === null) {
-          return res.status(200).json({ status: "success", message: `no Data in db` });
+          return res.status(200).json({ status: 200, success:false , data: `no Data in db` });
         }
-        let tranformData = userTrackData.filter(element => element.groupId===undefined || element.groupId.length===0)
+        let tranformData1 = userTrackData.filter(element => element.groupId===undefined || element.groupId.length===0)
+        let tranformData2 = userTrackData.filter(element => element.botGeneratedGroup===true)
+        let tranformData = [...tranformData1, ...tranformData2];
+        for(let i=0;i<tranformData.length;i++){
+          let levelData159 = await level_Model.find({trackId:tranformData[i]._id},{__v:0,createdAt:0,updatedAt:0}).lean();
+          tranformData[i].levelData = levelData159
+        }
         return res.status(200).json({ status: "success", message: tranformData });
       } catch (err) {
         console.log(err.name);
@@ -72,9 +83,9 @@ module.exports = {
         for(let j=0;j<userTrackData.length;j++){
           let bar = await userTrackInfo_Model.findOne({creatorUserId:userData._id,trackId:userTrackData[j]._id}).lean();
           let foobar = await level_Model.find({trackId:userTrackData[j]._id}).lean()
-          userTrackData[j].trackProgress = bar.trackProgress===undefined?'':bar.trackProgress;
-          userTrackData[j].trackState = bar.trackState===undefined?'unattemped':bar.trackState;
-          userTrackData[j].isArchived = bar.isArchived===undefined?'':bar.isArchived;
+          userTrackData[j].trackProgress = bar===null?'':bar.trackProgress===undefined?'':bar.trackProgress;
+          userTrackData[j].trackState = bar===null?'unattemped': bar.trackState===undefined?'unattemped':bar.trackState;
+          userTrackData[j].isArchived = bar===null?'': bar.isArchived===undefined?'':bar.isArchived;
           userTrackData[j].totalLevelCount = foobar.length;
         }
         return res.status(200).json({ status: "success", message: userTrackData });
@@ -92,10 +103,6 @@ module.exports = {
     createTrack: async (req, res) => {
       try {
         let userData = req.user;
-        const getRandomInt = (max) => {
-          return Math.floor(Math.random() * max);
-        };
-        let randomNumber = getRandomInt(3);
         let data = {
           creatorUserId: userData._id,
           trackName: req.body.trackName,
@@ -105,11 +112,46 @@ module.exports = {
           skillTag: req.body.skillTag,
           description: req.body.description,
           organization: req.user.organization,
+          botGeneratedGroup:req.body.groupId===undefined?undefined:false  
         };
         let savedData = await track_Model.create(data);
         return res
           .status(201)
           .json({ status: "success", message: `successfully saved the data in db` });
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(200).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    createTrackUsingLearnerId: async (req, res) => {
+      try {
+        let userData = req.user;
+        let {learnerIds} = req.body   //taking arrays of user ids from user
+        let groupData = {
+          name:randomstring.generate({length: 16,charset: 'alphabetic'}),
+          employees: learnerIds,
+          organization: userData.organization,
+          description: 'this is generated by code',
+          createdBy: userData._id,
+        }
+        let savedGroupData = await group_Model.create(groupData);
+        let data = {
+          creatorUserId: userData._id,
+          trackName: req.body.trackName,
+          groupId: savedGroupData._id, 
+          groupName: req.body.groupName,
+          selectedTheme: req.body.selectedTheme,
+          skillTag: req.body.skillTag,
+          description: req.body.description,
+          organization: req.user.organization,
+          botGeneratedGroup:true
+        };
+        let savedData = await track_Model.create(data);
+        return res.status(201).json({ status: 201,success:true,data: `successfully saved the data in db` });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -133,6 +175,7 @@ module.exports = {
           skillTag: req.body.skillTag,
           description: req.body.description,
           organization: req.user.organization,
+          botGeneratedGroup:req.body.groupId===undefined?undefined:false
         };
         let updatedData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).update(data);
         if(updatedData.n===1 && updatedData.nModified===1 && updatedData.ok===1)
