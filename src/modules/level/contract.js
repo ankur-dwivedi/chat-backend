@@ -10,4 +10,5 @@ exports.createLevelContract = Joi.object({
   totalMinutes: Joi.number().allow(""),
   dueDate: Joi.date().allow(""),
   levelType: Joi.string().required(),
+  isLocked: Joi.boolean().allow(""),
 });

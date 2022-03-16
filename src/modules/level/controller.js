@@ -59,24 +59,26 @@ module.exports = {
 
           //calculate lock state
           let lockedState;
-          if (index == 0) lockedState = LOCKED_STATE.UNLOCKED;
-          else {
-            const previousLevel = levelData[index - 1];
-            const prevUserLevelData = await getLatestUserLevelByLevel({
-              levelId: previousLevel._id,
-              learnerId: req.user._id,
-            });
-            if (prevUserLevelData[0] && previousLevel.passingScore) {
-              if (prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS)
+          if (data.isLocked) {
+            if (index == 0) lockedState = LOCKED_STATE.UNLOCKED;
+            else {
+              const previousLevel = levelData[index - 1];
+              const prevUserLevelData = await getLatestUserLevelByLevel({
+                levelId: previousLevel._id,
+                learnerId: req.user._id,
+              });
+              if (prevUserLevelData[0] && previousLevel.passingScore) {
+                if (prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS)
+                  lockedState = LOCKED_STATE.UNLOCKED;
+                else lockedState = LOCKED_STATE.LOCKED;
+              } else if (
+                prevUserLevelData[0] &&
+                prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate
+              )
                 lockedState = LOCKED_STATE.UNLOCKED;
               else lockedState = LOCKED_STATE.LOCKED;
-            } else if (
-              prevUserLevelData[0] &&
-              prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate
-            )
-              lockedState = LOCKED_STATE.UNLOCKED;
-            else lockedState = LOCKED_STATE.LOCKED;
-          }
+            }
+          } else lockedState = LOCKED_STATE.UNLOCKED;
 
           if (userLevelData && userLevelData.length) {
             const score = userLevelData[0].levelScore;
@@ -135,9 +137,10 @@ module.exports = {
           dueDate: req.body.dueDate,
           levelType: req.body.levelType,
           organization: req.user.organization,
+          isLocked: req.body.isLocked,
         };
         await level_Model.create(data);
-        sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
+        // sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
         return res
           .status(201)
           .json({ status: "success", message: `successfully saved the data in db` });
