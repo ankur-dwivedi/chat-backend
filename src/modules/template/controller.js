@@ -193,11 +193,12 @@ exports.deleteTemplate = async (req, res) =>
 exports.uploadTemplateMedia = async (req, res) => {
   try {
     const { files } = req;
+    console.log({ files });
     if (!files.length) res.status(400).send("No file uploaded.");
     const finalbucket =
       `${process.env.AWS_BUCKET_NAME}` +
       "/" +
-      file`${req.query.org}` +
+      `${req.query.org}` +
       `${req.query.track}` +
       `${req.query.level}` +
       "/template";
