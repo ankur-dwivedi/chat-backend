@@ -19,6 +19,7 @@ const levelSchema = new Schema(
     dueDate: { type: Date, trim: true },
     levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM },
     organization: { type: Schema.Types.ObjectId, required: true, trim: true, ref: "organization" },
+    isLocked: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
