@@ -14,7 +14,7 @@ trackRouter.get("/getTracksWithoutUserCreatedGroup",withAuthUser,trackController
 trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser,trackController.post.createTrack);
 trackRouter.post("/createTrackUsingLearnerId",validate(createTrackUsingLearnerIdContract),withAuthUser,trackController.post.createTrackUsingLearnerId);
 
-trackRouter.put('/updateTrack',validate(createTrackContract),withAuthUser,trackController.put.updateTrack)
+trackRouter.put('/updateTrack/:trackId',validate(createTrackContract),withAuthUser,trackController.put.updateTrack)
 
 trackRouter.delete("/deleteTrack/:trackId",withAuthUser,trackController.delete.deleteTrack);
 // apis for lerner side
