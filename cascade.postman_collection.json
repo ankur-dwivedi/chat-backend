@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "20c55391-ab17-43c4-a04b-b4eb6d040d86",
+		"_postman_id": "18ea0d97-5e4f-4576-b375-ec8a79b3fd15",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1627,7 +1627,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDc0MzQyNjJ9.FN9YWsuGAYKb0ddVBEwuBpyYqmd41ultWlLSg4rvXuA",
 									"type": "string"
 								}
 							]
@@ -1636,7 +1636,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 2\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\"\n}",
+							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 2\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1731,6 +1731,47 @@
 								{
 									"key": "trackId",
 									"value": "621ab37f04d46bfeeb398d19"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get new unlocked level",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/level/new-unlocked?levelId=6216186448b6347f9735bb5a",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"level",
+								"new-unlocked"
+							],
+							"query": [
+								{
+									"key": "levelId",
+									"value": "6216186448b6347f9735bb5a"
 								}
 							]
 						}
