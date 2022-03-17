@@ -1296,7 +1296,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NDc1MzkzNzN9.wnhA531b8BlXFdnAba5nqaVRhm3vIaiK2JKB_tyxSF4",
 									"type": "string"
 								}
 							]
@@ -1313,12 +1313,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/template?levelId=6216186448b6347f9735bb5a",
+							"raw": "{{baseUrl}}/template/creator?levelId=6216186448b6347f9735bb5a",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"template"
+								"template",
+								"creator"
 							],
 							"query": [
 								{
