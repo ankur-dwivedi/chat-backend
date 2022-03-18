@@ -28,7 +28,6 @@ exports.getUsers = async (req, res) =>
   );
 
 exports.searchUser = async (req, res) => {
-  console.log({ ...req.query, organization: req.user.organization });
   return searchByEmp({ ...req.query, organization: req.user.organization })
     .then((user) =>
       res.send({

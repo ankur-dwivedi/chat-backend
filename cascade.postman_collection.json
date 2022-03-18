@@ -401,7 +401,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\":\"organization1\",\r\n    \"domain\":\"org1\"\r\n}",
+							"raw": "{\r\n    \"name\":\"organization2\",\r\n    \"domain\":\"org2\",\r\n    \"revenueScheme\":\"lite\",\r\n    \"licenseExpiryDate\":\"12/25/2022\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -797,7 +797,7 @@
 									"formdata": []
 								},
 								"url": {
-									"raw": "{{baseUrl}}/user/search?employeeId=em-1",
+									"raw": "{{baseUrl}}/user/search?employeeId=e",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -807,13 +807,8 @@
 									],
 									"query": [
 										{
-											"key": "name",
-											"value": "abc1232",
-											"disabled": true
-										},
-										{
 											"key": "employeeId",
-											"value": "em-1"
+											"value": "e"
 										}
 									]
 								}
@@ -1020,7 +1015,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"type\": \"mcq-text\",\r\n  \"levelId\": \"6214c0ae6de8d66209bc02b1\",\r\n  \"trackId\": \"621ab37f04d46bfeeb398d19\",\r\n  \"organization\": \"61b064bee20da142b8dea48c\",\r\n  \"question\":{\r\n      \"value\":\"What is Data..?\",\r\n      \"type\":\"text\"\r\n  },\r\n  \"options\": [{\r\n      \"value\":\"Option 1\",\r\n      \"type\":\"text\"\r\n  },{\r\n      \"value\":\"Option 2\",\r\n      \"type\":\"text\"\r\n  }],\r\n  \"answer\": [\"A\"],\r\n  \"importance\":1,\r\n  \"information\":{\r\n    \"text\":\"template informaaatio\",\r\n    \"media\":\"https://media-url\",\r\n    \"mediaType\": \"mp4\"\r\n  },\r\n  \"revealOption\":true,\r\n  \"templateOrder\":1\r\n}",
+							"raw": "{\r\n    \"type\": \"mcq-media\",\r\n  \"levelId\": \"6214c0ae6de8d66209bc02b1\",\r\n  \"trackId\": \"621ab37f04d46bfeeb398d19\",\r\n  \"organization\": \"61b064bee20da142b8dea48c\",\r\n  \"question\":{\r\n      \"value\":\"What is Data..?\",\r\n      \"type\":\"text\"\r\n  },\r\n  \"media\":{\r\n      \"value\":\"http://media\",\r\n      \"type\":\"jpg\"\r\n  },\r\n  \"options\": [{\r\n      \"value\":\"Option 1\",\r\n      \"type\":\"text\"\r\n  },{\r\n      \"value\":\"Option 2\",\r\n      \"type\":\"text\"\r\n  }],\r\n  \"answer\": [\"A\"],\r\n  \"importance\":1,\r\n  \"information\":{\r\n    \"text\":\"template informaaatio\",\r\n    \"media\":\"https://media-url\",\r\n    \"mediaType\": \"mp4\"\r\n  },\r\n  \"revealOption\":true,\r\n  \"templateOrder\":21\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1219,7 +1214,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"templateId\": \"61fb21d63bc02c5322e34347\",\n    \"feedback\":\"answer is not correct\"\n}",
+							"raw": "{\n    \"templateId\": \"61fb21d63bc02c5322e34347\",\n    \"feedback\":\"answer is not correct\",\n    \"feedbackType\":\"issue\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1296,7 +1291,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDYyOTk3NTJ9.VOsLCbFHPJU-_SXQCUud88DcPh5zfLTYCyYr0-1C-QU",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NDc1MzkzNzN9.wnhA531b8BlXFdnAba5nqaVRhm3vIaiK2JKB_tyxSF4",
 									"type": "string"
 								}
 							]
@@ -1313,12 +1308,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/template?levelId=6216186448b6347f9735bb5a",
+							"raw": "{{baseUrl}}/template/creator?levelId=6216186448b6347f9735bb5a",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
-								"template"
+								"template",
+								"creator"
 							],
 							"query": [
 								{

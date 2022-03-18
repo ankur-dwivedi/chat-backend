@@ -9,6 +9,10 @@ exports.createContract = Joi.object({
     value: Joi.string().required(),
     type: Joi.string().required(),
   }),
+  media: Joi.object({
+    value: Joi.string().required(),
+    type: Joi.string().required(),
+  }).allow(""),
   options: Joi.array().items({
     value: Joi.string().required(),
     type: Joi.string().required(),
@@ -31,6 +35,7 @@ exports.deleteContract = Joi.object({
 exports.createFeedbackContract = Joi.object({
   templateId: Joi.string().required(),
   feedback: Joi.string().required(),
+  feedbackType: Joi.string().required(),
 });
 
 exports.setTemplateOrder = Joi.object({
