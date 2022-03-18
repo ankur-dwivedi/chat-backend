@@ -7,6 +7,7 @@ const OrganizationSchema = new Schema(
     logo: { type: String },
     domain: { type: String, required: true, unique: true },
     revenueScheme: { type: String, trim: true, enum: REVENUE_SCHEME_ENUM },
+    licenseExpiryDate: { type: Date },
   },
   { timestamps: true }
 );

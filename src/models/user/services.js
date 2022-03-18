@@ -34,6 +34,7 @@ exports.searchByEmp = (query) =>
     ],
   })
     .select(["employeeId", "name"])
+    .limit(10)
     .then((response) => response);
 
 exports.getByEmpIdOrName = async (query) =>

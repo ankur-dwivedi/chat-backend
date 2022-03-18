@@ -11,6 +11,7 @@ const TemplateSchema = new Schema(
     levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM }, // added to get it in journey hook
     organization: { type: Schema.Types.ObjectId, required: true, trim: true, ref: "organization" },
     question: { type: QuestionSchema },
+    media: { type: QuestionSchema },
     options: { type: [QuestionSchema] },
     answer: { type: [String] },
     importance: { type: Number },
