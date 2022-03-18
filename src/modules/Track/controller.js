@@ -73,6 +73,7 @@ module.exports = {
     },
     fetchTrackAssignedToLearner: async (req, res) => {
       try {
+        let {archived} = req.query;
         let userData = req.user;
         let groupData = await group_Model.find({employees:{$in:[userData._id]}},{_id:1}).lean()
         let userTrackData=[];
@@ -81,7 +82,7 @@ module.exports = {
           foo === null ? '' : userTrackData.push(foo)
         }
         for(let j=0;j<userTrackData.length;j++){
-          let bar = await userTrackInfo_Model.findOne({creatorUserId:userData._id,trackId:userTrackData[j]._id}).lean();
+          let bar = await userTrackInfo_Model.findOne({creatorUserId:userData._id,trackId:userTrackData[j]._id,isArchived:archived}).lean();
           let foobar = await level_Model.find({trackId:userTrackData[j]._id}).lean()
           userTrackData[j].trackProgress = bar===null?'':bar.trackProgress===undefined?'':bar.trackProgress;
           userTrackData[j].trackState = bar===null?'unattemped': bar.trackState===undefined?'unattemped':bar.trackState;
