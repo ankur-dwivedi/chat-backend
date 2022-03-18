@@ -50,7 +50,7 @@ module.exports = {
           .find({ trackId, levelState: LEVEL_STATE.LAUNCH })
           .populate({
             path: "trackId",
-            select: "selectedTheme",
+            select: "selectedTheme trackName description",
           });
         if (levelData === null) {
           return res.status(201).json({ status: "success", message: `no Data in db` });
