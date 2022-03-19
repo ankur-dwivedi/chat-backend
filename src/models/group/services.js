@@ -3,7 +3,7 @@ const Group = require(".");
 
 exports.get = async (query) =>
   query.createdBy
-    ? Group.find({ createdBy: query.createdBy }, "")
+    ? Group.find({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] }, "")
         .select(["_id", "name"])
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
@@ -16,7 +16,7 @@ exports.get = async (query) =>
         .catch((error) => error);
 
 exports.create = (groupData) =>
-  Group.create({ ...groupData, createdAt: new Date() })
+  Group.create({ ...groupData, createdAt: new Date() })``
     .then((response) => response)
     .catch((error) => {
       console.error(error);

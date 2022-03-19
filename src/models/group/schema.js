@@ -9,6 +9,7 @@ const GroupSchema = new Schema(
     description: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: "user", required: true },
     properties: { type: [PropertiesSchema] },
+    botGeneratedGroup: { type: Boolean, trim: true, default: false },
   },
   { timestamps: true }
 );
