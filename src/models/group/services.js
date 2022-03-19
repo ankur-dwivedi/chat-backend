@@ -4,7 +4,7 @@ const Group = require(".");
 exports.get = async (query) =>
   query.createdBy
     ? Group.find({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] }, "")
-        .select(["_id", "name"])
+        .select(["_id", "name", "description"])
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
     : query.id
