@@ -87,7 +87,7 @@ module.exports = {
     },
     fetchTrackAssignedToLearner: async (req, res) => {
       try {
-        let { archived } = req.query;
+        let archived = req.query.archived==='true'?true:req.query.archived==='false'?false:'';
         let userData = req.user;
         let groupData = await group_Model
           .find({ employees: { $in: [userData._id] } }, { _id: 1 })
@@ -95,8 +95,8 @@ module.exports = {
         let userTrackData = [];
         for (let i = 0; i < groupData.length; i++) {
           let foo = await track_Model
-            .findOne({ groupId: groupData[i]._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
-            .populate("creatorUserId", "-__v -createdAt -updatedAt -lastSession")
+            .findOne({ groupId:{$in:[groupData[i]._id ]}}, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .populate({path:'creatorUserId',select:'name employeeId'})
             .lean();
           foo === null ? "" : userTrackData.push(foo);
         }
@@ -105,23 +105,20 @@ module.exports = {
             .findOne({
               creatorUserId: userData._id,
               trackId: userTrackData[j]._id,
-              isArchived: archived,
             })
             .lean();
           let foobar = await level_Model.find({ trackId: userTrackData[j]._id }).lean();
-          userTrackData[j].trackProgress =
-            bar === null ? "" : bar.trackProgress === undefined ? "" : bar.trackProgress;
-          userTrackData[j].trackState =
-            bar === null
-              ? "unattemped"
-              : bar.trackState === undefined
-              ? "unattemped"
-              : bar.trackState;
-          userTrackData[j].isArchived =
-            bar === null ? "" : bar.isArchived === undefined ? "" : bar.isArchived;
+          bar === null ? "" :userTrackData[j].trackProgress =  bar.trackProgress === undefined ? "" : bar.trackProgress;
+          bar === null ? "unattemped" :userTrackData[j].trackState = bar.trackState === undefined ? "unattemped" : bar.trackState;
+          bar === null ? false :userTrackData[j].isArchived =  bar.isArchived === undefined ? false : bar.isArchived;
           userTrackData[j].totalLevelCount = foobar.length;
         }
-        return res.status(200).json({ status: "success", message: userTrackData });
+        if(archived===''){
+          return res.status(200).json({ status: 200,success:true,data:userTrackData});
+        }else{
+          convertedUserTrack = userTrackData.filter(element=>element.isArchived===archived)
+          return res.status(200).json({ status: 200,success:true,data:convertedUserTrack});
+        }
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
