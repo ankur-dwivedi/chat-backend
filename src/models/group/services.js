@@ -3,11 +3,19 @@ const Group = require(".");
 
 exports.get = async (query) =>
   query.createdBy
-    ? Group.find({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] }, "")
-        .select(["_id", "name", "description"])
-        .then((response) => (response ? response : generateError()))
-        .catch((error) => error)
-    : query.id
+    ? Group.aggregate()
+        .match({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] })
+        .project({
+          _id: 1,
+          name: 1,
+          description: 1,
+          employees: { $size: "$employees" },
+        })
+    : // ? Group.find({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] }, "")
+    //     .select(["_id", "name", "description", "employees"])
+    //     .then((response) => (response ? response : generateError()))
+    //     .catch((error) => error)
+    query.id
     ? Group.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
