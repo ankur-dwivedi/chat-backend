@@ -5,7 +5,7 @@ const levelSchema = new Schema(
   {
     creatorUserId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
     trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track" },
-    levelName: { type: String, trim: true, required: true },
+    levelName: { type: String, trim: true, required: true, unique: true },
     levelDescription: { type: String, trim: true, required: true },
     levelState: {
       type: String,

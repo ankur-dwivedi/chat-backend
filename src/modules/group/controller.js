@@ -34,8 +34,13 @@ exports.create = async (req, res) => {
       data: { group },
     });
   } catch (error) {
-    console.log(error);
-    res.status(400).send({ message: `group already exists` });
+    console.log(error.message);
+    if (error.message.indexOf("name_1") !== -1)
+      return res.status(200).json({
+        status: "failed",
+        message: `Group Name needs to be unique`,
+      });
+    return res.status(400).send({ message: `Group already exists` });
   }
 };
 
@@ -77,6 +82,11 @@ exports.createGroupEmployee = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    if (error.message.indexOf("name_1") !== -1)
+      return res.status(200).json({
+        status: "failed",
+        message: `Group Name needs to be unique`,
+      });
     res.status(400).send({ message: `group already exists` });
   }
 };
@@ -109,6 +119,11 @@ exports.createGpByEmpList = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    if (error.message.indexOf("name_1") !== -1)
+      return res.status(200).json({
+        status: "failed",
+        message: `Group Name needs to be unique`,
+      });
     res.status(400).send({ message: `group already exists` });
   }
 };

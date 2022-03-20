@@ -11,11 +11,7 @@ exports.get = async (query) =>
           description: 1,
           employees: { $size: "$employees" },
         })
-    : // ? Group.find({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] }, "")
-    //     .select(["_id", "name", "description", "employees"])
-    //     .then((response) => (response ? response : generateError()))
-    //     .catch((error) => error)
-    query.id
+    : query.id
     ? Group.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
@@ -24,12 +20,7 @@ exports.get = async (query) =>
         .catch((error) => error);
 
 exports.create = (groupData) =>
-  Group.create({ ...groupData, createdAt: new Date() })``
-    .then((response) => response)
-    .catch((error) => {
-      console.error(error);
-      return error;
-    });
+  Group.create({ ...groupData, createdAt: new Date() }).then((response) => response);
 
 exports.findGroups = (query) =>
   Group.find({ createdBy: query.createdBy })

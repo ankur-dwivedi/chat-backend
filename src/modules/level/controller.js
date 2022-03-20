@@ -52,9 +52,12 @@ module.exports = {
             path: "trackId",
             select: "selectedTheme trackName description",
           });
-        if (levelData === null) {
-          return res.status(201).json({ status: "success", message: `no Data in db` });
-        }
+        if (levelData === null || !levelData.length)
+          return res.status(201).json({
+            status: "failed",
+            message: `Track Not Found (Please check the Track ID)`,
+          });
+
         const updatedLevlelData = levelData.map(async (data, index) => {
           const userLevelData = await getLatestUserLevelByLevel({
             levelId: data._id,
@@ -255,7 +258,12 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
+        if (err.message.indexOf("levelName_1") !== -1)
+          return res.status(200).json({
+            status: "failed",
+            message: `Level Name need to be unique`,
+          });
+        return res.status(200).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,
         });

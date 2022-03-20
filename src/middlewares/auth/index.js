@@ -70,6 +70,10 @@ const assocAuthLearner = (req, res, next) =>
           } else return res.status(401).send({ message: "User not Authorised for template" });
         } else if (req.query.levelId) {
           const level = await Level.findById(req.query.levelId);
+          if (!level)
+            return res
+              .status(204)
+              .send({ message: " Level Not Found (Please check the Level ID)" });
           const track = await Track.findById(level.trackId);
           const filteredArray = track.groupId.filter(function (n) {
             return user.groups.indexOf(n) !== -1;

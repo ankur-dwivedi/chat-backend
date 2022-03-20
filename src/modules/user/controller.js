@@ -68,7 +68,7 @@ exports.login = (req, res, next) => {
         : generateError()
     )
     .catch((err) => {
-      res.status(400).send({ message: `invalid employeeId or password` });
+      res.status(400).send({ message: `Invalid Employee ID or Password` });
     });
 };
 
@@ -93,17 +93,23 @@ exports.update = async (req, res) => {
 const sendOtp = (phone, message) => message;
 
 exports.requestOtp = async ({ body }, res) => {
-  const { employeeId } = body;
-  const otp = generateOtp();
-  const message = `your otp is ${otp}`;
-  const User = await get({ employeeId: body.employeeId });
-  const result = await update(
-    { employeeId },
-    { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } }
-  );
-  if (User.email) await sendMail(otp, User.email, "");
-  else sendOtp(User.phoneNumber, message);
-  return res.send(message);
+  try {
+    const { employeeId } = body;
+    const otp = generateOtp();
+    const message = `your otp is ${otp}`;
+    const User = await get({ employeeId: body.employeeId });
+    if (User && User.password)
+      generateError("This ID is already registered, please go to login or forgot password");
+    await update(
+      { employeeId },
+      { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } }
+    );
+    if (User.email) await sendMail(otp, User.email, "");
+    else sendOtp(User.phoneNumber, message);
+    return res.send(message);
+  } catch (err) {
+    res.status(400).send({ message: err.message });
+  }
 };
 
 exports.verifyOtp = async ({ body }, res) =>
@@ -113,7 +119,7 @@ exports.verifyOtp = async ({ body }, res) =>
     const currentDate = new Date();
     const difference = expiry - currentDate.getTime();
     const status =
-      body.otp === savedOtp ? (difference > 0 ? "Success" : "Otp has expired") : "Otp doesnt match";
+      body.otp === savedOtp ? (difference > 0 ? "Success" : "Otp has Expired") : "Invalid OTP";
     status === "Success"
       ? res.send({
           status: 200,
@@ -138,7 +144,7 @@ exports.forgetPassword = async (req, res) => {
     const mail = await sendMail(0, user.email, generateAuthToken(user._id));
     res.send({ message: "link sed to registered email" });
   } catch (error) {
-    res.status(statuscode).send({ error: error.message });
+    res.status(400).send({ error: error.message });
   }
   getOrgEmployee;
 };
@@ -199,7 +205,7 @@ exports.analytics = async (req, res) => {
       data: data,
     });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(204).send({ error: error.message });
   }
 };
 
@@ -213,6 +219,6 @@ exports.analyticsEmpData = async (req, res) => {
       data: list,
     });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(204).send({ error: error.message });
   }
 };

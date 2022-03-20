@@ -15,7 +15,7 @@ exports.get = async (query) =>
       }).then((response) => (response ? response : generateError("invalid employeeId or password")))
     : query.employeeId
     ? User.findOne({ employeeId: query.employeeId }).then((response) =>
-        response ? response : generateError("invalid employeeId or password")
+        response ? response : generateError("Invalid Employee ID")
       )
     : User.find()
         .then((response) => response)
