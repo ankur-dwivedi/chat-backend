@@ -23,7 +23,7 @@ exports.createContract = Joi.object({
     text: Joi.string(),
     media: Joi.string(),
     mediaType: Joi.string(),
-  }),
+  }).allow(""),
   revealOption: Joi.boolean(),
   templateOrder: Joi.number().min(0),
 });
