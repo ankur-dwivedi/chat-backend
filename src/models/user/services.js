@@ -21,6 +21,24 @@ exports.get = async (query) =>
         .then((response) => response)
         .catch((error) => error);
 
+exports.getUserWithOrg = ({ userId }) =>
+  User.findById(userId)
+    .populate({
+      path: "organization",
+      select: "logo name",
+    })
+    .select([
+      "role",
+      "lastSession",
+      "_id",
+      "name",
+      "email",
+      "employeeId",
+      "phoneNumber",
+      "organization",
+    ])
+    .then((user) => user);
+
 exports.searchByEmp = (query) =>
   User.find({
     $and: [

@@ -5,6 +5,7 @@ const {
   deleteUser,
   getGroupEmployee,
   searchByEmp,
+  getUserWithOrg,
 } = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
@@ -19,7 +20,7 @@ const { OTP_EXPIRY } = require("../../models/user/constants");
 const { sendMail } = require("../user/util");
 
 exports.getUsers = async (req, res) =>
-  get(req.query).then((user) =>
+  getUserWithOrg({ userId: req.user._id }).then((user) =>
     res.send({
       status: 200,
       success: true,

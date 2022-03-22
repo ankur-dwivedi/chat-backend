@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const connectToDB = () =>
   mongoose
-    .connect("mongodb+srv://admin:admin@cluster0.3vv6n.mongodb.net/cascade", {
+    .connect(process.env.MONGO_URL, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       useFindAndModify: false,
