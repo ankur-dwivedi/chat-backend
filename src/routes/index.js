@@ -7,7 +7,8 @@ const organizationRouter = require("../modules/organization/router.js");
 const groupRouter = require("../modules/group/router.js");
 const templateRouter = require("../modules/template/router.js");
 const filterDataRouter = require("../modules/filterData/router.js");
-const userTrackRouter = require("../modules/userTrack/router.js")
+const userTrackRouter = require("../modules/userTrack/router.js");
+const mailingListRouter = require("../modules/mailingList/router.js");
 
 const router = Router();
 
@@ -22,5 +23,6 @@ router.use("/template", templateRouter);
 router.use("/filter-data", filterDataRouter);
 router.use("/level", levelRouter);
 router.use("/userTrack", userTrackRouter);
+router.use("/mailingList", mailingListRouter);
 
 module.exports = router;
