@@ -5,7 +5,6 @@ const { LEVEL_TYPE_ENUM } = require("../level/constants");
 const journeySchema = new Schema(
   {
     learnerId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
-    groupId: { type: Schema.Types.ObjectId, trim: true, ref: "group", required: true },
     trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track", required: true },
     levelId: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },
     levelType: { type: String, trim: true, required: true, enum: LEVEL_TYPE_ENUM }, // added to get it in hook

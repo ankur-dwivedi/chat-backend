@@ -20,7 +20,6 @@ const checkIfFirstAttempt = async ({ levelId, template }) => {
 const saveJourneyData = async ({
   template,
   user,
-  groupId,
   submittedAnswer,
   timeSpend,
   anyIssue,
@@ -28,7 +27,6 @@ const saveJourneyData = async ({
 }) => {
   const data = {
     learnerId: user._id,
-    groupId: groupId,
     trackId: template.trackId,
     levelId: template.levelId,
     submittedAnswer: submittedAnswer,
@@ -84,7 +82,6 @@ module.exports = {
           saveData = await saveJourneyData({
             template,
             user: req.user,
-            groupId: req.body.groupId,
             submittedAnswer: req.body.submittedAnswer,
             timeSpend: req.body.timeSpend,
             anyIssue: req.body.anyIssue,
@@ -99,7 +96,6 @@ module.exports = {
           saveData = await saveJourneyData({
             template,
             user: req.user,
-            groupId: req.body.groupId,
             submittedAnswer: req.body.submittedAnswer,
             timeSpend: req.body.timeSpend,
             anyIssue: req.body.anyIssue,

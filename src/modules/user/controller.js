@@ -147,7 +147,7 @@ exports.forgetPassword = async (req, res) => {
       await sendMail(0, user.email, generateAuthToken(user._id), user.organization.domain);
     else sendOtp(user.phoneNumber, "message");
 
-    res.send({ message: "link sed to registered email" });
+    res.send({ message: "link sent to registered email" });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
