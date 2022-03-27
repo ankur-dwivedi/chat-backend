@@ -11,7 +11,7 @@ const feedback = new Schema(
     learnerId: { type: Schema.Types.ObjectId, trim: true, ref: "user", required: true },
     levelId: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },
     templateId: { type: Schema.Types.ObjectId, trim: true, ref: "template", required: true },
-    feedback: { type: String, trim: true, required: true },
+    feedback: { type: [{ type: String, trim: true }], required: true },
     feedbackType: { type: String, trim: true, required: true, enum: FEEDBACK_TYPE_ENUM },
   },
   { timestamps: true }

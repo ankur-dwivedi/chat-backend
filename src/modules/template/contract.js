@@ -34,7 +34,7 @@ exports.deleteContract = Joi.object({
 
 exports.createFeedbackContract = Joi.object({
   templateId: Joi.string().required(),
-  feedback: Joi.string().required(),
+  feedback: Joi.array().items(Joi.string()).required(),
   feedbackType: Joi.string().required(),
 });
 

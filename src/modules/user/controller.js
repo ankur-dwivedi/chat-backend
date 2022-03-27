@@ -99,7 +99,7 @@ exports.requestOtp = async ({ body }, res) => {
   try {
     const { employeeId, organization } = body;
     const otp = generateOtp();
-    const message = `your otp is ${otp}`;
+    const message = `Otp sent`;
     const User = await get({ employeeId, organization });
     if (User && User.password)
       generateError("This ID is already registered, please go to login or forgot password");
