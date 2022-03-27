@@ -1,7 +1,6 @@
 const Joi = require("joi");
 
 exports.registerUserContract = Joi.object({
-  employeeId: Joi.string(),
   phoneNumber: Joi.number().required(),
   email: Joi.string().required(),
   name: Joi.string().required(),
@@ -20,10 +19,12 @@ exports.registerUserContract = Joi.object({
 exports.loginContract = Joi.object({
   employeeId: Joi.string().required(),
   password: Joi.string().required(),
+  organization: Joi.string().required(),
 });
 
 exports.reqOtpForgetPassContract = Joi.object({
   employeeId: Joi.string().required(),
+  organization: Joi.string().required(),
 });
 
 exports.setSessionContract = Joi.object({
@@ -32,12 +33,12 @@ exports.setSessionContract = Joi.object({
 
 exports.verifyOtpContract = Joi.object({
   employeeId: Joi.string().required(),
+  organization: Joi.string().required(),
   otp: Joi.number().required(),
 });
 
 exports.editUserContract = Joi.object({
   id: Joi.string().required(),
-  employeeId: Joi.string().required(),
   employeeId: Joi.string().allow(""),
   phoneNumber: Joi.number(),
   email: Joi.string(),

@@ -9,17 +9,32 @@ exports.get = async (query) =>
     ? User.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
-    : query.password && query.employeeId
+    : query.password && query.employeeId && query.organization
+    ? User.findOne(
+        {
+          $and: [
+            { employeeId: query.employeeId },
+            { password: query.password },
+            { organization: query.organization },
+          ],
+        },
+        { otp: 0, __v: 0, password: 0 }
+      ).then((response) => (response ? response : generateError("invalid employeeId or password")))
+    : query.employeeId && query.organization
     ? User.findOne({
-        $and: [{ employeeId: query.employeeId }, { password: query.password }],
-      }).then((response) => (response ? response : generateError("invalid employeeId or password")))
-    : query.employeeId
-    ? User.findOne({ employeeId: query.employeeId }).then((response) =>
-        response ? response : generateError("Invalid Employee ID")
-      )
+        $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
+      }).then((response) => (response ? response : generateError("Invalid Employee ID")))
     : User.find()
         .then((response) => response)
         .catch((error) => error);
+
+exports.getUserAndOrgByEmpId = ({ employeeId, organization }) =>
+  User.findOne({ employeeId, organization })
+    .populate({
+      path: "organization",
+      select: "domain",
+    })
+    .then((response) => (response ? response : generateError("Invalid Employee ID")));
 
 exports.getUserWithOrg = ({ userId }) =>
   User.findById(userId)
@@ -44,8 +59,18 @@ exports.searchByEmp = (query) =>
     $and: [
       {
         $or: [
-          { employeeId: { $regex: query.employeeId + ".*" } },
-          { name: { $regex: query.employeeId + ".*" } },
+          {
+            $and: [
+              { employeeId: { $regex: query.employeeId + ".*" } },
+              { organization: query.organization },
+            ],
+          },
+          {
+            $and: [
+              { name: { $regex: query.employeeId + ".*" } },
+              { organization: query.organization },
+            ],
+          },
         ],
       },
       { organization: query.organization },
@@ -54,18 +79,6 @@ exports.searchByEmp = (query) =>
     .select(["employeeId", "name"])
     .limit(10)
     .then((response) => response);
-
-exports.getByEmpIdOrName = async (query) =>
-  query.employeeId
-    ? User.findOne({
-        $and: [
-          { employeeId: query.employeeId },
-          { organization: Types.ObjectId(query.organization) },
-        ],
-      }).then((response) => (response ? response : generateError()))
-    : User.findOne({
-        $and: [{ employeeId: query.name }, { organization: Types.ObjectId(query.organization) }],
-      }).then((response) => (response ? response : generateError()));
 
 exports.getGroupEmployee = (organization, property) =>
   User.find({ ...createGroupFilterQuery(organization, property) })
