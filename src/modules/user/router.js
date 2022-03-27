@@ -11,7 +11,7 @@ const {
 } = require("./controller");
 const { requestOtp, verifyOtp, forgetPassword, resetpass, searchUser } = require("./controller");
 const { getFilteredEmp } = require("./controller");
-const { withAuthUser } = require("../../middlewares/auth");
+const { withAuthUser, withNewUser } = require("../../middlewares/auth");
 const { validate } = require("../../middlewares/schema");
 
 const {
@@ -41,5 +41,6 @@ userRouter.get("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilt
 userRouter.patch("/set-session", withAuthUser, validate(setSessionContract), setSession);
 userRouter.get("/analytics", withAuthUser, analytics);
 userRouter.get("/analytics-list", withAuthUser, analyticsEmpData);
+userRouter.post("/create-access-token", withNewUser);
 
 module.exports = userRouter;

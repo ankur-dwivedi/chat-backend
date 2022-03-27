@@ -11,10 +11,11 @@ const {
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
 const {
-  generateAuthToken,
+  generateAccessToken,
   generateOtp,
   analyicsData,
   analyicslist,
+  generateRefreshToken,
 } = require("../../utils/general");
 const md5 = require("md5");
 const { OTP_EXPIRY } = require("../../models/user/constants");
@@ -66,7 +67,8 @@ exports.login = (req, res, next) => {
             status: 200,
             success: true,
             data: user,
-            token: generateAuthToken(user._id),
+            refreshToken: generateRefreshToken(user._id),
+            accessToken: generateAccessToken(user._id),
           })
         : generateError()
     )
@@ -129,7 +131,8 @@ exports.verifyOtp = async ({ body }, res) =>
           success: true,
           data: {
             ...JSON.parse(JSON.stringify(user)),
-            token: generateAuthToken(user._id),
+            refreshToken: generateRefreshToken(user._id),
+            accessToken: generateAccessToken(user._id),
           },
         })
       : res.status(400).send({
@@ -144,7 +147,7 @@ exports.forgetPassword = async (req, res) => {
     const { employeeId, organization } = req.body;
     const user = await getUserAndOrgByEmpId({ employeeId, organization });
     if (user.email)
-      await sendMail(0, user.email, generateAuthToken(user._id), user.organization.domain);
+      await sendMail(0, user.email, generateAccessToken(user._id), user.organization.domain);
     else sendOtp(user.phoneNumber, "message");
 
     res.send({ message: "link sent to registered email" });

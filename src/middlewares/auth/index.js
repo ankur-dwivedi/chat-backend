@@ -3,40 +3,30 @@ const User = require("../../models/user");
 const Level = require("../../models/level");
 const Template = require("../../models/template");
 const Track = require("../../models/Track");
-const { createUnauthorizedError } = require("../../utils/general");
+const { createUnauthorizedError, generateAccessToken } = require("../../utils/general");
 const { ROLE } = require("../../models/user/constants");
 
-const verifyAuthToken = expressJwt({
-  secret: "testing",
+const verifyAccessToken = expressJwt({
+  secret: process.env.ACCESS_TOKEN_SECRET,
   algorithms: ["HS256"],
 });
 
-//-----added by rahul
-const saveLastRoleStatus = async (req, res, next) => {
-  let lastSession = req.body.lastSession;
-  let userData = req.user;
-  let fetchUserData = await User.findOne({ _id: userData._id }).lean();
-  if (fetchUserData === null) {
-    return res.status(200).json({
-      status: "failed",
-      message: "please send a valid token / user data not present in db",
-    });
-  } else {
-    if (ROLE_ENUM.includes(lastSession)) {
-      fetchUserData.lastSession = lastSession;
-      let updatedData = await User.findOne({ _id: userData._id }).updateOne(fetchUserData);
-      if (updatedData.n == 1 && updatedData.ok == 1 && updatedData.nModified == 1) {
-        return next();
+const verifyRefreshToken = expressJwt({
+  secret: process.env.REFRESH_TOKEN_SECRET,
+  algorithms: ["HS256"],
+});
+
+const refreshAuthUser = (req, res, next) =>
+  User.findById(req.user.userId)
+    .then((user) => {
+      if (!user) {
+        res.send(createUnauthorizedError("User not found"));
+      } else {
+        req.user = user;
+        res.send({ status: 200, success: true, accessToken: generateAccessToken(user._id) });
       }
-      return res.status(200).json({
-        status: "failed",
-        message: "something went wrong while updating db please contact admin",
-      });
-    }
-    return res.status(200).json({ status: "failed", message: "please send a valid user role" });
-  }
-};
-//------end
+    })
+    .catch((error) => res.send(createUnauthorizedError(error)));
 
 const assocAuthUser = (req, res, next) =>
   User.findById(req.user.userId)
@@ -90,18 +80,6 @@ const assocAuthLearner = (req, res, next) =>
       res.send(createUnauthorizedError(error));
     });
 
-const assocAuthOtherUser = (req, res, next) =>
-  User.findById(req.user.userId)
-    .then((user) => {
-      if (!user) {
-        res.send(createUnauthorizedError("User not found"));
-      } else {
-        req.user = user;
-        next();
-      }
-    })
-    .catch((error) => res.send(createUnauthorizedError(error)));
-
 const isAdmin = (req, res, next) =>
   User.findById(req.user.userId)
     .then(async (user) => {
@@ -122,24 +100,10 @@ const isAdmin = (req, res, next) =>
     })
     .catch((error) => res.send(createUnauthorizedError(error)));
 
-/**
- * withAuthUser :: [Middleware]
- * Verify auth token and assoc user document to request
- */
-const withAuthUser = [verifyAuthToken, assocAuthUser];
-
-/**
- * withAdminAuthUser :: [Middleware]
- * Verify auth token and check user role
- */
-const withAdminAuthUser = [verifyAuthToken, isAdmin];
-
-/**
- * withOptionalAuthUser :: [Middleware]
- * Get user object if exists - other ways assoc empty object
- */
-
-const withAuthLearner = [verifyAuthToken, assocAuthLearner];
+const withAuthUser = [verifyAccessToken, assocAuthUser];
+const withAdminAuthUser = [verifyAccessToken, isAdmin];
+const withAuthLearner = [verifyAccessToken, assocAuthLearner];
+const withNewUser = [verifyRefreshToken, refreshAuthUser];
 
 const withOptionalAuthUser = [
   ...withAuthUser,
@@ -154,12 +118,12 @@ const withOptionalAuthUser = [
 ];
 
 module.exports = {
-  verifyAuthToken,
+  verifyAccessToken,
   assocAuthUser,
   isAdmin,
   withAuthUser,
   withAdminAuthUser,
   withOptionalAuthUser,
-  saveLastRoleStatus,
   withAuthLearner,
+  withNewUser,
 };

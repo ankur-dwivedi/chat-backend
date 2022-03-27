@@ -10,3 +10,7 @@ sudo docker cp mymongodb:/backup/ backup/
 docker cp backup/ mymongodb:/backup_restore
 
 mongorestore -d cascade /backup_restore/cascade/
+
+docker exec -it mybackend bash
+
+k1ll 1
