@@ -134,7 +134,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"password\":\"ankur\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"password\":\"ankur\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -161,7 +161,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"em-12\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -188,7 +188,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"otp\":147006\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\",\r\n    \"otp\":147006\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -252,7 +252,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"em-12\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -384,6 +384,43 @@
 							"path": [
 								"user",
 								"analytics-list"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create access token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg0MjE2NDcsImV4cCI6MTY3OTk3OTI0N30.4qW-AkC2EK2s3nS8f6HG82S__4BYSKANlaTbUiP_RC4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/create-access-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"create-access-token"
 							]
 						}
 					},
@@ -1140,7 +1177,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"templateId\": \"61fb21d63bc02c5322e34347\",\n    \"groupId\":\"61bf814dc93b593384d3b4a3\",\n    \"submittedAnswer\":\"A\",\n    \"timeSpend\":1\n}",
+							"raw": "{\n    \"templateId\": \"61fb21d63bc02c5322e34347\",\n    \"submittedAnswer\":\"A\",\n    \"timeSpend\":1\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1214,7 +1251,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"templateId\": \"61fb21d63bc02c5322e34347\",\n    \"feedback\":\"answer is not correct\",\n    \"feedbackType\":\"issue\"\n}",
+							"raw": "{\n    \"templateId\": \"61fb21d63bc02c5322e34347\",\n    \"feedback\":[\"feedback 1\",\"feedback 2\"],\n    \"feedbackType\":\"issue\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
