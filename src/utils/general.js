@@ -11,7 +11,7 @@ const { frequencyData, passFailData } = require("./constants");
 
 exports.generateAccessToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1h",
+    expiresIn: "1d",
   });
 
 exports.generateRefreshToken = (userId) =>
