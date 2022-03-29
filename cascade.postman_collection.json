@@ -1399,6 +1399,43 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "update template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg1OTY3ODUsImV4cCI6MTY0ODYzMjc4NX0.cJViwtZ8sKmybWLRDrI4_k1N4C7O5r1kAsFBi7cFiAA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"61fb21d63bc02c5322e34347\",\r\n    \"levelId\": \"6214c0ae6de8d66209bc02b1\",\r\n    \"answer\": [\r\n        \"A\"\r\n    ],\r\n    \"type\": \"mcq-text\",\r\n    \"question\": {\r\n        \"value\": \"What is Data1..?\",\r\n        \"type\": \"text\"\r\n    },\r\n    \"options\": [\r\n        {\r\n            \"value\": \"Option 1\",\r\n            \"type\": \"text\"\r\n        },\r\n        {\r\n            \"value\": \"Option 2\",\r\n            \"type\": \"text\"\r\n        }\r\n    ],\r\n    \"importance\": 1,\r\n    \"information\": {\r\n        \"text\": \"template informaaatio\",\r\n        \"media\": \"https://media-url\",\r\n        \"mediaType\": \"mp4\"\r\n    },\r\n    \"revealOption\": true,\r\n    \"templateOrder\": 1\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/template/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"template",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1690,6 +1727,84 @@
 					"response": []
 				},
 				{
+					"name": "get  creator level by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg1OTQ4OTIsImV4cCI6MTY0ODYzMDg5Mn0.St7br5KVcko_pP1auoHGjELuYE84cC6UeEDFe0gkPis",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/level/creator?levelId=6214c0ae6de8d66209bc02b1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"level",
+								"creator"
+							],
+							"query": [
+								{
+									"key": "levelId",
+									"value": "6214c0ae6de8d66209bc02b1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create level Copy",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDc0MzQyNjJ9.FN9YWsuGAYKb0ddVBEwuBpyYqmd41ultWlLSg4rvXuA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 2\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/level/createLevel",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"level",
+								"createLevel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "get learner level",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -1806,6 +1921,43 @@
 									"key": "levelId",
 									"value": "6216186448b6347f9735bb5a"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update level",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg1OTQ4OTIsImV4cCI6MTY0ODYzMDg5Mn0.St7br5KVcko_pP1auoHGjELuYE84cC6UeEDFe0gkPis",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"6214c0ae6de8d66209bc02b1\",\n    \"levelState\": \"launch\",\n    \"employeeRetryInDays\": 2,\n    \"isLocked\": true,\n    \"levelName\": \"Level 1\",\n    \"levelDescription\": \"description\",\n    \"passingScore\": 40,\n    \"dueDate\": \"2022-01-11T18:30:00.000Z\",\n    \"levelType\": \"assessment\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/level/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"level",
+								""
 							]
 						}
 					},

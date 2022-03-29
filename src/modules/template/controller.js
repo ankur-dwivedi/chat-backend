@@ -4,6 +4,7 @@ const {
   deleteTemplate,
   countTemplateInLevel,
   updateTemplateOrder,
+  update,
 } = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
 const { generateError } = require("../../utils/error");
@@ -271,6 +272,20 @@ exports.templateOrder = async (req, res) => {
     console.log(error);
     res.status(400).send({ message: error.message });
   }
+};
+
+exports.update = async (req, res) => {
+  const queryObject = {
+    $and: [{ _id: req.body.id }, { levelId: req.body.levelId }],
+  };
+  const updateObject = { ...req.body };
+  delete updateObject.id;
+  const updateTemplate = await update(queryObject, updateObject).then((level) => ({
+    status: 200,
+    success: true,
+    data: level,
+  }));
+  return res.send(updateTemplate);
 };
 
 exports.getTemplates = getTemplates;

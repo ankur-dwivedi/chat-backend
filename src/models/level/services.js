@@ -15,3 +15,10 @@ exports.deleteLevel = async (id) =>
   Level.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);
+
+exports.update = (queryObject, updateObject) =>
+  Level.findOneAndUpdate(queryObject, { $set: updateObject }, { new: true })
+    .then((response) => response)
+    .catch((error) => {
+      throw Error(error);
+    });

@@ -49,3 +49,30 @@ exports.setTemplateOrder = Joi.object({
     )
     .required(),
 });
+
+exports.updateContract = Joi.object({
+  id: Joi.string().required(),
+  levelId: Joi.string().required(),
+  type: Joi.string(),
+  question: Joi.object({
+    value: Joi.string().required(),
+    type: Joi.string().required(),
+  }),
+  media: Joi.object({
+    value: Joi.string().required(),
+    type: Joi.string().required(),
+  }),
+  options: Joi.array().items({
+    value: Joi.string().required(),
+    type: Joi.string().required(),
+  }),
+  answer: Joi.array().items(Joi.string()),
+  importance: Joi.number(),
+  information: Joi.object({
+    text: Joi.string(),
+    media: Joi.string(),
+    mediaType: Joi.string(),
+  }),
+  revealOption: Joi.boolean(),
+  templateOrder: Joi.number().min(0),
+});

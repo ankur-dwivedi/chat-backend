@@ -9,6 +9,7 @@ const {
   templateCount,
   getCreatorTemplate,
   templateOrder,
+  update,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const {
@@ -16,6 +17,7 @@ const {
   deleteContract,
   createFeedbackContract,
   setTemplateOrder,
+  updateContract,
 } = require("./contract");
 const multer = require("multer");
 const { withAuthUser, withAuthLearner, withAdminAuthUser } = require("../../middlewares/auth");
@@ -51,5 +53,6 @@ templateRouter.patch(
   validate(setTemplateOrder),
   templateOrder
 );
+templateRouter.patch("/", validate(updateContract), withAdminAuthUser, update);
 
 module.exports = templateRouter;

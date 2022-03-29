@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const levelController = require("./controller");
-const { withAuthUser } = require("../../middlewares/auth");
-const { createLevelContract } = require("./contract");
+const { withAuthUser, withAdminAuthUser } = require("../../middlewares/auth");
+const { createLevelContract, updateLevelContract } = require("./contract");
 const { validate } = require("../../middlewares/schema");
 
 const levelRouter = Router();
@@ -16,5 +16,12 @@ levelRouter.post(
 );
 levelRouter.get("/learner-level-info", withAuthUser, levelController.get.learnerLevelInfo);
 levelRouter.get("/new-unlocked", withAuthUser, levelController.get.newUnlockedLevel);
+levelRouter.get("/creator", withAdminAuthUser, levelController.get.fetchLevelByIdAndCreator);
+levelRouter.patch(
+  "/",
+  validate(updateLevelContract),
+  withAdminAuthUser,
+  levelController.patch.update
+);
 
 module.exports = levelRouter;

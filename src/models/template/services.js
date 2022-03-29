@@ -63,3 +63,10 @@ exports.updateTemplateOrder = ({ bulkOps }) => {
     return bulkWriteOpResult;
   });
 };
+
+exports.update = (queryObject, updateObject) =>
+  Template.findOneAndUpdate(queryObject, { $set: updateObject }, { new: true })
+    .then((response) => response)
+    .catch((error) => {
+      throw Error(error);
+    });

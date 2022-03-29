@@ -12,3 +12,16 @@ exports.createLevelContract = Joi.object({
   levelType: Joi.string().required(),
   isLocked: Joi.boolean().allow(""),
 });
+
+exports.updateLevelContract = Joi.object({
+  id: Joi.string().required(),
+  levelName: Joi.string(),
+  levelDescription: Joi.string(),
+  levelState: Joi.string(),
+  passingScore: Joi.number(),
+  employeeRetryInDays: Joi.number(),
+  totalMinutes: Joi.number(),
+  dueDate: Joi.date(),
+  levelType: Joi.string(),
+  isLocked: Joi.boolean(),
+});

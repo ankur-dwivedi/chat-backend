@@ -6,9 +6,29 @@ const {
   ATTEMPT_STATUS,
 } = require("../../models/userLevel/constants");
 const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
+const { update } = require("../../models/level/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
 module.exports = {
   get: {
+    fetchLevelByIdAndCreator: async (req, res) => {
+      try {
+        const userData = req.user;
+        const level = await level_Model.findOne({
+          creatorUserId: userData._id,
+          _id: req.query.levelId,
+        });
+        if (level === null)
+          return res.status(201).json({ status: "success", message: `no Data in db` });
+        return res.status(201).json({ status: 200, success: false, data: level });
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(201).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
     fetchUserLevel: async (req, res) => {
       try {
         let userData = req.user;
@@ -268,6 +288,19 @@ module.exports = {
           message: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
+    },
+  },
+  patch: {
+    update: async (req, res) => {
+      const queryObject = { $and: [{ _id: req.body.id }, { creatorUserId: req.user._id }] };
+      const updateObject = { ...req.body };
+      delete updateObject.id;
+      const updateLevel = await update(queryObject, updateObject).then((level) => ({
+        status: 200,
+        success: true,
+        data: level,
+      }));
+      return res.send(updateLevel);
     },
   },
   put: {},
