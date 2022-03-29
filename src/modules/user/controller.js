@@ -66,9 +66,11 @@ exports.login = (req, res, next) => {
         ? res.send({
             status: 200,
             success: true,
-            data: user,
-            refreshToken: generateRefreshToken(user._id),
-            accessToken: generateAccessToken(user._id),
+            data: {
+              ...JSON.parse(JSON.stringify(user)),
+              refreshToken: generateRefreshToken(user._id),
+              accessToken: generateAccessToken(user._id),
+            },
           })
         : generateError()
     )
