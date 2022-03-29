@@ -11,12 +11,12 @@ const { frequencyData, passFailData } = require("./constants");
 
 exports.generateAccessToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1d",
+    expiresIn: 60 * 60 * 10,
   });
 
 exports.generateRefreshToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "1y",
+    expiresIn: "1d",
   });
 
 exports.createUnauthorizedError = (error = "Unauthorized") => httpErrors(401, error);

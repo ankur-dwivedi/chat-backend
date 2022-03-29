@@ -21,7 +21,6 @@ exports.get = async (query) =>
           options: 1,
           importance: 1,
           templateOrder: 1,
-          information: 1,
           revealOption: 1,
           media: 1,
           answer: {
