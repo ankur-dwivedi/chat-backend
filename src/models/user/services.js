@@ -3,6 +3,7 @@ const User = require("./");
 const { createGroupFilterQuery, createUserIdQuery, createUserIdFindQuery } = require("./utils");
 const md5 = require("md5");
 const { Types } = require("mongoose");
+const bcrypt = require('bcrypt');
 
 exports.get = async (query) =>
   query.id
@@ -94,8 +95,8 @@ exports.getOrgEmployee = ({ organization }) =>
     .then((response) => response)
     .catch((error) => error);
 
-exports.create = (userData) => {
-  if (userData && userData.password) userData.password = md5(userData.password);
+exports.create = async (userData) => {
+  if (userData && userData.password) userData.password = await bcrypt.hash(userData.password, 10);
   return User.create({ ...userData, createdAt: new Date() })
     .then((response) => response)
     .catch((error) => {

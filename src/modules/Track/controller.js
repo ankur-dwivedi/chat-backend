@@ -92,13 +92,15 @@ module.exports = {
         let groupData = await group_Model
           .find({ employees: { $in: [userData._id] } }, { _id: 1 })
           .lean();
+          // console.log(groupData)
         let userTrackData = [];
         for (let i = 0; i < groupData.length; i++) {
           let foo = await track_Model
-            .findOne({ groupId:{$in:[groupData[i]._id ]}}, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .find({ groupId:{$in:[groupData[i]._id ]}}, { __v: 0, createdAt: 0, updatedAt: 0 })
             .populate({path:'creatorUserId',select:'name employeeId'})
             .lean();
-          foo === null ? "" : userTrackData.push(foo);
+            // console.log(foo)
+          userTrackData = foo === null ? [...userTrackData, ...foo] : [...userTrackData, ...foo];
         }
         for (let j = 0; j < userTrackData.length; j++) {
           let bar = await userTrackInfo_Model
