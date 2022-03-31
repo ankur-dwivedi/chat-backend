@@ -77,7 +77,7 @@ const assocAuthLearner = (req, res, next) =>
     })
     .catch((error) => {
       console.log(error);
-      res.send(createUnauthorizedError(error));
+      res.status(204).send(createUnauthorizedError(error));
     });
 
 const isAdmin = (req, res, next) =>
