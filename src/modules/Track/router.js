@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const trackController = require("./controller");
 const { withAuthUser } = require("../../middlewares/auth");
-const { createTrackContract,createTrackUsingLearnerIdContract } = require("./contract");
+const { createTrackContract,createTrackUsingLearnerIdContract,transferTrackOwnerContract } = require("./contract");
 const { validate } = require("../../middlewares/schema");
 
 const trackRouter = Router();
@@ -13,6 +13,7 @@ trackRouter.get("/getTracksWithoutUserCreatedGroup",withAuthUser,trackController
 
 trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser,trackController.post.createTrack);
 trackRouter.post("/createTrackUsingLearnerId",validate(createTrackUsingLearnerIdContract),withAuthUser,trackController.post.createTrackUsingLearnerId);
+trackRouter.post("/transferTrackOwner",validate(transferTrackOwnerContract),withAuthUser,trackController.post.transferTrackOwner)
 
 trackRouter.put('/updateTrack/:trackId',validate(createTrackContract),withAuthUser,trackController.put.updateTrack)
 
