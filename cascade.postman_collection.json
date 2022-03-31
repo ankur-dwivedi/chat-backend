@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "18ea0d97-5e4f-4576-b375-ec8a79b3fd15",
+		"_postman_id": "f1d27f94-14a5-4b8e-ba65-96942073a6d8",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1648,14 +1648,14 @@
 					"response": []
 				},
 				{
-					"name": "{{baseUrl}}/track/createTrack",
+					"name": "transfer track api",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NDg2NTk0MDMsImV4cCI6MTY0ODY5NTQwM30.hQ_9b962pHE5k13MILODIP7pPBjeb1aaGO7cxW1LF2s",
 									"type": "string"
 								}
 							]
@@ -1664,7 +1664,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"trackName\":\"track1\",\r\n    \"learnerId\": [\"61bf814dc93b593384d3b4a3\"],\r\n    \"selectedTheme\":\"Mountain\",\r\n    \"skillTag\":[\"tech\"],\r\n    \"description\":\"track 1 created\"\r\n}",
+							"raw": "{\r\n    \"newUserId\":\"\",\r\n    \"trackId\":\"\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1672,13 +1672,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/track/createTrack",
+							"raw": "{{baseUrl}}/track/transferTrackOwner",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"track",
-								"createTrack"
+								"transferTrackOwner"
 							]
 						}
 					},
