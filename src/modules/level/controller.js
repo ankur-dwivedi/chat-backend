@@ -73,7 +73,7 @@ module.exports = {
             select: "selectedTheme trackName description",
           });
         if (levelData === null || !levelData.length)
-          return res.status(201).json({
+          return res.status(204).json({
             status: "failed",
             message: `Track Not Found (Please check the Track ID)`,
           });
