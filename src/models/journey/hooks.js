@@ -47,14 +47,12 @@ exports.initHooks = (JourneySchema) => {
           lastAttemptedTemplate: templateId,
         }
       );
-      // delete this console after test
-    console.log(userLevelData.learnerId);
-    console.log(levelData.trackId);
     //calling this function to update the user track status
     updateTrackStatus(userLevelData.learnerId,levelData.trackId);
     } else {
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
+      const levelData = await Level.get({ id: levelId });
       //update score in userLevel
       await UserLevel.update(
         { _id: attemptId },
@@ -70,9 +68,6 @@ exports.initHooks = (JourneySchema) => {
           lastAttemptedTemplate: templateId,
         }
       );
-      // delete this console after test
-    console.log(userLevelData.learnerId);
-    console.log(levelData.trackId);
     //calling this function to update the user track status
     updateTrackStatus(userLevelData.learnerId,levelData.trackId);
     }
