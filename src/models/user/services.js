@@ -3,7 +3,7 @@ const User = require("./");
 const { createGroupFilterQuery, createUserIdQuery, createUserIdFindQuery } = require("./utils");
 const md5 = require("md5");
 const { Types } = require("mongoose");
-const bcrypt = require('bcrypt');
+const bcrypt = require("bcrypt");
 
 exports.get = async (query) =>
   query.id
@@ -28,6 +28,15 @@ exports.get = async (query) =>
     : User.find()
         .then((response) => response)
         .catch((error) => error);
+
+exports.getUserAnalytics = async (query) =>
+  User.findOne({ _id: query.id })
+    .populate({
+      path: "groups",
+      select: "name",
+    })
+    .then((response) => (response ? response : generateError()))
+    .catch((error) => error);
 
 exports.getUserAndOrgByEmpId = ({ employeeId, organization }) =>
   User.findOne({ employeeId, organization })

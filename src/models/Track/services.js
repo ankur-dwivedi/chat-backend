@@ -2,6 +2,11 @@ const { generateError } = require("../../utils/error");
 const mongoose = require("mongoose");
 const Track = require(".");
 
+exports.get = async (query) =>
+  Track.findOne({ _id: query.id })
+    .then((response) => (response ? response : generateError()))
+    .catch((error) => error);
+
 exports.getUsersByTrackId = async (query) =>
   Track.findOne({ _id: mongoose.Types.ObjectId(query.id) })
     .select(["groupId", "trackName"])

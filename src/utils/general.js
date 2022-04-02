@@ -4,6 +4,7 @@ const csv = require("csvtojson");
 const request = require("request");
 const Group = require("../models/group/services");
 const Track = require("../models/Track/services");
+const Level = require("../models/level/services");
 const { getLatestUserLevelByLevel } = require("../models/userLevel/services");
 const User = require("../models/user/services");
 const { LEVEL_STATUS } = require("../models/userLevel/constants");
@@ -98,16 +99,18 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
 
 exports.analyicslist = async ({ groupId, trackId, levelId }) => {
   let empData = await getEmpAttemptData({ groupId, trackId, levelId });
+  const level = await Level.get({ id: levelId });
+  const track = await Track.get({ id: trackId });
   empData = empData.filter((data) => {
     if (data) return data;
   });
   empData = empData.map(async (data) => {
     if (data !== null) {
-      const userData = await User.get({ id: data.learnerId });
+      const userData = await User.getUserAnalytics({ id: data.learnerId });
       return {
-        groupId: userData.groups,
-        trackId,
-        level: levelId,
+        group: userData.groups,
+        track: track.trackName,
+        level: level.levelName,
         name: userData.name,
         employeeId: userData.employeeId,
         score: data.levelScore,
