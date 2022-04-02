@@ -85,9 +85,9 @@ module.exports = {
             .findOne({ creatorUserId: userData._id, trackId: body.trackId })
             .update(userTrackInfo);
           if (
-            updateData.n === 1 &&
-            updateData.nModified === 1 &&
-            updateData.ok === 1
+            updatedData.n === 1 &&
+            updatedData.nModified === 1 &&
+            updatedData.ok === 1
           ) {
             return res
               .status(201)
