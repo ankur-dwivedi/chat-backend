@@ -4,6 +4,7 @@ const Level = require("../level/services");
 const { LEVEL_STATUS, ATTEMPT_STATUS } = require("../userLevel/constants");
 const { TEMPLATE_TYPE } = require("../template/constants");
 const { LEVEL_TYPE } = require("../level/constants");
+const { updateTrackStatus } = require('../userTrack/services');
 
 exports.initHooks = (JourneySchema) => {
   JourneySchema.post("save", async (docs) => {
@@ -65,5 +66,10 @@ exports.initHooks = (JourneySchema) => {
         }
       );
     }
+    // delete this console after test
+    console.log(userLevelData.learnerId);
+    console.log(levelData.learnerId);
+    //calling this function to update the user track status
+    updateTrackStatus(userLevelData.learnerId,levelData.learnerId);
   });
 };

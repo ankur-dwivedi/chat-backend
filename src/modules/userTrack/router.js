@@ -8,6 +8,6 @@ const userTrackRouter = Router();
 
 userTrackRouter.get("/fetchUserTrackInfo", withAuthUser, userTrackController.get.fetchUserTrackInfo);
 userTrackRouter.post("/createUserTrackInfo", withAuthUser,validate(createUserTrackInfoContract), userTrackController.post.createUserTrackInfo);
-userTrackRouter.put("/updateUserTrackInfo/:userTrackId", withAuthUser,validate(updateUserTrackInfoContract), userTrackController.put.updateUserTrackInfo);
+// userTrackRouter.put("/updateUserTrackInfo/:userTrackId", withAuthUser,validate(updateUserTrackInfoContract), userTrackController.put.updateUserTrackInfo);
 
 module.exports = userTrackRouter;
