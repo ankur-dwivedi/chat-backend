@@ -15,3 +15,8 @@ exports.createTrackUsingLearnerIdContract = Joi.object({
   description: Joi.string().required(),
   learnerIds:Joi.array().required(),
 });
+
+exports.transferTrackOwnerContract = Joi.object({
+  newUserId:Joi.string().required(),
+  trackId:Joi.string().required(),
+})

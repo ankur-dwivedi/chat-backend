@@ -124,9 +124,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success:false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -193,6 +194,43 @@ module.exports = {
         res.status(200).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    transferTrackOwner:async(req,res)=>{
+      try {
+        let currentUserId = req.userData._id;
+        let newUserId = req.body.newUserId;
+        let trackId = req.body.trackId;
+        let trackData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId}).lean()
+        if(trackData===null){
+          throw {
+            name: "Not Found",
+            message: "please send a valid trackId",
+          };
+        }else{
+          trackData.creatorUserId = newUserId;
+          let updatedData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId}).update(updateTrackDate)
+          if(updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1){
+            return res.status(200).json({
+              status: 200,
+              success:true,
+              data: 'OwnerShip of Track Changed Successfully',
+            });
+          }else{
+            throw {
+              name: "updation Error",
+              message: "something went wrong while updating data please try again or contact admin",
+            };
+          }
+        }        
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(400).json({
+          status: 400,
+          success:false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
