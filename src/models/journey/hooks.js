@@ -47,6 +47,11 @@ exports.initHooks = (JourneySchema) => {
           lastAttemptedTemplate: templateId,
         }
       );
+      // delete this console after test
+    console.log(userLevelData.learnerId);
+    console.log(levelData.learnerId);
+    //calling this function to update the user track status
+    updateTrackStatus(userLevelData.learnerId,levelData.learnerId);
     } else {
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
@@ -65,11 +70,11 @@ exports.initHooks = (JourneySchema) => {
           lastAttemptedTemplate: templateId,
         }
       );
-    }
-    // delete this console after test
+      // delete this console after test
     console.log(userLevelData.learnerId);
     console.log(levelData.learnerId);
     //calling this function to update the user track status
     updateTrackStatus(userLevelData.learnerId,levelData.learnerId);
+    }
   });
 };
