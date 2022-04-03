@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 dotenv.config();
 const connectToDB = () =>
   mongoose
-    .connect("mongodb+srv://admin:1HKgUksK7q8QDJdM@cluster0.cibal.mongodb.net/padboat", {
+    .connect(process.env.MONGO_URL, {
       useUnifiedTopology: true,
       useNewUrlParser: true,
       useFindAndModify: false,
