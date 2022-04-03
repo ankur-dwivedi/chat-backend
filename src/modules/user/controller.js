@@ -62,20 +62,18 @@ exports.login = (req, res, next) => {
   query.organization = req.body.organization;
   return get({ ...query })
     .then((user) => {
-      console.log(user)
       return user
-      ? res.send({
-          status: 200,
-          success: true,
-          data: {
-            ...JSON.parse(JSON.stringify(user)),
-            refreshToken: generateRefreshToken(user._id),
-            accessToken: generateAccessToken(user._id),
-          },
-        })
-      : generateError()
-    }
-    )
+        ? res.send({
+            status: 200,
+            success: true,
+            data: {
+              ...JSON.parse(JSON.stringify(user)),
+              refreshToken: generateRefreshToken(user._id),
+              accessToken: generateAccessToken(user._id),
+            },
+          })
+        : generateError();
+    })
     .catch((err) => {
       res.status(400).send({ message: `Invalid Employee ID or Password` });
     });

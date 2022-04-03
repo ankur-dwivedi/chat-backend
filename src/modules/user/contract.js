@@ -1,8 +1,8 @@
 const Joi = require("joi");
 
 exports.registerUserContract = Joi.object({
-  phoneNumber: Joi.number().required(),
-  email: Joi.string().required(),
+  phoneNumber: Joi.number().allow(""),
+  email: Joi.string().allow(""),
   name: Joi.string().required(),
   employeeId: Joi.string().required(),
   employeeData: Joi.array()

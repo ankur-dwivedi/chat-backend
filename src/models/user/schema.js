@@ -5,9 +5,27 @@ const { OtpSchema } = require("./utils");
 
 const UserSchema = new Schema(
   {
-    employeeId: { type: String, unique: true, required: true },
-    phoneNumber: { type: Number, unique: true, required: true },
-    email: { type: String },
+    employeeId: { type: String, required: true },
+    phoneNumber: {
+      type: Number,
+      trim: true,
+      index: true,
+      unique: true,
+      sparse: true,
+      required: function () {
+        return this.email === undefined;
+      },
+    },
+    email: {
+      type: String,
+      trim: true,
+      index: true,
+      unique: true,
+      sparse: true,
+      required: function () {
+        return this.phoneNumber === undefined;
+      },
+    },
     name: { type: String, required: true },
     employeeData: { type: [EmployeeDataSchema] },
     groups: [{ type: Schema.Types.ObjectId, ref: "group" }],

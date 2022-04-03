@@ -2,7 +2,7 @@ const { Schema, Types } = require("mongoose");
 
 exports.EmployeeDataSchema = new Schema({
   name: { type: String, required: true },
-  value: { type: String, required: true },
+  value: { type: String, required: true, lowercase: true },
 });
 
 exports.OtpSchema = new Schema({
@@ -26,7 +26,6 @@ exports.createGroupFilterQuery = (org, property) => {
       object[`employeeData.value`] = { $eq: filterValues };
       return { ...object };
     });
-
     return { ...object, $or: [...subQuery] };
   });
   return { $and: [{ organization: Types.ObjectId(org) }, ...filterData] };
