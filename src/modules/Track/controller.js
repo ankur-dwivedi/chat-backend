@@ -131,6 +131,25 @@ module.exports = {
         });
       }
     },
+    fetchTrackInfoForTransferTab: async (req,res) =>{
+      try {
+        let userData = req.userData;
+        let trackData = await track_Model.find({creatorUserId:userData._id},{trackName:1,_id:1,description:1}).lean();
+        return res.status(200).json({
+          status:200,
+          success:true,
+          data:trackData
+        })
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(400).json({
+          status: 400,
+          success:false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    }
   },
   post: {
     createTrack: async (req, res) => {

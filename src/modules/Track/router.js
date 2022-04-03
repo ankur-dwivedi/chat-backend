@@ -10,6 +10,7 @@ const trackRouter = Router();
 trackRouter.get("/fetchTrackByCreatorId", withAuthUser, trackController.get.fetchTrackByCreatorId);
 trackRouter.get("/fetchTrackByGroupId/:groupId", withAuthUser, trackController.get.fetchTrackByGroups);
 trackRouter.get("/getTracksWithoutUserCreatedGroup",withAuthUser,trackController.get.getTracksWithoutUserCreatedGroup);
+trackRouter.get("/fetchTrackInfoForTransferTab",withAuthUser,trackController.get.fetchTrackInfoForTransferTab);
 
 trackRouter.post("/createTrack",validate(createTrackContract),withAuthUser,trackController.post.createTrack);
 trackRouter.post("/createTrackUsingLearnerId",validate(createTrackUsingLearnerIdContract),withAuthUser,trackController.post.createTrackUsingLearnerId);
