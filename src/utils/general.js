@@ -17,7 +17,7 @@ exports.generateAccessToken = (userId) =>
 
 exports.generateRefreshToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "3m",
+    expiresIn: "90d",
   });
 
 exports.createUnauthorizedError = (error = "Unauthorized") => httpErrors(401, error);
