@@ -1,8 +1,12 @@
 const level_model = require('../level/index');
 const userTrackInfo_model = require('../userTrack/index');
 const userLevelInfo_model = require('../userLevel/index');
+//imports for sending mail are as following
+const group_model = require('../group/index');
+const nodeMailer = require('nodemailer');
 
-exports.updateTrackStatus = async (learnerId,trackId)=>{
+
+const updateTrackStatus = async (learnerId,trackId)=>{
     try {
         let fetchAllTrackLevels = await level_model.find({trackId}).lean();
         let learnerLevelStatus = [];
@@ -46,4 +50,78 @@ exports.updateTrackStatus = async (learnerId,trackId)=>{
         console.log(err.name)
         console.log(err.message)
     }
+}
+
+let transport=nodemailer.createTransport({
+    host:"smtp.gmail.com",
+    port:465,
+    secure:true,
+    debug:process.env.NODE_ENV ==="develop",
+    auth:{
+        user: process.env.GMAIL_EMAIL,
+        pass: process.env.GMAIL_PASS
+    }
+})
+
+let verify=async ()=>{
+    try{
+       let status = await transport.verify()
+       await console.log(status)
+    } catch (err) {
+       console.log(err)                  
+    }
+ }
+ verify();
+
+const nodeMailerSendMail = async (email,subject,html) => {
+    let status = await transport.sendMail({
+        from:`padboat.com`, 
+        to:email,
+        subject:subject,
+        html:html
+     })
+     try {
+       //  console.log(status)                  
+     } catch (err) {
+        console.log(err)
+     }
+}
+
+
+const sendMailToUsersAssignedToTracks = async (trackData)=>{
+    try {
+        let groupData=[];
+        //logic to fetch all the user emails 
+        for(let i=0;i<trackData.groupId.length;i++){
+            let fetchGroupData = await group_model.findOne({_id:trackData.groupId[i]},{employees:1}).populate({
+                path:'employees',
+                select:'name email employeeId'
+            }).lean();
+            fetchGroupData === null?"":groupData = [...groupData, ...fetchGroupData.employees]
+        }
+        console.log(groupData)
+        //logic to access that perticular email and send email
+        for(let j=0;j<groupData.length;j++){
+            let learnerEmail = groupData[j].email
+            let learnerName = groupData[j].name
+            let learnerId = groupData[j].employeeId
+            let subject = `Update from Padboat`
+            let html = `
+            <h3>Hello, ${learnerName}(${learnerId}) a new Track has been assigned to you</h3>
+            <b>Greetings from Padboat!</b>` 
+            nodeMailerSendMail(learnerEmail,subject,html)
+        }
+        
+    } catch (err) {
+        console.log(err.name)
+        console.log(err.message)
+    }
+}
+
+// sendMailToUsersAssignedToTracks({_id:'6230fd35c8a4072b850ea278',groupId:['6230f66fc8a4072b850ea225'],trackName:'gomu gomu no mi'})
+
+module.exports = {
+    updateTrackStatus,
+    sendMailToUsersAssignedToTracks,
+    nodeMailerSendMail
 }
