@@ -113,7 +113,7 @@ module.exports = {
           bar === null ? "" :userTrackData[j].trackProgress =  bar.trackProgress === undefined ? "" : bar.trackProgress;
           bar === null ? "unattemped" :userTrackData[j].trackState = bar.trackState === undefined ? "unattemped" : bar.trackState;
           bar === null ? false :userTrackData[j].isArchived =  bar.isArchived === undefined ? false : bar.isArchived;
-          userTrackData[j].totalLevelCount = foobar.length;
+          foobar.length === 0 ? userTrackData.splice(j,1) : userTrackData[j].totalLevelCount = foobar.length;
         }
         if(archived===''){
           return res.status(200).json({ status: 200,success:true,data:userTrackData});
