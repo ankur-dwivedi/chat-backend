@@ -133,7 +133,7 @@ module.exports = {
     },
     fetchTrackInfoForTransferTab: async (req,res) =>{
       try {
-        let userData = req.userData;
+        let userData = req.user;
         let trackData = await track_Model.find({creatorUserId:userData._id},{trackName:1,_id:1,description:1}).lean();
         return res.status(200).json({
           status:200,
