@@ -1030,7 +1030,7 @@
 					"response": []
 				},
 				{
-					"name": "create group Copy",
+					"name": "update group",
 					"request": {
 						"auth": {
 							"type": "bearer",
