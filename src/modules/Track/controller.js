@@ -64,8 +64,9 @@ module.exports = {
         if (userTrackData === null) {
           return res.status(200).json({ status: 200, success: false, data: `no Data in db` });
         }
+        //filtering this data here so to give user list of track hich does not contains groupId 
         let tranformData1 = userTrackData.filter(
-          (element) => element.groupId === undefined || element.groupId.length === 0
+          (element) => element.groupId === null || element.groupId === undefined || element.groupId.length === 0
         );
         let tranformData2 = userTrackData.filter((element) => element.botGeneratedGroup === true);
         let tranformData = [...tranformData1, ...tranformData2];
