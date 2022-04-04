@@ -35,8 +35,7 @@ const updateTrackStatus = async (learnerId, trackId) => {
       score = activeLevels.length;
       status = "inProgress";
     } else {
-      let completedScore =
-        (completedLevels.length / fetchAllTrackLevels.length) * 100;
+      let completedScore = (completedLevels.length / fetchAllTrackLevels.length) * 100;
       let activeScore = activeLevels.length;
       score = completedScore + activeScore;
       status = score === 100 ? "completed" : "inProgress";
@@ -70,10 +69,9 @@ let transport = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
   secure: true,
-  debug: process.env.NODE_ENV === "develop",
   auth: {
-    user: process.env.GMAIL_EMAIL,
-    pass: process.env.GMAIL_PASS,
+    user: "signtalklearnisl@gmail.com",
+    pass: "testing@SIGNTALK1",
   },
 });
 
@@ -113,9 +111,7 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
           select: "name email employeeId",
         })
         .lean();
-      fetchGroupData === null
-        ? ""
-        : (groupData = [...groupData, ...fetchGroupData.employees]);
+      fetchGroupData === null ? "" : (groupData = [...groupData, ...fetchGroupData.employees]);
     }
     console.log(groupData);
     //logic to access that perticular email and send email
