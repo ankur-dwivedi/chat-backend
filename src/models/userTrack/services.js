@@ -65,25 +65,25 @@ const updateTrackStatus = async (learnerId, trackId) => {
   }
 };
 
-let transport = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "signtalklearnisl@gmail.com",
-    pass: "testing@SIGNTALK1",
-  },
-});
+// let transport = nodemailer.createTransport({
+//   host: "smtp.gmail.com",
+//   port: 465,
+//   secure: true,
+//   auth: {
+//     user: "signtalklearnisl@gmail.com",
+//     pass: "testing@SIGNTALK1",
+//   },
+// });
 
-let verify = async () => {
-  try {
-    let status = await transport.verify();
-    await console.log(status);
-  } catch (err) {
-    console.log(err);
-  }
-};
-verify();
+// let verify = async () => {
+//   try {
+//     let status = await transport.verify();
+//     await console.log(status);
+//   } catch (err) {
+//     console.log(err);
+//   }
+// };
+// verify();
 
 const nodeMailerSendMail = async (email, subject, html) => {
   let status = await transport.sendMail({
