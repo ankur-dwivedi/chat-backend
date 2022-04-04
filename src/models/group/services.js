@@ -2,7 +2,13 @@ const { generateError } = require("../../utils/error");
 const Group = require(".");
 
 exports.get = async (query) =>
-  query.createdBy
+  query.id && query.createdBy
+    ? Group.findOne({ $and: [{ _id: query.id }, { createdBy: query.createdBy }] })
+        .populate({ path: "employees", select: ["name", "employeeId"] })
+        .select(["name", "description", "employees"])
+        .then((response) => (response ? response : generateError()))
+        .catch((error) => error)
+    : query.createdBy
     ? Group.aggregate()
         .match({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] })
         .project({

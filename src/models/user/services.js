@@ -29,6 +29,11 @@ exports.get = async (query) =>
         .then((response) => response)
         .catch((error) => error);
 
+exports.getEmpBempIdOrg = async (query) =>
+  User.findOne({
+    $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
+  }).then((response) => response);
+
 exports.getUserAnalytics = async (query) =>
   User.findOne({ _id: query.id })
     .populate({
@@ -92,7 +97,7 @@ exports.searchByEmp = (query) =>
 
 exports.getGroupEmployee = (organization, property) =>
   User.find({ ...createGroupFilterQuery(organization, property) })
-    .select(["_id", "name", "email"])
+    .select(["_id", "name", "email", "employeeData"])
     .sort({ createdAt: -1 })
     .then((response) => response)
     .catch((error) => error);
@@ -148,16 +153,19 @@ exports.findIdByEmloyeeId = (employeeIds, org) =>
     })
     .catch((err) => false);
 
-exports.findIdByEmloyeeId = (employeeIds, org) =>
-  User.find({ ...createUserIdFindQuery(employeeIds, org) })
-    .then((user) => {
-      return user.map((value) => value._id);
-    })
-    .catch((err) => false);
-
 exports.removeGroupId = ({ groupId }) =>
   User.updateMany(
     { groups: { $in: [groupId] } },
+    {
+      $pull: {
+        groups: groupId,
+      },
+    }
+  );
+
+exports.removeGroupIdByEmpId = ({ groupId, employeeId }) =>
+  User.updateMany(
+    { _id: { $in: employeeId } },
     {
       $pull: {
         groups: groupId,

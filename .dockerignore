@@ -3,3 +3,4 @@ command
 kubernetes/
 node_modules/
 cascade.postman_collection.json
+templates/

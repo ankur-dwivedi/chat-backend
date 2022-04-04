@@ -22,3 +22,10 @@ exports.createByEmpListContract = Joi.object({
 exports.deleteContract = Joi.object({
   id: Joi.string().required(),
 });
+
+exports.updateContract = Joi.object({
+  id: Joi.string().required(),
+  name: Joi.string(),
+  description: Joi.string(),
+  employees: Joi.array().items(Joi.string()).required(),
+});

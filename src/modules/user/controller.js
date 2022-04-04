@@ -176,16 +176,35 @@ exports.resetpass = (req, res, next) => {
 
 exports.getFilteredEmp = async (req, res) => {
   try {
-    let employees = [];
-    if (req.body.data && req.body.data.length)
+    let employees = [],
+      activeFilter = [];
+    if (req.body.data && req.body.data.length) {
       employees = await getGroupEmployee(req.user.organization, req.body.data);
-    else employees = await getOrgEmployee({ organization: req.user.organization });
+      const filterObject = {};
+      for (let data of employees) {
+        for (let empData of data.employeeData) {
+          if (
+            filterObject[empData.name] &&
+            filterObject[empData.name].indexOf(empData.value) === -1
+          )
+            filterObject[empData.name] = [...filterObject[empData.name], empData.value];
+          else if (!filterObject[empData.name]) filterObject[empData.name] = [empData.value];
+        }
+      }
+      for (let data in filterObject) {
+        activeFilter.push({
+          name: data,
+          value: filterObject[data],
+        });
+      }
+    } else employees = await getOrgEmployee({ organization: req.user.organization });
     res.send({
       status: 200,
       success: true,
-      data: employees,
+      data: req.body.data.length ? { employees, activeFilter } : { employees },
     });
   } catch (error) {
+    console.log(error);
     res.status(400).send({ error: error.message });
   }
 };
