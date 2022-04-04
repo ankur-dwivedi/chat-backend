@@ -113,7 +113,7 @@ module.exports = {
           bar === null ? "" :userTrackData[j].trackProgress =  bar.trackProgress === undefined ? "" : bar.trackProgress;
           bar === null ? "unattemped" :userTrackData[j].trackState = bar.trackState === undefined ? "unattemped" : bar.trackState;
           bar === null ? false :userTrackData[j].isArchived =  bar.isArchived === undefined ? false : bar.isArchived;
-          userTrackData[j].totalLevelCount = foobar.length;
+          foobar.length === 0 ? userTrackData.splice(j,1) : userTrackData[j].totalLevelCount = foobar.length;
         }
         if(archived===''){
           return res.status(200).json({ status: 200,success:true,data:userTrackData});
@@ -131,6 +131,25 @@ module.exports = {
         });
       }
     },
+    fetchTrackInfoForTransferTab: async (req,res) =>{
+      try {
+        let userData = req.userData;
+        let trackData = await track_Model.find({creatorUserId:userData._id},{trackName:1,_id:1,description:1}).lean();
+        return res.status(200).json({
+          status:200,
+          success:true,
+          data:trackData
+        })
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(400).json({
+          status: 400,
+          success:false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    }
   },
   post: {
     createTrack: async (req, res) => {
@@ -202,28 +221,30 @@ module.exports = {
         let currentUserId = req.userData._id;
         let newUserId = req.body.newUserId;
         let trackId = req.body.trackId;
-        let trackData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId}).lean()
+        let count=0;
+        for(let i=0;i<trackId.length;i++){
+          let trackData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId[i]}).lean()
         if(trackData===null){
-          throw {
-            name: "Not Found",
-            message: "please send a valid trackId",
-          };
+          continue
         }else{
           trackData.creatorUserId = newUserId;
-          let updatedData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId}).update(updateTrackDate)
+          let updatedData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId}).updateOne(trackData)
           if(updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1){
-            return res.status(200).json({
-              status: 200,
-              success:true,
-              data: 'OwnerShip of Track Changed Successfully',
-            });
-          }else{
-            throw {
-              name: "updation Error",
-              message: "something went wrong while updating data please try again or contact admin",
-            };
+            count=count+1;
           }
-        }        
+        }
+        }
+        if(count.length===trackId.length){
+          return res.status(200).json({
+            status: 200,
+            success:true,
+            data: 'OwnerShip of Track Changed Successfully',
+          });
+        }else{
+          throw({
+          name: "updation Error",
+          message: "something went wrong while updating data please try again or contact admin",})
+        }       
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
