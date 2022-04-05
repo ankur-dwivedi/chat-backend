@@ -177,17 +177,3 @@ exports.countEmployeeInOrg = ({ organization }) =>
   User.find({ organization })
     .count()
     .then((response) => response);
-
-// const updateAll = async () => {
-//   const user = await User.find();
-//   const temp = user.map(async (data) => {
-//     let emp = data.employeeData;
-//     emp = emp.map((value) => {
-//       return { ...JSON.parse(JSON.stringify(value)), value: value.value.toLowerCase() };
-//     });
-//     const up = await User.updateOne({ _id: data._id }, { $set: { employeeData: emp } });
-//     return up;
-//   });
-//   const data = await Promise.all(temp);
-//   console.log(temp);
-// };
