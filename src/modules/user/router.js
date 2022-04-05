@@ -37,7 +37,7 @@ userRouter.delete("/", withAuthUser, validate(deleteContract), deleteUser);
 userRouter.patch("/", withAuthUser, validate(editUserContract), update);
 userRouter.post("/forget-password", validate(reqOtpForgetPassContract), forgetPassword);
 userRouter.patch("/resetpass", withAuthUser, resetpass);
-userRouter.get("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilteredEmp);
+userRouter.post("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilteredEmp);
 userRouter.patch("/set-session", withAuthUser, validate(setSessionContract), setSession);
 userRouter.get("/analytics", withAuthUser, analytics);
 userRouter.get("/analytics-list", withAuthUser, analyticsEmpData);

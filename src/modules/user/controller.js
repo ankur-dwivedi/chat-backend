@@ -226,7 +226,7 @@ exports.setSession = async (req, res) => {
 
 exports.analytics = async (req, res) => {
   try {
-    const { trackId, groupId, levelId } = req.body;
+    const { trackId, groupId, levelId } = req.query;
     const data = await analyicsData({ groupId, trackId, levelId });
     return res.send({
       status: 200,
@@ -240,7 +240,7 @@ exports.analytics = async (req, res) => {
 
 exports.analyticsEmpData = async (req, res) => {
   try {
-    const { trackId, groupId, levelId } = req.body;
+    const { trackId, groupId, levelId } = req.query;
     const list = await analyicslist({ groupId, trackId, levelId });
     return res.send({
       status: 200,
