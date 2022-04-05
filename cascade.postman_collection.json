@@ -329,7 +329,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelId\": \"6214c0ae6de8d66209bc02b1\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -337,13 +337,23 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/analytics",
+							"raw": "{{baseUrl}}/user/analytics?trackId=621ab37f04d46bfeeb398d19&levelId=6214c0ae6de8d66209bc02b1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"user",
 								"analytics"
+							],
+							"query": [
+								{
+									"key": "trackId",
+									"value": "621ab37f04d46bfeeb398d19"
+								},
+								{
+									"key": "levelId",
+									"value": "6214c0ae6de8d66209bc02b1"
+								}
 							]
 						}
 					},
@@ -369,7 +379,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelId\": \"6214c0ae6de8d66209bc02b1\"\n}",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -377,13 +387,23 @@
 							}
 						},
 						"url": {
-							"raw": "{{baseUrl}}/user/analytics-list",
+							"raw": "{{baseUrl}}/user/analytics-list?trackId=621ab37f04d46bfeeb398d19&levelId=6214c0ae6de8d66209bc02b1",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"user",
 								"analytics-list"
+							],
+							"query": [
+								{
+									"key": "trackId",
+									"value": "621ab37f04d46bfeeb398d19"
+								},
+								{
+									"key": "levelId",
+									"value": "6214c0ae6de8d66209bc02b1"
+								}
 							]
 						}
 					},
@@ -698,9 +718,6 @@
 						},
 						{
 							"name": "get filter employees",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
 							"request": {
 								"auth": {
 									"type": "bearer",
@@ -712,7 +729,7 @@
 										}
 									]
 								},
-								"method": "GET",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
@@ -2233,13 +2250,11 @@
 	"variable": [
 		{
 			"key": "baseUrl",
-			"value": "http://localhost:4000/api/v1/",
-			"disabled": true
+			"value": "http://localhost:4000/api/v1/"
 		},
 		{
 			"key": "token",
-			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg3MTk3NzYsImV4cCI6MTY4MDI3NzM3Nn0.gUJljOpzeubeTYutIXlruvxSnD6MMeZNcmI5NN_KTQ4",
-			"disabled": true
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg3MTk3NzYsImV4cCI6MTY4MDI3NzM3Nn0.gUJljOpzeubeTYutIXlruvxSnD6MMeZNcmI5NN_KTQ4"
 		}
 	]
 }

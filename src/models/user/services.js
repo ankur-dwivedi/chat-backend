@@ -76,13 +76,13 @@ exports.searchByEmp = (query) =>
         $or: [
           {
             $and: [
-              { employeeId: { $regex: query.employeeId + ".*" } },
+              { employeeId: { $regex: query.employeeId + ".*", $options: "i" } },
               { organization: query.organization },
             ],
           },
           {
             $and: [
-              { name: { $regex: query.employeeId + ".*" } },
+              { name: { $regex: query.employeeId + ".*", $options: "i" } },
               { organization: query.organization },
             ],
           },

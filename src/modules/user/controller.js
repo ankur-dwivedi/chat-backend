@@ -198,6 +198,13 @@ exports.getFilteredEmp = async (req, res) => {
         });
       }
     } else employees = await getOrgEmployee({ organization: req.user.organization });
+    employees = employees.map((data) => {
+      const ob = {
+        ...JSON.parse(JSON.stringify(data)),
+      };
+      delete ob.employeeData;
+      return ob;
+    });
     res.send({
       status: 200,
       success: true,
@@ -226,7 +233,7 @@ exports.setSession = async (req, res) => {
 
 exports.analytics = async (req, res) => {
   try {
-    const { trackId, groupId, levelId } = req.body;
+    const { trackId, groupId, levelId } = req.query;
     const data = await analyicsData({ groupId, trackId, levelId });
     return res.send({
       status: 200,
@@ -240,7 +247,7 @@ exports.analytics = async (req, res) => {
 
 exports.analyticsEmpData = async (req, res) => {
   try {
-    const { trackId, groupId, levelId } = req.body;
+    const { trackId, groupId, levelId } = req.query;
     const list = await analyicslist({ groupId, trackId, levelId });
     return res.send({
       status: 200,
