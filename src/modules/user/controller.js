@@ -198,6 +198,13 @@ exports.getFilteredEmp = async (req, res) => {
         });
       }
     } else employees = await getOrgEmployee({ organization: req.user.organization });
+    employees = employees.map((data) => {
+      const ob = {
+        ...JSON.parse(JSON.stringify(data)),
+      };
+      delete ob.employeeData;
+      return ob;
+    });
     res.send({
       status: 200,
       success: true,
