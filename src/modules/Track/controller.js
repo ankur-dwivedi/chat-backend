@@ -135,7 +135,7 @@ module.exports = {
     fetchTrackInfoForTransferTab: async (req,res) =>{
       try {
         let userData = req.user;
-        let trackData = await track_Model.find({creatorUserId:userData._id},{trackName:1,_id:1,description:1}).lean();
+        let trackData = await track_Model.find({creatorUserId:userData._id},{trackName:1,_id:1,description:1,groupId:1}).populate({path:'groupId',select:'name botGeneratedGroup description -_id'}).lean();
         return res.status(200).json({
           status:200,
           success:true,
