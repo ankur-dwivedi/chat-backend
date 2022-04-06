@@ -73,7 +73,10 @@ module.exports = {
           .find(
             { creatorUserId: userData._id },
             { __v: 0, createdAt: 0, updatedAt: 0 }
-          )
+          ).populate({
+            path:'groupId',
+            select:'employees -_id'
+          })
           .lean();
         if (userTrackData === null) {
           return res
