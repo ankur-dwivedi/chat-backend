@@ -9,6 +9,7 @@ const { getLatestUserLevelByLevel } = require("../models/userLevel/services");
 const User = require("../models/user/services");
 const { LEVEL_STATUS } = require("../models/userLevel/constants");
 const { frequencyData, passFailData } = require("./constants");
+const multer = require("multer");
 
 exports.generateAccessToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.ACCESS_TOKEN_SECRET, {
@@ -20,7 +21,8 @@ exports.generateRefreshToken = (userId) =>
     expiresIn: "90d",
   });
 
-exports.createUnauthorizedError = (error = "Unauthorized") => httpErrors(401, error);
+exports.createUnauthorizedError = (error = "Unauthorized") =>
+  httpErrors(401, error);
 
 exports.csvToJson = async (csvUrl) => {
   let jsonArray = [];
@@ -54,7 +56,10 @@ const getAuthorisedUser = async ({ groupId, trackId }) => {
     return group.employees;
   } else if (trackId) {
     const track = await Track.getUsersByTrackId({ id: trackId });
-    let employees = track.groupId.reduce((ar, data) => [...ar, ...data.employees], []);
+    let employees = track.groupId.reduce(
+      (ar, data) => [...ar, ...data.employees],
+      []
+    );
     employees = employees.reduce((ar, data) => [...ar, data._id], []);
     return employees;
   }
@@ -68,7 +73,10 @@ const getEmpAttemptData = async ({ groupId, trackId, levelId }) => {
       learnerId: id,
     });
     return userLevel.length
-      ? { ...JSON.parse(JSON.stringify(userLevel[0])), session: userLevel.length }
+      ? {
+          ...JSON.parse(JSON.stringify(userLevel[0])),
+          session: userLevel.length,
+        }
       : null;
   });
   empData = await Promise.all(empData);
@@ -90,7 +98,10 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
     } else passFailData[2].unattempted += 1;
 
     if (data !== null && data.levelScore) {
-      const index = Math.abs(data.levelScore / 10) !== 0 ? Math.abs(data.levelScore / 10) - 1 : 0;
+      const index =
+        Math.abs(data.levelScore / 10) !== 0
+          ? Math.abs(data.levelScore / 10) - 1
+          : 0;
       frequencyData[index].frequency += 1;
     }
   });
@@ -124,3 +135,14 @@ exports.analyicslist = async ({ groupId, trackId, levelId }) => {
 };
 
 exports.generateOtp = () => Math.floor(100000 + Math.random() * 900000);
+
+exports.upload = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, "/tmp");
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname);
+    },
+  }),
+});
