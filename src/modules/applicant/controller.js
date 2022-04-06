@@ -1,4 +1,4 @@
-const applicant_model = require("../../models/mailingList/index");
+const applicant_model = require("../../models/applicant/index");
 const { uploadFiles } = require(".././../libs/aws/upload");
 
 exports.addApplicant = async (req, res) => {

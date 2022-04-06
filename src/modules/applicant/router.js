@@ -6,4 +6,5 @@ const applicantRouter = Router();
 
 applicantRouter.post("/", addApplicant);
 applicantRouter.post("/upload", upload.array("files"), uploadResume);
+
 module.exports = applicantRouter;
