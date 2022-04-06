@@ -1,5 +1,6 @@
-// api to create new row in mailing list table
 const applicant_model = require("../../models/mailingList/index");
+const { uploadFiles } = require(".././../libs/aws/upload");
+
 exports.addApplicant = async (req, res) => {
   try {
     await applicant_model.create(req.body);
@@ -21,5 +22,22 @@ exports.addApplicant = async (req, res) => {
       status: "failed",
       message: `err.name : ${err.name}, err.message:${err.message}`,
     });
+  }
+};
+exports.uploadResume = async (req, res) => {
+  try {
+    const { files } = req;
+    console.log({ files });
+    if (!files.length) res.status(400).send("No file uploaded.");
+    const finalbucket = `${process.env.AWS_BUCKET_NAME}` + "/resumes";
+    const uploadedFiles = await uploadFiles(finalbucket, files);
+    return res.send({
+      status: 200,
+      success: true,
+      data: uploadedFiles,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(400).send({ message: `invalid file` });
   }
 };

@@ -9,6 +9,7 @@ const templateRouter = require("../modules/template/router.js");
 const filterDataRouter = require("../modules/filterData/router.js");
 const userTrackRouter = require("../modules/userTrack/router.js");
 const mailingListRouter = require("../modules/mailingList/router.js");
+const applicantRouter = require("../modules/applicant/router.js");
 
 const router = Router();
 
