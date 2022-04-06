@@ -24,5 +24,6 @@ router.use("/filter-data", filterDataRouter);
 router.use("/level", levelRouter);
 router.use("/userTrack", userTrackRouter);
 router.use("/mailingList", mailingListRouter);
+router.use("/applicant", applicantRouter);
 
 module.exports = router;
