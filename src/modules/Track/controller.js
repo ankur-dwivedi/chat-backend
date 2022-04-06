@@ -3,6 +3,7 @@ const group_Model = require("../../models/group/index");
 const userTrackInfo_Model = require("../../models/userTrack/index");
 const level_Model = require("../../models/level/index");
 const randomstring = require("randomstring");
+const user_model = require("../../models/user/index");
 
 module.exports = {
   get: {
@@ -195,6 +196,8 @@ module.exports = {
     fetchTrackInfoForTransferTab: async (req, res) => {
       try {
         let userData = req.user;
+        let organization = userData.organization;
+        let organizationData = await user_model.find({organization,role:'creator'},{_id:1,name:1}).lean();
         let trackData = await track_Model
           .find(
             { creatorUserId: userData._id },
@@ -205,10 +208,11 @@ module.exports = {
             select: "name botGeneratedGroup description -_id",
           })
           .lean();
+
         return res.status(200).json({
           status: 200,
           success: true,
-          data: trackData,
+          data: {trackData,creatorData:organizationData},
         });
       } catch (err) {
         console.log(err.name);

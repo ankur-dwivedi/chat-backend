@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "18ea0d97-5e4f-4576-b375-ec8a79b3fd15",
+		"_postman_id": "65ffdc35-89d8-4f3f-9e7d-cf207ca9d129",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1715,22 +1715,33 @@
 				{
 					"name": "fetch Track With No Groups",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NDkyNzk1NDUsImV4cCI6MTY0OTg4NDM0NX0.Xe-7fsZ_QQtrKREmnoRX8VOlhoHxfX4wCqo6I_hd_L0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
-								"type": "text"
+								"type": "text",
+								"disabled": true
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/track/fetchTrackWithNoGroups",
+							"raw": "{{baseUrl}}/track/getTracksWithoutUserCreatedGroup",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"track",
-								"fetchTrackWithNoGroups"
+								"getTracksWithoutUserCreatedGroup"
 							]
 						}
 					},
@@ -1835,6 +1846,34 @@
 							"path": [
 								"track",
 								"createTrack"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch Track Info For Transfer Tab",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NDkyNzk1NDUsImV4cCI6MTY0OTg4NDM0NX0.Xe-7fsZ_QQtrKREmnoRX8VOlhoHxfX4wCqo6I_hd_L0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/track/fetchTrackInfoForTransferTab",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"track",
+								"fetchTrackInfoForTransferTab"
 							]
 						}
 					},
