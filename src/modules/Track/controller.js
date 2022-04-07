@@ -3,6 +3,7 @@ const group_Model = require("../../models/group/index");
 const userTrackInfo_Model = require("../../models/userTrack/index");
 const level_Model = require("../../models/level/index");
 const randomstring = require("randomstring");
+const user_model = require("../../models/user/index");
 
 module.exports = {
   get: {
@@ -13,9 +14,13 @@ module.exports = {
           .find({ creatorUserId: userData._id })
           .populate("groupId");
         if (userTrackData === null) {
-          return res.status(200).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(200)
+            .json({ status: "success", message: `no Data in db` });
         }
-        return res.status(200).json({ status: "success", message: userTrackData });
+        return res
+          .status(200)
+          .json({ status: "success", message: userTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -37,15 +42,22 @@ module.exports = {
           .populate("groupId", "-__v -createdAt -updatedAt")
           .lean();
         if (GroupTrackData === null) {
-          return res.status(200).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(200)
+            .json({ status: "success", message: `no Data in db` });
         }
         for (let i = 0; i < GroupTrackData.length; i++) {
           let levelData159 = await level_Model
-            .find({ trackId: GroupTrackData[i]._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .find(
+              { trackId: GroupTrackData[i]._id },
+              { __v: 0, createdAt: 0, updatedAt: 0 }
+            )
             .lean();
           GroupTrackData[i].levelData = levelData159;
         }
-        return res.status(200).json({ status: "success", message: GroupTrackData });
+        return res
+          .status(200)
+          .json({ status: "success", message: GroupTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -59,24 +71,42 @@ module.exports = {
       try {
         let userData = req.user;
         let userTrackData = await track_Model
-          .find({ creatorUserId: userData._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
+          .find(
+            { creatorUserId: userData._id },
+            { __v: 0, createdAt: 0, updatedAt: 0 }
+          ).populate({
+            path:'groupId',
+            select:'employees -_id'
+          })
           .lean();
         if (userTrackData === null) {
-          return res.status(200).json({ status: 200, success: false, data: `no Data in db` });
+          return res
+            .status(200)
+            .json({ status: 200, success: false, data: `no Data in db` });
         }
-        //filtering this data here so to give user list of track hich does not contains groupId 
+        //filtering this data here so to give user list of track hich does not contains groupId
         let tranformData1 = userTrackData.filter(
-          (element) => element.groupId === null || element.groupId === undefined || element.groupId.length === 0
+          (element) =>
+            element.groupId === null ||
+            element.groupId === undefined ||
+            element.groupId.length === 0
         );
-        let tranformData2 = userTrackData.filter((element) => element.botGeneratedGroup === true);
+        let tranformData2 = userTrackData.filter(
+          (element) => element.botGeneratedGroup === true
+        );
         let tranformData = [...tranformData1, ...tranformData2];
         for (let i = 0; i < tranformData.length; i++) {
           let levelData159 = await level_Model
-            .find({ trackId: tranformData[i]._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .find(
+              { trackId: tranformData[i]._id },
+              { __v: 0, createdAt: 0, updatedAt: 0 }
+            )
             .lean();
           tranformData[i].levelData = levelData159;
         }
-        return res.status(200).json({ status: "success", message: tranformData });
+        return res
+          .status(200)
+          .json({ status: "success", message: tranformData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -88,20 +118,31 @@ module.exports = {
     },
     fetchTrackAssignedToLearner: async (req, res) => {
       try {
-        let archived = req.query.archived==='true'?true:req.query.archived==='false'?false:'';
+        let archived =
+          req.query.archived === "true"
+            ? true
+            : req.query.archived === "false"
+            ? false
+            : "";
         let userData = req.user;
         let groupData = await group_Model
           .find({ employees: { $in: [userData._id] } }, { _id: 1 })
           .lean();
-          // console.log(groupData)
+        // console.log(groupData)
         let userTrackData = [];
         for (let i = 0; i < groupData.length; i++) {
           let foo = await track_Model
-            .find({ groupId:{$in:[groupData[i]._id ]}}, { __v: 0, createdAt: 0, updatedAt: 0 })
-            .populate({path:'creatorUserId',select:'name employeeId'})
+            .find(
+              { groupId: { $in: [groupData[i]._id] } },
+              { __v: 0, createdAt: 0, updatedAt: 0 }
+            )
+            .populate({ path: "creatorUserId", select: "name employeeId" })
             .lean();
-            // console.log(foo)
-          userTrackData = foo === null ? [...userTrackData, ...foo] : [...userTrackData, ...foo];
+          // console.log(foo)
+          userTrackData =
+            foo === null
+              ? [...userTrackData, ...foo]
+              : [...userTrackData, ...foo];
         }
         for (let j = 0; j < userTrackData.length; j++) {
           let bar = await userTrackInfo_Model
@@ -110,47 +151,79 @@ module.exports = {
               trackId: userTrackData[j]._id,
             })
             .lean();
-          let foobar = await level_Model.find({ trackId: userTrackData[j]._id }).lean();
-          bar === null ? "" :userTrackData[j].trackProgress =  bar.trackProgress === undefined ? "" : bar.trackProgress;
-          bar === null ? "unattemped" :userTrackData[j].trackState = bar.trackState === undefined ? "unattemped" : bar.trackState;
-          bar === null ? false :userTrackData[j].isArchived =  bar.isArchived === undefined ? false : bar.isArchived;
-          foobar.length === 0 ? userTrackData.splice(j,1) : userTrackData[j].totalLevelCount = foobar.length;
+          let foobar = await level_Model
+            .find({ trackId: userTrackData[j]._id })
+            .lean();
+          bar === null
+            ? (userTrackData[j].trackProgress = "")
+            : (userTrackData[j].trackProgress =
+                bar.trackProgress === undefined ? "" : bar.trackProgress);
+          bar === null
+            ? (userTrackData[j].trackState = "unattemped")
+            : (userTrackData[j].trackState =
+                bar.trackState === undefined ? "unattemped" : bar.trackState);
+          bar === null
+            ? (userTrackData[j].isArchived = false)
+            : (userTrackData[j].isArchived =
+                bar.isArchived === undefined ? false : bar.isArchived);
+          foobar.length === 0
+            ? userTrackData.splice(j, 1)
+            : (userTrackData[j].totalLevelCount = foobar.length);
         }
-        if(archived===''){
-          return res.status(200).json({ status: 200,success:true,data:userTrackData});
-        }else{
-          convertedUserTrack = userTrackData.filter(element=>element.isArchived===archived)
-          return res.status(200).json({ status: 200,success:true,data:convertedUserTrack});
+        console.log(userTrackData);
+        if (archived === "") {
+          return res
+            .status(200)
+            .json({ status: 200, success: true, data: userTrackData });
+        } else {
+          convertedUserTrack = userTrackData.filter(
+            (element) => element.isArchived === archived
+          );
+          return res
+            .status(200)
+            .json({ status: 200, success: true, data: convertedUserTrack });
         }
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
         res.status(400).json({
           status: 400,
-          success:false,
+          success: false,
           data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
-    fetchTrackInfoForTransferTab: async (req,res) =>{
+    fetchTrackInfoForTransferTab: async (req, res) => {
       try {
         let userData = req.user;
-        let trackData = await track_Model.find({creatorUserId:userData._id},{trackName:1,_id:1,description:1}).lean();
+        let organization = userData.organization;
+        let organizationData = await user_model.find({organization,role:'creator'},{_id:1,name:1}).lean();
+        let trackData = await track_Model
+          .find(
+            { creatorUserId: userData._id },
+            { trackName: 1, _id: 1, description: 1, groupId: 1 }
+          )
+          .populate({
+            path: "groupId",
+            select: "name botGeneratedGroup description -_id",
+          })
+          .lean();
+
         return res.status(200).json({
-          status:200,
-          success:true,
-          data:trackData
-        })
+          status: 200,
+          success: true,
+          data: {trackData,creatorData:organizationData},
+        });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
         res.status(400).json({
           status: 400,
-          success:false,
+          success: false,
           data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
-    }
+    },
   },
   post: {
     createTrack: async (req, res) => {
@@ -168,9 +241,10 @@ module.exports = {
           botGeneratedGroup: req.body.groupId === undefined ? undefined : false,
         };
         let savedData = await track_Model.create(data);
-        return res
-          .status(201)
-          .json({ status: "success", message: `successfully saved the data in db` });
+        return res.status(201).json({
+          status: "success",
+          message: `successfully saved the data in db`,
+        });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -205,9 +279,11 @@ module.exports = {
           botGeneratedGroup: true,
         };
         let savedData = await track_Model.create(data);
-        return res
-          .status(201)
-          .json({ status: 201, success: true, data: `successfully saved the data in db` });
+        return res.status(201).json({
+          status: 201,
+          success: true,
+          data: `successfully saved the data in db`,
+        });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -217,41 +293,51 @@ module.exports = {
         });
       }
     },
-    transferTrackOwner:async(req,res)=>{
+    transferTrackOwner: async (req, res) => {
       try {
         let currentUserId = req.userData._id;
         let newUserId = req.body.newUserId;
         let trackId = req.body.trackId;
-        let count=0;
-        for(let i=0;i<trackId.length;i++){
-          let trackData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId[i]}).lean()
-        if(trackData===null){
-          continue
-        }else{
-          trackData.creatorUserId = newUserId;
-          let updatedData = await track_Model.findOne({creatorUserId:currentUserId,_id:trackId}).updateOne(trackData)
-          if(updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1){
-            count=count+1;
+        let count = 0;
+        for (let i = 0; i < trackId.length; i++) {
+          let trackData = await track_Model
+            .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
+            .lean();
+          if (trackData === null) {
+            continue;
+          } else {
+            trackData.creatorUserId = newUserId;
+            let updatedData = await track_Model
+              .findOne({ creatorUserId: currentUserId, _id: trackId })
+              .updateOne(trackData);
+            if (
+              updatedData.n === 1 &&
+              updatedData.nModified === 1 &&
+              updatedData.ok === 1
+            ) {
+              count = count + 1;
+            }
           }
         }
-        }
-        if(count.length===trackId.length){
+        if (count.length === trackId.length) {
           return res.status(200).json({
             status: 200,
-            success:true,
-            data: 'OwnerShip of Track Changed Successfully',
+            success: true,
+            data: "OwnerShip of Track Changed Successfully",
           });
-        }else{
-          throw({
-          name: "updation Error",
-          message: "something went wrong while updating data please try again or contact admin",})
-        }       
+        } else {
+          throw {
+            name: "updation Error",
+            message:
+              "something went wrong while updating data please try again or contact admin",
+          };
+        }
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
         res.status(400).json({
           status: 400,
-          success:false,
+          success: false,
           data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
@@ -275,13 +361,19 @@ module.exports = {
         let updatedData = await track_Model
           .findOne({ creatorUserId: userData._id, _id: trackId })
           .update(data);
-        if (updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1)
-          return res
-            .status(200)
-            .json({ status: "success", message: `successfully updated the data in db` });
+        if (
+          updatedData.n === 1 &&
+          updatedData.nModified === 1 &&
+          updatedData.ok === 1
+        )
+          return res.status(200).json({
+            status: "success",
+            message: `successfully updated the data in db`,
+          });
         throw {
           name: "updation Error",
-          message: "something went wrong while updating data please try again or contact admin",
+          message:
+            "something went wrong while updating data please try again or contact admin",
         };
       } catch (err) {
         console.log(err.name);
@@ -302,7 +394,9 @@ module.exports = {
           creatorUserId: userData._id,
           _id: trackId,
         });
-        return res.status(200).json({ status: "success", message: "track deleted successfully" });
+        return res
+          .status(200)
+          .json({ status: "success", message: "track deleted successfully" });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
