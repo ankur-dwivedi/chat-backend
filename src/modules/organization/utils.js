@@ -11,9 +11,10 @@ const userKeys = {
   groups: [],
   organization: "",
 };
-exports.createUserObject = (org, userData) => {
+exports.createUserObject = (org, userData, role) => {
   userData["employeeData"] = [];
   userData["organization"] = org;
+  if (role) userData["role"] = role;
   Object.keys(userData).map((value) => {
     if (!(value in userKeys)) {
       userData["employeeData"].push({

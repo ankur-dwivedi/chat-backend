@@ -608,12 +608,12 @@
 								{
 									"key": "files",
 									"type": "file",
-									"src": "/C:/Users/Lenovo/Downloads/result.csv"
+									"src": "/home/ankur/projects/signtalk/cascade-backend/templates/employeeData.csv"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/organization/upload-employee-data?org=61b064bee20da142b8dea48c",
+							"raw": "{{baseUrl}}/organization/upload-employee-data?org=61b064bee20da142b8dea48c&role=creator",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -625,6 +625,10 @@
 								{
 									"key": "org",
 									"value": "61b064bee20da142b8dea48c"
+								},
+								{
+									"key": "role",
+									"value": "creator"
 								}
 							]
 						}
@@ -696,7 +700,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\":\"Group\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\",\r\n    \"description\":\"SDE1\",\r\n    \"properties\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
+									"raw": "{\r\n    \"name\":\"Group\",\r\n    \"description\":\"SDE1\",\r\n    \"properties\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -766,7 +770,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+											"value": "{{token}}",
 											"type": "string"
 										}
 									]
@@ -775,7 +779,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\":\"Group2\",\n    \"organization\":\"61b064bee20da142b8dea48c\",\n    \"description\":\"SDE1\",\n    \"employeeId\":[\"61d2b2995fe75e27248bf470\"]\n}",
+									"raw": "{\n    \"name\":\"Group2\",\n    \"description\":\"SDE1\",\n    \"employeeId\":[\"61d2b2995fe75e27248bf470\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -846,7 +850,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+											"value": "{{token}}",
 											"type": "string"
 										}
 									]
@@ -858,7 +862,7 @@
 									"formdata": []
 								},
 								"url": {
-									"raw": "{{baseUrl}}/user/search?employeeId=e",
+									"raw": "{{baseUrl}}/user/search?employeeId=E",
 									"host": [
 										"{{baseUrl}}"
 									],
@@ -869,7 +873,7 @@
 									"query": [
 										{
 											"key": "employeeId",
-											"value": "e"
+											"value": "E"
 										}
 									]
 								}
@@ -1017,7 +1021,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -1026,7 +1030,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"62286b3ab42a7d98a906638e\"\r\n}",
+							"raw": "{\r\n    \"id\":\"624f5eb1cb7fb200878320b6\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1257,6 +1261,16 @@
 				{
 					"name": "upload template media",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -1265,12 +1279,12 @@
 								{
 									"key": "files",
 									"type": "file",
-									"src": "/home/ankur/Documents/demo.txt"
+									"src": "/home/ankur/Pictures/Screenshot from 2022-04-02 19-52-17.png"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/template/upload?org=61b064bee20da142b8dea48c&track=61b064bee20da142b8dea48c&level=61b064bee20da142b8dea48c",
+							"raw": "{{baseUrl}}/template/upload?track=61b064bee20da142b8dea48c&level=61b064bee20da142b8dea48c",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -1279,10 +1293,6 @@
 								"upload"
 							],
 							"query": [
-								{
-									"key": "org",
-									"value": "61b064bee20da142b8dea48c"
-								},
 								{
 									"key": "track",
 									"value": "61b064bee20da142b8dea48c"
@@ -1586,7 +1596,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -1862,7 +1872,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 2\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true\n}",
+							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 4\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true\n}",
 							"options": {
 								"raw": {
 									"language": "json"

@@ -199,7 +199,7 @@ exports.uploadTemplateMedia = async (req, res) => {
     const finalbucket =
       `${process.env.AWS_BUCKET_NAME}` +
       "/" +
-      `${req.query.org}` +
+      `${req.user.organization}` +
       `${req.query.track}` +
       `${req.query.level}` +
       "/template";

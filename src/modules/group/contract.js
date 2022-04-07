@@ -2,7 +2,6 @@ const Joi = require("joi");
 
 exports.createContract = Joi.object({
   name: Joi.string().required(),
-  organization: Joi.string().required(),
   description: Joi.string().required(),
   properties: Joi.array()
     .items({
@@ -14,7 +13,6 @@ exports.createContract = Joi.object({
 
 exports.createByEmpListContract = Joi.object({
   name: Joi.string().required(),
-  organization: Joi.string().required(),
   description: Joi.string().required(),
   employeeId: Joi.array().items(Joi.string()).required(),
 });

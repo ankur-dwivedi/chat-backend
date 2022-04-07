@@ -270,11 +270,11 @@ module.exports = {
           organization: req.user.organization,
           isLocked: req.body.isLocked,
         };
-        await level_Model.create(data);
+        const level = await level_Model.create(data);
         // sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
         return res
           .status(201)
-          .json({ status: "success", message: `successfully saved the data in db` });
+          .json({ status: "success", message: `successfully saved the data in db`, data: level });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);

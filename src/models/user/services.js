@@ -111,12 +111,7 @@ exports.getOrgEmployee = ({ organization }) =>
 
 exports.create = async (userData) => {
   if (userData && userData.password) userData.password = await bcrypt.hash(userData.password, 10);
-  return User.create({ ...userData, createdAt: new Date() })
-    .then((response) => response)
-    .catch((error) => {
-      console.error(error);
-      return error;
-    });
+  return User.create({ ...userData, createdAt: new Date() }).then((response) => response);
 };
 
 exports.findUsers = (query) =>
