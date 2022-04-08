@@ -8,6 +8,7 @@ const {
 const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
 const { update } = require("../../models/level/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
+const { generateError } = require("../../utils/error");
 module.exports = {
   get: {
     fetchLevelByIdAndCreator: async (req, res) => {
@@ -279,11 +280,11 @@ module.exports = {
         console.log(err.name);
         console.log(err.message);
         if (err.message.indexOf("levelName_1") !== -1)
-          return res.status(200).json({
+          return res.status(400).json({
             status: "failed",
             message: `Level Name need to be unique`,
           });
-        return res.status(200).json({
+        return res.status(400).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,
         });
@@ -292,15 +293,30 @@ module.exports = {
   },
   patch: {
     update: async (req, res) => {
-      const queryObject = { $and: [{ _id: req.body.id }, { creatorUserId: req.user._id }] };
-      const updateObject = { ...req.body };
-      delete updateObject.id;
-      const updateLevel = await update(queryObject, updateObject).then((level) => ({
-        status: 200,
-        success: true,
-        data: level,
-      }));
-      return res.send(updateLevel);
+      try {
+        const queryObject = { $and: [{ _id: req.body.id }, { creatorUserId: req.user._id }] };
+        const updateObject = { ...req.body };
+        delete updateObject.id;
+        const updateLevel = await update(queryObject, updateObject).then((level) => ({
+          status: 200,
+          success: true,
+          data: level,
+        }));
+        return res.send(updateLevel);
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        if (err.message.indexOf("levelName_1") !== -1) {
+          return res.status(400).json({
+            status: "failed",
+            message: `Level Name need to be unique`,
+          });
+        }
+        return res.status(400).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
     },
   },
   put: {},
