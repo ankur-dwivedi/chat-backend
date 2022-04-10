@@ -1,11 +1,17 @@
-const { LEVEL_STATE, LOCKED_STATE, LEVEL_TYPE } = require("../../models/level/constants");
+const {
+  LEVEL_STATE,
+  LOCKED_STATE,
+  LEVEL_TYPE,
+} = require("../../models/level/constants");
 const level_Model = require("../../models/level/index");
 const {
   LEVEL_STATUS,
   LEVEL_STATUS_ENUM,
   ATTEMPT_STATUS,
 } = require("../../models/userLevel/constants");
-const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
+const {
+  getLatestUserLevelByLevel,
+} = require("../../models/userLevel/services");
 const { update } = require("../../models/level/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
 const { generateError } = require("../../utils/error");
@@ -19,8 +25,12 @@ module.exports = {
           _id: req.query.levelId,
         });
         if (level === null)
-          return res.status(201).json({ status: "success", message: `no Data in db` });
-        return res.status(201).json({ status: 200, success: false, data: level });
+          return res
+            .status(201)
+            .json({ status: "success", message: `no Data in db` });
+        return res
+          .status(201)
+          .json({ status: 200, success: false, data: level });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -33,11 +43,17 @@ module.exports = {
     fetchUserLevel: async (req, res) => {
       try {
         let userData = req.user;
-        let userTrackData = await level_Model.find({ creatorUserId: userData._id });
+        let userTrackData = await level_Model.find({
+          creatorUserId: userData._id,
+        });
         if (userTrackData === null) {
-          return res.status(201).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(201)
+            .json({ status: "success", message: `no Data in db` });
         }
-        return res.status(201).json({ status: "success", message: userTrackData });
+        return res
+          .status(201)
+          .json({ status: "success", message: userTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -52,7 +68,9 @@ module.exports = {
         let trackId = req.query.trackId;
         let userTrackData = await level_Model.find({ trackId });
         if (userTrackData === null) {
-          return res.status(201).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(201)
+            .json({ status: "success", message: `no Data in db` });
         }
         return res.status(201).json({ status: "success", data: userTrackData });
       } catch (err) {
@@ -101,7 +119,8 @@ module.exports = {
                 else lockedState = LOCKED_STATE.LOCKED;
               } else if (
                 prevUserLevelData[0] &&
-                prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate
+                prevUserLevelData[0].templateAttempted ===
+                  prevUserLevelData[0].totalTemplate
               )
                 lockedState = LOCKED_STATE.UNLOCKED;
               else lockedState = LOCKED_STATE.LOCKED;
@@ -111,7 +130,9 @@ module.exports = {
           if (userLevelData && userLevelData.length) {
             const score = userLevelData[0].levelScore;
             const completed =
-              (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
+              (userLevelData[0].templateAttempted /
+                userLevelData[0].totalTemplate) *
+              100;
             const passState = userLevelData[0].levelStatus;
             let ob = {};
             if (data.dueDate)
@@ -153,7 +174,9 @@ module.exports = {
         const levelId = req.query.levelId;
         const level = await level_Model.findOne({ _id: levelId });
         if (level === null) {
-          return res.status(201).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(201)
+            .json({ status: "success", message: `no Data in db` });
         }
         let levelData = await level_Model.find({
           trackId: level.trackId,
@@ -166,7 +189,8 @@ module.exports = {
           return data;
         });
         console.log({ nextLevelIndex });
-        nextLevelIndex = nextLevelIndex + 1 < levelData.length ? nextLevelIndex + 1 : -1;
+        nextLevelIndex =
+          nextLevelIndex + 1 < levelData.length ? nextLevelIndex + 1 : -1;
         console.log({ level, levelData, nextLevelIndex });
 
         let nextLevel;
@@ -273,16 +297,18 @@ module.exports = {
         };
         const level = await level_Model.create(data);
         // sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
-        return res
-          .status(201)
-          .json({ status: "success", message: `successfully saved the data in db`, data: level });
+        return res.status(201).json({
+          status: "success",
+          message: `successfully saved the data in db`,
+          data: level,
+        });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
         if (err.message.indexOf("levelName_1") !== -1)
           return res.status(400).json({
             status: "failed",
-            message: `Level Name need to be unique`,
+            message: `Level Name should be unique for a specific track.`,
           });
         return res.status(400).json({
           status: "failed",
@@ -294,14 +320,18 @@ module.exports = {
   patch: {
     update: async (req, res) => {
       try {
-        const queryObject = { $and: [{ _id: req.body.id }, { creatorUserId: req.user._id }] };
+        const queryObject = {
+          $and: [{ _id: req.body.id }, { creatorUserId: req.user._id }],
+        };
         const updateObject = { ...req.body };
         delete updateObject.id;
-        const updateLevel = await update(queryObject, updateObject).then((level) => ({
-          status: 200,
-          success: true,
-          data: level,
-        }));
+        const updateLevel = await update(queryObject, updateObject).then(
+          (level) => ({
+            status: 200,
+            success: true,
+            data: level,
+          })
+        );
         return res.send(updateLevel);
       } catch (err) {
         console.log(err.name);
@@ -309,7 +339,7 @@ module.exports = {
         if (err.message.indexOf("levelName_1") !== -1) {
           return res.status(400).json({
             status: "failed",
-            message: `Level Name need to be unique`,
+            message: `Level Name should be unique for a specific track`,
           });
         }
         return res.status(400).json({
