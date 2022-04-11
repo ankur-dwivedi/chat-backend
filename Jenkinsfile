@@ -50,6 +50,7 @@ pipeline {
                 #!/bin/bash
                 cd $WORKSPACE
                 kubectl apply -f=./kubernetes/mongodb.yaml
+                cat ./kubernetes/backend-deployment.yaml | sed s/1.0.0/${BUILD_NUMBER}/g
                 kubectl apply -f=./kubernetes/backend-service.yaml -f=./kubernetes/backend-deployment.yaml
                 '''
         }
