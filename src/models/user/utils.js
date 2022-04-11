@@ -2,12 +2,19 @@ const { Schema, Types } = require("mongoose");
 
 exports.EmployeeDataSchema = new Schema({
   name: { type: String, required: true },
-  value: { type: String, required: true },
+  value: { type: String, required: true, lowercase: true },
 });
 
 exports.OtpSchema = new Schema({
   expiry: { type: Date, required: true },
   value: { type: Number, required: true },
+});
+
+exports.CurrentStateSchema = new Schema({
+  track: { type: Schema.Types.ObjectId, trim: true, ref: "track", required: true },
+  level: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },
+  template: { type: Schema.Types.ObjectId, trim: true, ref: "template", required: true },
+  completed: { type: Boolean, default: false, required: true },
 });
 
 exports.createGroupFilterQuery = (org, property) => {
@@ -19,7 +26,6 @@ exports.createGroupFilterQuery = (org, property) => {
       object[`employeeData.value`] = { $eq: filterValues };
       return { ...object };
     });
-
     return { ...object, $or: [...subQuery] };
   });
   return { $and: [{ organization: Types.ObjectId(org) }, ...filterData] };

@@ -1,15 +1,60 @@
 exports.PORT = process.env.PORT || 4000;
 
 
-exports.trackColorFill = ["#F1FBFF","#FFEEF2","#EAE4FF"] 
+exports.passFailData = [
+  {
+    state: "Passed",
+    passed: 0,
+  },
+  {
+    state: "Failed",
+    failed: 0,
+  },
+  {
+    state: "Unattempted",
+    unattempted: 0,
+  },
+];
 
-exports.trackColorBorder = ["#47D4D0","#F17193","#8E75E6"]
-
-// #F1FBFF - Blue Fill
-// #47D4D0 - Blue Border
-
-// #FFEEF2 - Pink Fill
-// #F17193 - Pink Border
-
-// #EAE4FF - Purple Fill
-// #8E75E6 - Purple Border
+exports.frequencyData = [
+  {
+    bucket: 10,
+    frequency: 0,
+  },
+  {
+    bucket: 20,
+    frequency: 0,
+  },
+  {
+    bucket: 30,
+    frequency: 0,
+  },
+  {
+    bucket: 40,
+    frequency: 0,
+  },
+  {
+    bucket: 50,
+    frequency: 0,
+  },
+  {
+    bucket: 60,
+    frequency: 01,
+  },
+  {
+    bucket: 70,
+    frequency: 0,
+  },
+  {
+    bucket: 80,
+    frequency: 0,
+  },
+  {
+    bucket: 90,
+    frequency: 0,
+  },
+  {
+    bucket: 100,
+    frequency: 0,
+  },
+];

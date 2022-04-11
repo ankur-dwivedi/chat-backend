@@ -3,57 +3,115 @@ const User = require("./");
 const { createGroupFilterQuery, createUserIdQuery, createUserIdFindQuery } = require("./utils");
 const md5 = require("md5");
 const { Types } = require("mongoose");
+const bcrypt = require("bcrypt");
 
 exports.get = async (query) =>
   query.id
     ? User.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
-    : query.password && query.username
+    : query.password && query.employeeId && query.organization
+    ? User.findOne(
+        {
+          $and: [
+            { employeeId: query.employeeId },
+            { password: query.password },
+            { organization: query.organization },
+          ],
+        },
+        { otp: 0, __v: 0, password: 0 }
+      ).then((response) => (response ? response : generateError("invalid employeeId or password")))
+    : query.employeeId && query.organization
     ? User.findOne({
-        $and: [{ username: query.username }, { password: query.password }],
-      }).then((response) => (response ? response : generateError("invalid username or password")))
-    : query.password && query.employeeId
-    ? User.findOne({
-        $and: [{ employeeId: query.employeeId }, { password: query.password }],
-      }).then((response) => (response ? response : generateError("invalid employeeId or password")))
-    : query.employeeId
-    ? User.findOne({ employeeId: query.employeeId }).then((response) =>
-        response ? response : generateError("invalid employeeId or password")
-      )
-    : query.username
-    ? User.findOne({ username: query.username }).then((response) =>
-        response ? response : generateError("invalid employeeId or password")
-      )
+        $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
+      }).then((response) => (response ? response : generateError("Invalid Employee ID")))
     : User.find()
         .then((response) => response)
         .catch((error) => error);
 
-exports.getByEmpIdOrName = async (query) =>
-  query.employeeId
-    ? User.findOne({
-        $and: [
-          { employeeId: query.employeeId },
-          { organization: Types.ObjectId(query.organization) },
+exports.getEmpBempIdOrg = async (query) =>
+  User.findOne({
+    $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
+  }).then((response) => response);
+
+exports.getUserAnalytics = async (query) =>
+  User.findOne({ _id: query.id })
+    .populate({
+      path: "groups",
+      select: "name",
+    })
+    .then((response) => (response ? response : generateError()))
+    .catch((error) => error);
+
+exports.getUserAndOrgByEmpId = ({ employeeId, organization }) =>
+  User.findOne({ employeeId, organization })
+    .populate({
+      path: "organization",
+      select: "domain",
+    })
+    .then((response) => (response ? response : generateError("Invalid Employee ID")));
+
+exports.getUserWithOrg = ({ userId }) =>
+  User.findById(userId)
+    .populate({
+      path: "organization",
+      select: "logo name",
+    })
+    .select([
+      "role",
+      "lastSession",
+      "_id",
+      "name",
+      "email",
+      "employeeId",
+      "phoneNumber",
+      "organization",
+    ])
+    .then((user) => user);
+
+exports.searchByEmp = (query) =>
+  User.find({
+    $and: [
+      {
+        $or: [
+          {
+            $and: [
+              { employeeId: { $regex: query.employeeId + ".*", $options: "i" } },
+              { organization: query.organization },
+            ],
+          },
+          {
+            $and: [
+              { name: { $regex: query.employeeId + ".*", $options: "i" } },
+              { organization: query.organization },
+            ],
+          },
         ],
-      }).then((response) => (response ? response : generateError()))
-    : User.findOne({
-        $and: [{ employeeId: query.name }, { organization: Types.ObjectId(query.organization) }],
-      }).then((response) => (response ? response : generateError()));
+      },
+      { organization: query.organization },
+    ],
+  })
+    .select(["employeeId", "name"])
+    .limit(10)
+    .then((response) => response);
 
 exports.getGroupEmployee = (organization, property) =>
   User.find({ ...createGroupFilterQuery(organization, property) })
+    .select(["_id", "name", "email", "employeeData"])
+    .sort({ createdAt: -1 })
     .then((response) => response)
     .catch((error) => error);
 
-exports.create = (userData) => {
-  if (userData && userData.password) userData.password = md5(userData.password);
-  return User.create({ ...userData, createdAt: new Date() })
+exports.getOrgEmployee = ({ organization }) =>
+  User.find({ organization: Types.ObjectId(organization) })
+    .select(["_id", "name", "email"])
+    .sort({ createdAt: -1 })
     .then((response) => response)
-    .catch((error) => {
-      console.error(error);
-      return error;
-    });
+    .catch((error) => error);
+
+exports.create = async (userData) => {
+  if (userData && userData.password) userData.password = await bcrypt.hash(userData.password, 10);
+  return User.create({ ...userData, createdAt: new Date() }).then((response) => response);
 };
 
 exports.findUsers = (query) =>
@@ -64,8 +122,8 @@ exports.findUsers = (query) =>
     });
 
 exports.update = (queryObject, updateObject) =>
-  User.updateOne(queryObject, { $set: updateObject })
-    .then((response) => (response && response.n ? response : generateError()))
+  User.findOneAndUpdate(queryObject, { $set: updateObject }, { new: true })
+    .then((response) => response)
     .catch((error) => {
       throw Error(error);
     });
@@ -89,3 +147,28 @@ exports.findIdByEmloyeeId = (employeeIds, org) =>
       return user.map((value) => value._id);
     })
     .catch((err) => false);
+
+exports.removeGroupId = ({ groupId }) =>
+  User.updateMany(
+    { groups: { $in: [groupId] } },
+    {
+      $pull: {
+        groups: groupId,
+      },
+    }
+  );
+
+exports.removeGroupIdByEmpId = ({ groupId, employeeId }) =>
+  User.updateMany(
+    { _id: { $in: employeeId } },
+    {
+      $pull: {
+        groups: groupId,
+      },
+    }
+  );
+
+exports.countEmployeeInOrg = ({ organization }) =>
+  User.find({ organization })
+    .count()
+    .then((response) => response);

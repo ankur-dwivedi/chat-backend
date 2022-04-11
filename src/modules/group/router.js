@@ -5,10 +5,18 @@ const {
   deleteGroup,
   createGroupEmployee,
   createGpByEmpList,
+  countEmpInCsv,
+  getGroupById,
+  update,
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
-const { createContract, deleteContract, createByEmpListContract } = require("./contract");
-const { withAuthUser } = require("../../middlewares/auth");
+const {
+  createContract,
+  deleteContract,
+  createByEmpListContract,
+  updateContract,
+} = require("./contract");
+const { withAuthUser, withAdminAuthUser } = require("../../middlewares/auth");
 const multer = require("multer");
 
 var upload = multer({
@@ -25,14 +33,16 @@ var upload = multer({
 const groupRouter = Router();
 
 groupRouter.get("/", withAuthUser, getGroups);
+groupRouter.get("/group-id", withAuthUser, getGroupById);
 groupRouter.post("/", withAuthUser, validate(createContract), create);
 groupRouter.delete("/", withAuthUser, validate(deleteContract), deleteGroup);
 groupRouter.post("/create-custom", withAuthUser, upload.array("files"), createGroupEmployee);
+groupRouter.post("/count-employee", withAuthUser, upload.array("files"), countEmpInCsv);
 groupRouter.post(
   "/create-by-list",
   withAuthUser,
   validate(createByEmpListContract),
   createGpByEmpList
 );
-
+groupRouter.patch("/", withAdminAuthUser, validate(updateContract), update);
 module.exports = groupRouter;

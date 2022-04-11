@@ -1,11 +1,32 @@
 const expressJwt = require("express-jwt");
 const User = require("../../models/user");
-const { createUnauthorizedError } = require("../../utils/general");
+const Level = require("../../models/level");
+const Template = require("../../models/template");
+const Track = require("../../models/Track");
+const { createUnauthorizedError, generateAccessToken } = require("../../utils/general");
+const { ROLE } = require("../../models/user/constants");
 
-const verifyAuthToken = expressJwt({
-  secret: "testing",
+const verifyAccessToken = expressJwt({
+  secret: process.env.ACCESS_TOKEN_SECRET,
   algorithms: ["HS256"],
 });
+
+const verifyRefreshToken = expressJwt({
+  secret: process.env.REFRESH_TOKEN_SECRET,
+  algorithms: ["HS256"],
+});
+
+const refreshAuthUser = (req, res, next) =>
+  User.findById(req.user.userId)
+    .then((user) => {
+      if (!user) {
+        res.send(createUnauthorizedError("User not found"));
+      } else {
+        req.user = user;
+        res.send({ status: 200, success: true, accessToken: generateAccessToken(user._id) });
+      }
+    })
+    .catch((error) => res.send(createUnauthorizedError(error)));
 
 const assocAuthUser = (req, res, next) =>
   User.findById(req.user.userId)
@@ -19,49 +40,71 @@ const assocAuthUser = (req, res, next) =>
     })
     .catch((error) => res.send(createUnauthorizedError(error)));
 
- 
-const assocAuthOtherUser = (req, res, next) =>
-User.findById(req.user.userId)
-  .then((user) => {
-    if (!user) {
-      res.send(createUnauthorizedError("User not found"));
-    } else {
-      req.user = user;
-      next();
-    }
-  })
-  .catch((error) => res.send(createUnauthorizedError(error)));
- 
-const isAdmin = (req, _, next) =>
+// authenticate learner for tracks and level also
+const assocAuthLearner = (req, res, next) =>
   User.findById(req.user.userId)
-    .then((user) => {
+    .then(async (user) => {
+      if (!user) {
+        res.send(createUnauthorizedError("User not found"));
+      } else {
+        req.user = user;
+        if (req.body.templateId) {
+          const template = await Template.findById(req.body.templateId);
+          const track = await Track.findById(template.trackId);
+          const filteredArray = track.groupId.filter(function (n) {
+            return user.groups.indexOf(n) !== -1;
+          });
+          if (filteredArray && filteredArray.length) {
+            req.template = template;
+            next();
+          } else return res.status(401).send({ message: "User not Authorised for template" });
+        } else if (req.query.levelId) {
+          const level = await Level.findById(req.query.levelId);
+          if (!level)
+            return res
+              .status(204)
+              .send({ message: " Level Not Found (Please check the Level ID)" });
+          const track = await Track.findById(level.trackId);
+          const filteredArray = track.groupId.filter(function (n) {
+            return user.groups.indexOf(n) !== -1;
+          });
+          if (filteredArray && filteredArray.length) {
+            req.level = level;
+            next();
+          } else return res.status(401).send({ message: "User not Authorised for level" });
+        } else next();
+      }
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(204).send(createUnauthorizedError(error));
+    });
+
+const isAdmin = (req, res, next) =>
+  User.findById(req.user.userId)
+    .then(async (user) => {
       if (!user) {
         res.send(createUnauthorizedError("Not Authorized"));
-      } else if (user.role !== "admin") {
+      } else if (user.role !== ROLE.CREATOR) {
         res.send(createUnauthorizedError("Not Authorized"));
       } else {
         req.user = user;
+        if (req.body.levelId) {
+          const level = await Level.findById(req.body.levelId);
+          if (level && level.creatorUserId.toString() !== user._id.toString()) {
+            res.status(401).send({ message: "User not Authorised for level" });
+          }
+        }
         next();
       }
     })
     .catch((error) => res.send(createUnauthorizedError(error)));
 
-/**
- * withAuthUser :: [Middleware]
- * Verify auth token and assoc user document to request
- */
-const withAuthUser = [verifyAuthToken, assocAuthUser];
+const withAuthUser = [verifyAccessToken, assocAuthUser];
+const withAdminAuthUser = [verifyAccessToken, isAdmin];
+const withAuthLearner = [verifyAccessToken, assocAuthLearner];
+const withNewUser = [verifyRefreshToken, refreshAuthUser];
 
-/**
- * withAdminAuthUser :: [Middleware]
- * Verify auth token and check user role
- */
-const withAdminAuthUser = [verifyAuthToken, isAdmin];
-
-/**
- * withOptionalAuthUser :: [Middleware]
- * Get user object if exists - other ways assoc empty object
- */
 const withOptionalAuthUser = [
   ...withAuthUser,
   (error, req, res, next) => {
@@ -75,10 +118,12 @@ const withOptionalAuthUser = [
 ];
 
 module.exports = {
-  verifyAuthToken,
+  verifyAccessToken,
   assocAuthUser,
   isAdmin,
   withAuthUser,
   withAdminAuthUser,
   withOptionalAuthUser,
+  withAuthLearner,
+  withNewUser,
 };
