@@ -325,6 +325,7 @@ module.exports = {
             }
           }
         }
+        
         if (parseInt(nullCount) + parseInt(count) === trackId.length) {
           return res.status(200).json({
             status: 200,
