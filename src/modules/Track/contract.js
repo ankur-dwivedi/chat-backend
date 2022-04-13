@@ -2,7 +2,7 @@ const Joi = require("joi");
 
 exports.createTrackContract = Joi.object({
   trackName: Joi.string().required(),
-  // groupId: Joi.array().items(Joi.string().required()).allow(),
+  groupId: Joi.array().allow(),
   selectedTheme: Joi.string().required(),
   skillTag: Joi.array().allow(),
   description: Joi.string().required(),
