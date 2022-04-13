@@ -299,7 +299,7 @@ module.exports = {
     },
     transferTrackOwner: async (req, res) => {
       try {
-        let currentUserId = req.userData._id;
+        let currentUserId = req.user._id;
         let newUserId = req.body.newUserId;
         let trackId = req.body.trackId;
         let count = 0;
