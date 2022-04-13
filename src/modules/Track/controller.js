@@ -325,7 +325,7 @@ module.exports = {
             }
           }
         }
-        
+
         if (parseInt(nullCount) + parseInt(count) === trackId.length) {
           return res.status(200).json({
             status: 200,
@@ -408,7 +408,8 @@ module.exports = {
         //deleteing group Ids if required
         if(deleteGroupId!==undefined){
           for(let i=0;i<deleteGroupId.length;i++){
-            await group_Model.findOneAndDelete({_id:deleteGroupId[i]})
+            await group_Model.findOneAndDelete({_id:deleteGroupId[i]});
+            await track_Model.findOneAndDelete({_id:trackId},{$pull:{groupId:{$in:deleteGroupId[i]}}});
           }
         }
         //creating a new group to add it in the track data
