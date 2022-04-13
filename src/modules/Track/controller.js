@@ -303,11 +303,13 @@ module.exports = {
         let newUserId = req.body.newUserId;
         let trackId = req.body.trackId;
         let count = 0;
+        let nullCount=0;
         for (let i = 0; i < trackId.length; i++) {
           let trackData = await track_Model
             .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
             .lean();
           if (trackData === null) {
+            nullCount = nullCount+1;
             continue;
           } else {
             trackData.creatorUserId = newUserId;
@@ -323,7 +325,7 @@ module.exports = {
             }
           }
         }
-        if (count.length === trackId.length) {
+        if (parseInt(nullCount) + parseInt(count) === trackId.length) {
           return res.status(200).json({
             status: 200,
             success: true,
