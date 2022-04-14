@@ -1,7 +1,7 @@
 const { Router } = require("express");
 const trackController = require("./controller");
 const { withAuthUser } = require("../../middlewares/auth");
-const { createTrackContract,createTrackUsingLearnerIdContract,transferTrackOwnerContract } = require("./contract");
+const { createTrackContract,createTrackUsingLearnerIdContract,transferTrackOwnerContract,updateTrackUsingLearnerIdContract } = require("./contract");
 const { validate } = require("../../middlewares/schema");
 
 const trackRouter = Router();
@@ -17,6 +17,7 @@ trackRouter.post("/createTrackUsingLearnerId",validate(createTrackUsingLearnerId
 trackRouter.post("/transferTrackOwner",validate(transferTrackOwnerContract),withAuthUser,trackController.post.transferTrackOwner)
 
 trackRouter.put('/updateTrack/:trackId',validate(createTrackContract),withAuthUser,trackController.put.updateTrack)
+trackRouter.put('/updateTrackUsingLearnerId/:trackId',validate(updateTrackUsingLearnerIdContract),withAuthUser,trackController.put.updateTrackUsingLearnerId)
 
 trackRouter.delete("/deleteTrack/:trackId",withAuthUser,trackController.delete.deleteTrack);
 // apis for lerner side

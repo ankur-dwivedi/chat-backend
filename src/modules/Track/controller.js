@@ -24,9 +24,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -61,9 +62,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -110,9 +112,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -248,9 +251,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -271,7 +275,6 @@ module.exports = {
           creatorUserId: userData._id,
           trackName: req.body.trackName,
           groupId: savedGroupData._id,
-          groupName: req.body.groupName,
           selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
           description: req.body.description,
@@ -287,28 +290,31 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
     transferTrackOwner: async (req, res) => {
       try {
-        let currentUserId = req.userData._id;
+        let currentUserId = req.user._id;
         let newUserId = req.body.newUserId;
         let trackId = req.body.trackId;
         let count = 0;
+        let nullCount=0;
         for (let i = 0; i < trackId.length; i++) {
           let trackData = await track_Model
             .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
             .lean();
           if (trackData === null) {
+            nullCount = nullCount+1;
             continue;
           } else {
             trackData.creatorUserId = newUserId;
             let updatedData = await track_Model
-              .findOne({ creatorUserId: currentUserId, _id: trackId })
+              .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
               .updateOne(trackData);
             if (
               updatedData.n === 1 &&
@@ -319,7 +325,8 @@ module.exports = {
             }
           }
         }
-        if (count.length === trackId.length) {
+
+        if (parseInt(nullCount) + parseInt(count) === trackId.length) {
           return res.status(200).json({
             status: 200,
             success: true,
@@ -371,16 +378,80 @@ module.exports = {
             message: `successfully updated the data in db`,
           });
         throw {
-          name: "updation Error",
+          name: "updationError",
           message:
             "something went wrong while updating data please try again or contact admin",
         };
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    updateTrackUsingLearnerId: async (req, res) => {
+      try {
+        let userData = req.user;
+        let {trackId} = req.params;
+        let { learnerIds, deleteGroupId } = req.body; //taking arrays of user ids from user
+        //fetching track data using trackid
+        let oldTrackData = await track_Model.findOne({_id:trackId}).lean();
+        if(oldTrackData===null){
+          throw{
+            name: "validationError",
+            message: "please send valid trackId",
+          }
+        }
+        //deleteing group Ids if required
+        if(deleteGroupId!==undefined){
+          for(let i=0;i<deleteGroupId.length;i++){
+            await group_Model.findOneAndDelete({_id:deleteGroupId[i]});
+            await track_Model.findOneAndDelete({_id:trackId},{$pull:{groupId:{$in:deleteGroupId[i]}}});
+          }
+        }
+        //creating a new group to add it in the track data
+        let groupData = {
+          name: randomstring.generate({ length: 16, charset: "alphabetic" }),
+          employees: learnerIds,
+          organization: userData.organization,
+          description: "this is generated by code",
+          createdBy: userData._id,
+          botGeneratedGroup: true,
+        };
+        //storing in db
+        let savedGroupData = await group_Model.create(groupData);
+        //assigning objectid to trackid
+        oldTrackData.groupId.push(savedGroupData._id);
+        //assigning newData to oldData if any
+        oldTrackData.trackName = req.body.trackName===undefined?oldTrackData.trackName:req.body.trackName;
+        oldTrackData.selectedTheme = req.body.selectedTheme===undefined?oldTrackData.selectedTheme:req.body.selectedTheme;
+        oldTrackData.skillTag = req.body.skillTag===undefined?oldTrackData.skillTag:req.body.skillTag;
+        oldTrackData.description = req.body.description===undefined?oldTrackData.description:req.body.description;
+        oldTrackData.organization = req.body.organization===undefined?oldTrackData.organization:req.body.organization;
+        //updating old data
+        let updatedData = await track_Model
+          .findOne({ creatorUserId: userData._id, _id: trackId })
+          .update(oldTrackData);
+        if (updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1)
+          return res.status(200).json({
+            status:200,
+            success: true,
+            data: `successfully updated the data in db`,
+          });
+        throw {
+          name: "updationError",
+          message: "something went wrong while updating data please try again or contact admin",
+        };
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -400,9 +471,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
