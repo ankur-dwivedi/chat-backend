@@ -6,7 +6,7 @@ const {
   ATTEMPT_STATUS,
 } = require("../../models/userLevel/constants");
 const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
-const { update } = require("../../models/level/services");
+const { update, deleteProperty } = require("../../models/level/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
 const { generateError } = require("../../utils/error");
 module.exports = {
@@ -300,12 +300,22 @@ module.exports = {
   patch: {
     update: async (req, res) => {
       try {
+        const unset = {};
+        for (let data in req.body) {
+          if (req.body[data] === "") unset[data] = 1;
+        }
+        console.log({ unset });
         const queryObject = {
           $and: [{ _id: req.body.id }, { creatorUserId: req.user._id }],
         };
         const updateObject = { ...req.body };
         delete updateObject.id;
-        const updateLevel = await update(queryObject, updateObject).then((level) => ({
+        let updateLevel = await update(queryObject, updateObject).then((level) => ({
+          status: 200,
+          success: true,
+          data: level,
+        }));
+        updateLevel = await deleteProperty(queryObject, unset).then((level) => ({
           status: 200,
           success: true,
           data: level,
