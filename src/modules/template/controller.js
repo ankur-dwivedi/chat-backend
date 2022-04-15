@@ -171,8 +171,8 @@ const levelComplete = async ({ levelId, learnerId }) => {
 exports.create = async (req, res) => {
   try {
     const level = await Level.get({ id: req.body.levelId });
-    const levelType = level.levelType;
-    const template = await create({ ...req.body, levelType });
+    const { levelType, trackId, organization } = level;
+    const template = await create({ ...req.body, levelType, trackId, organization });
     res.send({
       status: 200,
       success: true,

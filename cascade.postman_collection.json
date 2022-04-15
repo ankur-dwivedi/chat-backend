@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "65ffdc35-89d8-4f3f-9e7d-cf207ca9d129",
+		"_postman_id": "18ea0d97-5e4f-4576-b375-ec8a79b3fd15",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -466,18 +466,11 @@
 							}
 						},
 						"url": {
-							"raw": "http://192.168.58.2:31740/api/v1/organization/",
-							"protocol": "http",
+							"raw": "{{baseUrl}}/organization/",
 							"host": [
-								"192",
-								"168",
-								"58",
-								"2"
+								"{{baseUrl}}"
 							],
-							"port": "31740",
 							"path": [
-								"api",
-								"v1",
 								"organization",
 								""
 							]
@@ -491,7 +484,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/organization/?domain=org-1",
+							"raw": "{{baseUrl}}/organization/?domain=indutch",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -502,7 +495,7 @@
 							"query": [
 								{
 									"key": "domain",
-									"value": "org-1"
+									"value": "indutch"
 								}
 							]
 						}
@@ -974,26 +967,23 @@
 					]
 				},
 				{
-					"name": "get group",
-					"protocolProfileBehavior": {
-						"disableBodyPruning": true
-					},
+					"name": "delete group",
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg3MTk3NzYsImV4cCI6MTY4MDI3NzM3Nn0.gUJljOpzeubeTYutIXlruvxSnD6MMeZNcmI5NN_KTQ4",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
 						},
-						"method": "GET",
+						"method": "DELETE",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "",
+							"raw": "{\r\n    \"id\":\"624f5eb1cb7fb200878320b6\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1014,7 +1004,7 @@
 					"response": []
 				},
 				{
-					"name": "delete group",
+					"name": "delete group Copy",
 					"request": {
 						"auth": {
 							"type": "bearer",
@@ -1031,6 +1021,46 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\r\n    \"id\":\"624f5eb1cb7fb200878320b6\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/group/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"group",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get group",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg3MTk3NzYsImV4cCI6MTY4MDI3NzM3Nn0.gUJljOpzeubeTYutIXlruvxSnD6MMeZNcmI5NN_KTQ4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1183,7 +1213,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDU5MTg5NDd9.OVj2DxzrIs5F02I2vyaZOGTnDFlhV8p66x0mI9LGxuA",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -1192,7 +1222,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"type\": \"mcq-media\",\r\n  \"levelId\": \"6214c0ae6de8d66209bc02b1\",\r\n  \"trackId\": \"621ab37f04d46bfeeb398d19\",\r\n  \"organization\": \"61b064bee20da142b8dea48c\",\r\n  \"question\":{\r\n      \"value\":\"What is Data..?\",\r\n      \"type\":\"text\"\r\n  },\r\n  \"media\":{\r\n      \"value\":\"http://media\",\r\n      \"type\":\"jpg\"\r\n  },\r\n  \"options\": [{\r\n      \"value\":\"Option 1\",\r\n      \"type\":\"text\"\r\n  },{\r\n      \"value\":\"Option 2\",\r\n      \"type\":\"text\"\r\n  }],\r\n  \"answer\": [\"A\"],\r\n  \"importance\":1,\r\n  \"information\":{\r\n    \"text\":\"template informaaatio\",\r\n    \"media\":\"https://media-url\",\r\n    \"mediaType\": \"mp4\"\r\n  },\r\n  \"revealOption\":true,\r\n  \"templateOrder\":21\r\n}",
+							"raw": "{\r\n    \"type\": \"mcq-media\",\r\n  \"levelId\": \"6214c0ae6de8d66209bc02b1\",\r\n  \"question\":{\r\n      \"value\":\"What is Data..?\",\r\n      \"type\":\"text\"\r\n  },\r\n  \"media\":{\r\n      \"value\":\"http://media\",\r\n      \"type\":\"jpg\"\r\n  },\r\n  \"options\": [{\r\n      \"value\":\"Option 1\",\r\n      \"type\":\"text\"\r\n  },{\r\n      \"value\":\"Option 2\",\r\n      \"type\":\"text\"\r\n  }],\r\n  \"answer\": [\"A\"],\r\n  \"importance\":1,\r\n  \"information\":{\r\n    \"text\":\"template informaaatio\",\r\n    \"media\":\"https://media-url\",\r\n    \"mediaType\": \"mp4\"\r\n  },\r\n  \"revealOption\":true,\r\n  \"templateOrder\":21\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1314,7 +1344,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -1582,6 +1612,43 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "delete template",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\":\"624f5eb1cb7fb200878320b6\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/template/",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"template",
+								""
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -1661,7 +1728,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg3MTk3NzYsImV4cCI6MTY4MDI3NzM3Nn0.gUJljOpzeubeTYutIXlruvxSnD6MMeZNcmI5NN_KTQ4",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -1725,33 +1792,22 @@
 				{
 					"name": "fetch Track With No Groups",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NDkyNzk1NDUsImV4cCI6MTY0OTg4NDM0NX0.Xe-7fsZ_QQtrKREmnoRX8VOlhoHxfX4wCqo6I_hd_L0",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [
 							{
 								"key": "Authorization",
 								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
-								"type": "text",
-								"disabled": true
+								"type": "text"
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/track/getTracksWithoutUserCreatedGroup",
+							"raw": "{{baseUrl}}/track/fetchTrackWithNoGroups",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"track",
-								"getTracksWithoutUserCreatedGroup"
+								"fetchTrackWithNoGroups"
 							]
 						}
 					},
@@ -1860,34 +1916,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "fetch Track Info For Transfer Tab",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NDkyNzk1NDUsImV4cCI6MTY0OTg4NDM0NX0.Xe-7fsZ_QQtrKREmnoRX8VOlhoHxfX4wCqo6I_hd_L0",
-									"type": "string"
-								}
-							]
-						},
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/track/fetchTrackInfoForTransferTab",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"fetchTrackInfoForTransferTab"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -1973,43 +2001,6 @@
 					"response": []
 				},
 				{
-					"name": "create level Copy",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDc0MzQyNjJ9.FN9YWsuGAYKb0ddVBEwuBpyYqmd41ultWlLSg4rvXuA",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 2\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/level/createLevel",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"level",
-								"createLevel"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "get learner level",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -2020,7 +2011,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -2139,7 +2130,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg1OTQ4OTIsImV4cCI6MTY0ODYzMDg5Mn0.St7br5KVcko_pP1auoHGjELuYE84cC6UeEDFe0gkPis",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -2148,7 +2139,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"6214c0ae6de8d66209bc02b1\",\n    \"levelState\": \"launch\",\n    \"employeeRetryInDays\": 2,\n    \"isLocked\": true,\n    \"levelName\": \"Level 1\",\n    \"levelDescription\": \"description\",\n    \"passingScore\": 40,\n    \"dueDate\": \"2022-01-11T18:30:00.000Z\",\n    \"levelType\": \"assessment\"\n}",
+							"raw": "{\n    \"id\": \"6229734cefd86a3040e366f1\",\n    \"levelState\": \"launch\",\n    \"employeeRetryInDays\": 2,\n    \"isLocked\": true,\n    \"levelName\": \"Level 2\",\n    \"levelDescription\": \"description\",\n    \"passingScore\": 40,\n    \"dueDate\": \"2022-01-11T18:30:00.000Z\",\n    \"levelType\": \"assessment\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
