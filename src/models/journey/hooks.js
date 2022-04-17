@@ -4,7 +4,7 @@ const Level = require("../level/services");
 const { LEVEL_STATUS, ATTEMPT_STATUS } = require("../userLevel/constants");
 const { TEMPLATE_TYPE } = require("../template/constants");
 const { LEVEL_TYPE } = require("../level/constants");
-const { updateTrackStatus } = require('../userTrack/services');
+const { updateTrackStatus } = require("../userTrack/services");
 
 exports.initHooks = (JourneySchema) => {
   JourneySchema.post("save", async (docs) => {
@@ -47,8 +47,8 @@ exports.initHooks = (JourneySchema) => {
           lastAttemptedTemplate: templateId,
         }
       );
-    //calling this function to update the user track status
-    updateTrackStatus(userLevelData.learnerId,levelData.trackId);
+      //calling this function to update the user track status
+      updateTrackStatus(userLevelData.learnerId, levelData.trackId);
     } else {
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
@@ -57,8 +57,6 @@ exports.initHooks = (JourneySchema) => {
       await UserLevel.update(
         { _id: attemptId },
         {
-          levelScore: 0,
-          totalObtainScore: 0,
           totalTemplate: templateData.length,
           templateAttempted: userLevelData.templateAttempted + 1,
           attemptStatus:
@@ -68,8 +66,8 @@ exports.initHooks = (JourneySchema) => {
           lastAttemptedTemplate: templateId,
         }
       );
-    //calling this function to update the user track status
-    updateTrackStatus(userLevelData.learnerId,levelData.trackId);
+      //calling this function to update the user track status
+      updateTrackStatus(userLevelData.learnerId, levelData.trackId);
     }
   });
 };

@@ -1,6 +1,7 @@
 const { generateError } = require("../../utils/error");
 const Template = require(".");
 const { Types } = require("mongoose");
+const { TEMPLATE_TYPE } = require("./constants");
 
 exports.get = async (query) =>
   query.id
@@ -23,6 +24,15 @@ exports.get = async (query) =>
           templateOrder: 1,
           revealOption: 1,
           media: 1,
+          information: {
+            $cond: {
+              if: {
+                $eq: ["$type", TEMPLATE_TYPE.DOC],
+              },
+              then: "$information",
+              else: null,
+            },
+          },
           answer: {
             $cond: {
               if: {

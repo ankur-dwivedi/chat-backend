@@ -113,7 +113,7 @@ module.exports = {
             return res.json({ ...saveData });
           else return res.json({ message: `Template submitted successfully` });
         } else {
-          if (template.information) {
+          if (template.information && template.type !== TEMPLATE_TYPE.DOC) {
             return res.json({
               answerExplainer: template.information,
             });
