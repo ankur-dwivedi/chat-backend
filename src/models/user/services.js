@@ -4,9 +4,12 @@ const { createGroupFilterQuery, createUserIdQuery, createUserIdFindQuery } = req
 const md5 = require("md5");
 const { Types } = require("mongoose");
 const bcrypt = require("bcrypt");
+const { truncate } = require("lodash");
 
 exports.get = async (query) =>
-  query.id
+  {
+    console.log(query)
+    return query.id
     ? User.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
@@ -15,19 +18,31 @@ exports.get = async (query) =>
         {
           $and: [
             { employeeId: query.employeeId },
-            { password: query.password },
             { organization: query.organization },
           ],
         },
-        { otp: 0, __v: 0, password: 0 }
-      ).then((response) => (response ? response : generateError("invalid employeeId or password")))
+        { otp: 0, __v: 0 }
+      ).lean().then((response) => (response ? response : generateError("invalid employeeId or password")))
     : query.employeeId && query.organization
     ? User.findOne({
-        $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
+        $and: [{ employeeId: query.employeeId }, { organization: query.organization },{__v:0}],
       }).then((response) => (response ? response : generateError("Invalid Employee ID")))
     : User.find()
         .then((response) => response)
         .catch((error) => error);
+  }
+
+  //function to compare and check/validate password
+exports.passwordCompare = async (password,storedPassword) => {
+  try {
+    let match = await bcrypt.compare(password, storedPassword);
+    return match;
+  } catch (err) {
+    console.log(err.name)
+    console.log(err.message)
+    return {errName:err.name,errMessage:err.message}
+  }
+}
 
 exports.getEmpBempIdOrg = async (query) =>
   User.findOne({

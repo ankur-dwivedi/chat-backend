@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const {
   update,
   get,
@@ -7,6 +8,7 @@ const {
   searchByEmp,
   getUserWithOrg,
   getUserAndOrgByEmpId,
+  passwordCompare
 } = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
@@ -57,22 +59,25 @@ exports.register = async (req, res) =>
 
 exports.login = (req, res, next) => {
   let query = {};
+  const userTypedPassword = req.body.password;
   query.employeeId = req.body.employeeId;
-  query.password = md5(req.body.password);
+  query.password = userTypedPassword;
   query.organization = req.body.organization;
   return get({ ...query })
     .then((user) => {
+      const {password, ...userData} = user
+      // this is just nested ternary conditions which is first checking userData is present in database or not 
+      // then it is checking the password provided is valid or not
       return user
-        ? res.send({
-            status: 200,
-            success: true,
-            data: {
-              ...JSON.parse(JSON.stringify(user)),
-              refreshToken: generateRefreshToken(user._id),
-              accessToken: generateAccessToken(user._id),
-            },
-          })
-        : generateError();
+        ? passwordCompare(userTypedPassword,password).then(match=>match ? res.send({
+          status: 200,
+          success: true,
+          data: {
+            ...JSON.parse(JSON.stringify(userData)),
+            refreshToken: generateRefreshToken(user._id),
+            accessToken: generateAccessToken(user._id),
+          },
+        }):generateError()): generateError()
     })
     .catch((err) => {
       res.status(400).send({ message: `Invalid Employee ID or Password` });
@@ -159,11 +164,11 @@ exports.forgetPassword = async (req, res) => {
   getOrgEmployee;
 };
 
-exports.resetpass = (req, res, next) => {
+exports.resetpass = async (req, res, next) => {
   update(
     { _id: req.user._id },
     {
-      password: md5(req.body.password),
+      password: await bcrypt.hash(req.body.password, 10),
     }
   )
     .then((user) =>
