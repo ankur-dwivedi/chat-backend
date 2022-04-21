@@ -401,6 +401,13 @@ module.exports = {
         let updatedData = await track_Model
           .findOne({ creatorUserId: userData._id, _id: trackId })
           .update(oldTrackData);
+
+        // add group id to user collection
+        const temp = learnerIds.map((data) => {
+          return { _id: data };
+        });
+        await addGroupId({ $or: temp }, savedGroupData._id);
+
         if (updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1)
           return res.status(200).json({
             status: 200,
