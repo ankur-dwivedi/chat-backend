@@ -13,8 +13,17 @@ const sendMail = async (otp, email, token, domain) => {
   let mailOptions = {
     from: "Verification<vindication@enron.com>",
     to: `${email}`,
-    subject: "Your Email Verification Code for Cascade",
-    html: `Your code is ${otp}`,
+    subject: "OTP for LogIn/SignUp verification with PaddleBoat",
+    html: `Welcome!
+    <br/>
+    <br/>
+    We're excited to get you started! First, let’s verify your account. Here is your OTP for verification: ${otp}
+    <br/><br/>
+    Reach out to the system admin in case you face any difficulties. 
+    <br/>
+    <br/>
+    Thanks,<br/>
+    Team PaddleBoat`,
   };
 
   mailOptions =
@@ -22,8 +31,14 @@ const sendMail = async (otp, email, token, domain) => {
       ? {
           from: "Verification<vindication@enron.com>",
           to: `${email}`,
-          subject: "Reset your Password for Cascade",
-          html: `Please visit this link to reset your password : <br> <br> <a href = "https://www.${domain}.padboat.com/reset-password/?token=${token}">Reset your Password</a>`,
+          subject: "Reset Password for PaddleBoat",
+          html: `Hi there!<br/><br/>
+
+          We noticed you wanted to reset your password for PaddleBoat. 
+          Head over to this link : https://www.${domain}.padboat.com/reset-password/?token=${token} to quickly set up a new one!
+          <br/><br/>
+          Thanks,<br/>
+          Team PaddleBoat`,
         }
       : mailOptions;
   console.log({ mailOptions, otp, email, token });
