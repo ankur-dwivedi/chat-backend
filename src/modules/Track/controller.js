@@ -210,7 +210,7 @@ module.exports = {
           status: 201,
           success:true,
           message: `successfully saved the data in db`,
-          data:savedData._id
+          data:{id:savedData._id}
         });
       } catch (err) {
         console.log(err.name);
@@ -254,7 +254,7 @@ module.exports = {
           status: 201,
           success: true,
           message: `successfully saved the data in db`,
-          data:savedData._id
+          data:{id:savedData._id}
         });
       } catch (err) {
         console.log(err.name);
