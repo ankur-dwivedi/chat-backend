@@ -123,7 +123,7 @@ module.exports = {
               trackId: userTrackData[j]._id,
             })
             .lean();
-          let foobar = await level_Model.find({ trackId: userTrackData[j]._id }).lean();
+          let foobar = await level_Model.find({ trackId: userTrackData[j]._id,levelState:'launch'}).lean();
           bar === null
             ? (userTrackData[j].trackProgress = "")
             : (userTrackData[j].trackProgress =
