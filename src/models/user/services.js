@@ -36,6 +36,7 @@ exports.get = async (query) =>
 exports.passwordCompare = async (password,storedPassword) => {
   try {
     let match = await bcrypt.compare(password, storedPassword);
+    console.log(match)
     return match;
   } catch (err) {
     console.log(err.name)

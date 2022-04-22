@@ -66,6 +66,9 @@ exports.login = (req, res, next) => {
   return get({ ...query })
     .then((user) => {
       const {password, ...userData} = user
+      if(password===undefined){
+        return generateError()
+      }
       // this is just nested ternary conditions which is first checking userData is present in database or not 
       // then it is checking the password provided is valid or not
       return user
