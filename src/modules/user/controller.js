@@ -8,7 +8,7 @@ const {
   searchByEmp,
   getUserWithOrg,
   getUserAndOrgByEmpId,
-  passwordCompare
+  passwordCompare,
 } = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
@@ -65,22 +65,27 @@ exports.login = (req, res, next) => {
   query.organization = req.body.organization;
   return get({ ...query })
     .then((user) => {
-      const {password, ...userData} = user
-      if(password===undefined){
-        return generateError()
+      const { password, ...userData } = user;
+      if (password === undefined) {
+        return generateError();
       }
-      // this is just nested ternary conditions which is first checking userData is present in database or not 
+      // this is just nested ternary conditions which is first checking userData is present in database or not
       // then it is checking the password provided is valid or not
       return user
-        ? passwordCompare(userTypedPassword,password).then(match=>match ? res.send({
-          status: 200,
-          success: true,
-          data: {
-            ...JSON.parse(JSON.stringify(userData)),
-            refreshToken: generateRefreshToken(user._id),
-            accessToken: generateAccessToken(user._id),
-          },
-        }):generateError()): generateError()
+        ? passwordCompare(userTypedPassword, password).then((match) =>
+            match
+              ? res.send({
+                  status: 200,
+                  success: true,
+                  data: {
+                    ...JSON.parse(JSON.stringify(userData)),
+                    refreshToken: generateRefreshToken(user._id),
+                    accessToken: generateAccessToken(user._id),
+                  },
+                })
+              : generateError()
+          )
+        : generateError();
     })
     .catch((err) => {
       res.status(400).send({ message: `Invalid Employee ID or Password` });
@@ -116,7 +121,7 @@ exports.requestOtp = async ({ body }, res) => {
     if (User && User.password)
       generateError("This ID is already registered, please go to login or forgot password");
     await update(
-      { employeeId },
+      { $and: [{ employeeId: employeeId }, { organization: organization }] },
       { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } }
     );
     if (User.email) await sendMail(otp, User.email, "");
