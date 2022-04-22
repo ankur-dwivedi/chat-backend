@@ -61,8 +61,8 @@ exports.updateContract = Joi.object({
     type: Joi.string().required(),
   }),
   options: Joi.array().items({
-    value: Joi.string().required(),
-    type: Joi.string().required(),
+    value: Joi.string().allow(""),
+    type: Joi.string().allow(""),
   }),
   answer: Joi.array().items(Joi.string()),
   importance: Joi.number(),
