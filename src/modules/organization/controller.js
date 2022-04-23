@@ -77,15 +77,23 @@ exports.uploadEmployeeData = async function (req, res) {
     const updatedData = employeeData.map((value) =>
       createUserObject(req.query.org, value, req.query.role)
     );
-    const createData = updatedData.map(async (value) => await userCreate({ ...value }));
-    const data = await Promise.all(createData);
-
+    const userNotCreated = [],
+      userCreated = [];
+    for (value of updatedData) {
+      try {
+        const cre = await userCreate({ ...value });
+        userCreated.push(cre);
+      } catch (err) {
+        userNotCreated.push(value);
+      }
+    }
     return res.status(200).send({
       status: "success",
       message: "files uploaded successfully",
-      uploadedFiles: data,
+      data: { userCreated, userNotCreated },
     });
   } catch (error) {
+    // console.log(error);
     return res.status(400).send({ message: error.message });
   }
 };

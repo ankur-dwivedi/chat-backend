@@ -34,15 +34,38 @@ exports.getGroupById = async (req, res) =>
 exports.create = async (req, res) => {
   try {
     const group = await create({ ...req.body, createdBy: req.user._id }).then((group) => group);
-    const employees = await getGroupEmployee(req.user.organization, req.body.properties);
-    const employeeIds = employees.map((value) => value._id);
-    await update({ $and: [{ _id: group._id }] }, { employees: employeeIds, updatedAt: new Date() });
-    await addGroupId(createGroupFilterQuery(req.user.organization, req.body.properties), group._id);
-    return res.send({
-      status: 200,
-      success: true,
-      data: { group },
-    });
+    let employees = [];
+    if (
+      req.body.properties.length === 1 &&
+      req.body.properties[0].name === "All Employees" &&
+      req.body.properties[0].value[0] === "All Employees"
+    ) {
+      employees = await User.getEmpByOrg({ organization: req.user.organization });
+      const employeeIds = employees.map((value) => value._id);
+      await update({ $and: [{ _id: group._id }] }, { employees: employeeIds });
+      const temp = employeeIds.map((data) => {
+        return { _id: data };
+      });
+      await addGroupId({ $or: temp }, group._id);
+      return res.send({
+        status: 200,
+        success: true,
+        data: { group },
+      });
+    } else {
+      employees = await getGroupEmployee(req.user.organization, req.body.properties);
+      const employeeIds = employees.map((value) => value._id);
+      await update({ $and: [{ _id: group._id }] }, { employees: employeeIds });
+      await addGroupId(
+        createGroupFilterQuery(req.user.organization, req.body.properties),
+        group._id
+      );
+      return res.send({
+        status: 200,
+        success: true,
+        data: { group },
+      });
+    }
   } catch (error) {
     console.log(error.message);
     if (error.message.indexOf("name_1") !== -1)

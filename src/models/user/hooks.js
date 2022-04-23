@@ -33,7 +33,7 @@ exports.initHooks = (UserSchema) => {
       const data = employeeData.map((val) => {
         return { name: val.name, value: [val.value] };
       });
-      await FilterData.create({ organization, data });
+      const createData = await FilterData.create({ organization, data });
     }
   });
 };
