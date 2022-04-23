@@ -16,11 +16,14 @@ exports.initHooks = (JourneySchema) => {
       //calculate percentage score
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
-      const maxScore = templateData.reduce((total, value) => total + value.importance * 10, 0);
+      const maxScore = templateData.reduce(
+        (total, value) => (value.importance ? total + value.importance * 10 : total),
+        0
+      );
       const percentageScore =
         ((userLevelData.totalObtainScore
           ? userLevelData.totalObtainScore + docs.score
-          : +docs.score) /
+          : docs.score) /
           maxScore) *
         100;
       //get level passing score
@@ -30,6 +33,7 @@ exports.initHooks = (JourneySchema) => {
         passStatus["levelStatus"] =
           levelData.passingScore <= percentageScore ? LEVEL_STATUS.PASS : LEVEL_STATUS.FAIL;
       //update score in userLevel
+      console.log({ templateData, userLevelData, percentageScore, maxScore, docs });
       await UserLevel.update(
         { _id: attemptId },
         {
