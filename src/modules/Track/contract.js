@@ -17,12 +17,12 @@ exports.createTrackUsingLearnerIdContract = Joi.object({
 });
 
 exports.updateTrackUsingLearnerIdContract = Joi.object({
-  trackName: Joi.string().required(),
-  selectedTheme: Joi.string().required(),
+  trackName: Joi.string().allow(),
+  selectedTheme: Joi.string().allow(),
   skillTag: Joi.array().allow(),
-  description: Joi.string().required(),
+  description: Joi.string().allow(),
   learnerIds: Joi.array().required(),
-  deleteGroupId: Joi.array().allow(),
+  singleGroupId: Joi.string().allow(),
   organization: Joi.string().allow()
 });
 
