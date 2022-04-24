@@ -385,6 +385,7 @@ module.exports = {
         oldTrackData.skillTag = req.body.skillTag===undefined?oldTrackData.skillTag:req.body.skillTag;
         oldTrackData.description = req.body.description===undefined?oldTrackData.description:req.body.description;
         oldTrackData.organization = req.body.organization===undefined?oldTrackData.organization:req.body.organization;
+        oldTrackData.botGeneratedGroup = req.body.botGeneratedGroup===undefined?oldTrackData.botGeneratedGroup===undefined?true:oldTrackData.botGeneratedGroup:req.body.botGeneratedGroup;
         //updating trackData
         const updateTrackData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).update(oldTrackData);
         if(updateTrackData.n === 1 && updateTrackData.nModified === 1 && updateTrackData.ok === 1)
@@ -413,6 +414,7 @@ module.exports = {
           oldTrackData.skillTag = req.body.skillTag===undefined?oldTrackData.skillTag:req.body.skillTag;
           oldTrackData.description = req.body.description===undefined?oldTrackData.description:req.body.description;
           oldTrackData.organization = req.body.organization===undefined?oldTrackData.organization:req.body.organization;
+          oldTrackData.botGeneratedGroup=true;
           //updating trackData
           const updateTrackData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).update(oldTrackData);
           if (updateTrackData.n === 1 && updateTrackData.nModified === 1 && updateTrackData.ok === 1)
