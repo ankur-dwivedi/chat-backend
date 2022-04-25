@@ -149,37 +149,6 @@ module.exports = {
               ? [...userTrackData, ...foo]
               : [...userTrackData, ...foo];
         }
-
-        // let filterUserTrackData = userTrackData.filter(async (element)=>{
-        //   let userTrackLevelInfo = await level_Model.find({ trackId: element._id, levelState: "launch" }).lean();
-        //   console.log(userTrackLevelInfo)
-        //   return userTrackLevelInfo.length!==0
-        // })
-
-        // console.log(filterUserTrackData)
-        // console.log(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
-        // console.log(userTrackData)
-
-        // let filterUserTrackData = userTrackData.filter(async element=>{
-        //   let userTrackLevelInfo = await level_Model.find({ trackId: element._id, levelState: "launch" }).lean();
-        //   console.log(userTrackLevelInfo.length)
-        //   if(userTrackLevelInfo.length!==0){
-        //     let userTrackInfo = undefined
-        //     if(archived===""){
-        //       userTrackInfo =  await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: element._id}).lean();
-        //     }else{
-        //       userTrackInfo =  await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: element._id,isArchived}).lean();
-        //     }
-        //     element.trackProgress = userTrackInfo === null || userTrackInfo.trackProgess === undefined ? "" : userTrackInfo.trackProgress
-        //     element.trackState = userTrackInfo === null || userTrackInfo.trackState === undefined ? "unattempted" : userTrackInfo.trackState
-        //     element.isArchived = userTrackInfo === null || userTrackInfo.isArchived === undefined ? false : userTrackInfo.isArchived
-        //     // userTrackLevelInfo.length === 0 ?  element.totalLevelCount = 0 : element.totalLevelCount = userTrackLevelInfo.length
-        //     element.totalLevelCount = userTrackLevelInfo.length
-        //   }
-        //   return true
-
-        // })
-        // console.log(filterUserTrackData)
         for (let j = 0; j < userTrackData.length; j++) {
           let userTrackInfo = undefined;
           if (archived === "") {
