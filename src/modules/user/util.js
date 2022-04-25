@@ -5,8 +5,8 @@ const sendMail = async (otp, email, token, domain) => {
   const transporter = await nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "signtalklearnisl@gmail.com",
-      pass: "testing@SIGNTALK1", // naturally, replace both with your real credentials or an application-specific password
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS, // naturally, replace both with your real credentials or an application-specific password
     },
   });
 

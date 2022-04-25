@@ -135,11 +135,13 @@ module.exports = {
           bar === null
             ? (userTrackData[j].isArchived = false)
             : (userTrackData[j].isArchived = bar.isArchived === undefined ? false : bar.isArchived);
-          foobar.length === 0
-            ? userTrackData.splice(j, 1)
-            : (userTrackData[j].totalLevelCount = foobar.length);
+            //no levels in this track hence removing
+            console.log(userTrackData);
+          // foobar.length === 0
+          //   ? userTrackData.splice(j, 1)
+          //   : (userTrackData[j].totalLevelCount = foobar.length);
         }
-        console.log(userTrackData);
+        
         if (archived === "") {
           return res.status(200).json({ status: 200, success: true, data: userTrackData });
         } else {
@@ -198,7 +200,6 @@ module.exports = {
           creatorUserId: userData._id,
           trackName: req.body.trackName,
           groupId: req.body.groupId,
-          groupName: req.body.groupName,
           selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
           description: req.body.description,
@@ -355,7 +356,7 @@ module.exports = {
       try {
         let userData = req.user;
         let { trackId } = req.params;
-        let {singleGroupId} = req.params;
+        let {singleGroupId} = req.body;
         let { learnerIds } = req.body; //taking arrays of user ids from user
         //fetching track data using trackId
         let oldTrackData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).lean();
@@ -408,7 +409,7 @@ module.exports = {
           };
           let savedGroupData = await group_Model.create(groupData);
           //updating oldTrackData with new data if avaialable
-          oldTrackData.groupId = [savedGroupData._id]; 
+          oldTrackData.groupId.push(savedGroupData._id); 
           oldTrackData.trackName = req.body.trackName===undefined?oldTrackData.trackName:req.body.trackName;
           oldTrackData.selectedTheme = req.body.selectedTheme===undefined?oldTrackData.selectedTheme:req.body.selectedTheme;
           oldTrackData.skillTag = req.body.skillTag===undefined?oldTrackData.skillTag:req.body.skillTag;
