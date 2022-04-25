@@ -20,6 +20,13 @@ exports.initHooks = (JourneySchema) => {
         (total, value) => (value.importance ? total + value.importance * 10 : total),
         0
       );
+      const totalTemplate = templateData.reduce(
+        (total, value) =>
+          value.type === TEMPLATE_TYPE.MCQ_TEXT || value.type === TEMPLATE_TYPE.MCQ_MEDIA
+            ? total + 1
+            : total,
+        0
+      );
       const percentageScore =
         ((userLevelData.totalObtainScore
           ? userLevelData.totalObtainScore + docs.score
@@ -41,7 +48,7 @@ exports.initHooks = (JourneySchema) => {
           totalObtainScore: userLevelData.totalObtainScore
             ? userLevelData.totalObtainScore + docs.score
             : docs.score,
-          totalTemplate: templateData.length,
+          totalTemplate,
           templateAttempted: userLevelData.templateAttempted + 1,
           ...passStatus,
           attemptStatus:
@@ -57,17 +64,31 @@ exports.initHooks = (JourneySchema) => {
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
       const levelData = await Level.get({ id: levelId });
+      let passStatus = {};
+      if (levelData.passingScore && templateData.length === userLevelData.templateAttempted + 1)
+        passStatus["levelStatus"] =
+          levelData.passingScore <= userLevelData.levelScore
+            ? LEVEL_STATUS.PASS
+            : LEVEL_STATUS.FAIL;
+      const totalTemplate = templateData.reduce(
+        (total, value) =>
+          value.type === TEMPLATE_TYPE.MCQ_TEXT || value.type === TEMPLATE_TYPE.MCQ_MEDIA
+            ? total + 1
+            : total,
+        0
+      );
       //update score in userLevel
       await UserLevel.update(
         { _id: attemptId },
         {
-          totalTemplate: templateData.length,
+          totalTemplate,
           templateAttempted: userLevelData.templateAttempted + 1,
           attemptStatus:
             templateData.length === userLevelData.templateAttempted + 1
               ? ATTEMPT_STATUS.COMPLETED
               : ATTEMPT_STATUS.ACTIVE,
           lastAttemptedTemplate: templateId,
+          ...passStatus,
         }
       );
       //calling this function to update the user track status
