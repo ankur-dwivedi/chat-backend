@@ -21,8 +21,7 @@ exports.generateRefreshToken = (userId) =>
     expiresIn: "90d",
   });
 
-exports.createUnauthorizedError = (error = "Unauthorized") =>
-  httpErrors(401, error);
+exports.createUnauthorizedError = (error = "Unauthorized") => httpErrors(401, error);
 
 exports.csvToJson = async (csvUrl) => {
   let jsonArray = [];
@@ -56,10 +55,7 @@ const getAuthorisedUser = async ({ groupId, trackId }) => {
     return group.employees;
   } else if (trackId) {
     const track = await Track.getUsersByTrackId({ id: trackId });
-    let employees = track.groupId.reduce(
-      (ar, data) => [...ar, ...data.employees],
-      []
-    );
+    let employees = track.groupId.reduce((ar, data) => [...ar, ...data.employees], []);
     employees = employees.reduce((ar, data) => [...ar, data._id], []);
     return employees;
   }
@@ -98,10 +94,7 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
     } else passFailData[2].unattempted += 1;
 
     if (data !== null && data.levelScore) {
-      const index =
-        Math.abs(data.levelScore / 10) !== 0
-          ? Math.abs(data.levelScore / 10) - 1
-          : 0;
+      const index = Math.abs(data.levelScore / 10) !== 0 ? Math.abs(data.levelScore / 10) - 1 : 0;
       frequencyData[index].frequency += 1;
     }
   });
@@ -125,6 +118,7 @@ exports.analyicslist = async ({ groupId, trackId, levelId }) => {
         name: userData.name,
         employeeId: userData.employeeId,
         score: data.levelScore,
+        status: data.levelStatus,
         numOfAttempts: data.session,
         dateOfAttempt: data.updatedAt,
       };

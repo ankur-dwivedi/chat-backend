@@ -56,5 +56,10 @@ spec:
                 secretKeyRef:
                   name: mysecret
                   key: MONGO_URL
+            - name: OTP_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: OTP_KEY
               # value: "mongodb://mongodb-service.default:27017/padboat"
               # value: "mongodb+srv://admin:1HKgUksK7q8QDJdM@cluster0.cibal.mongodb.net/padboat"
