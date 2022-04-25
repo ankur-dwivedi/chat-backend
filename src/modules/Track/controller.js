@@ -135,11 +135,13 @@ module.exports = {
           bar === null
             ? (userTrackData[j].isArchived = false)
             : (userTrackData[j].isArchived = bar.isArchived === undefined ? false : bar.isArchived);
-          foobar.length === 0
-            ? userTrackData.splice(j, 1)
-            : (userTrackData[j].totalLevelCount = foobar.length);
+            //no levels in this track hence removing
+            console.log(userTrackData);
+          // foobar.length === 0
+          //   ? userTrackData.splice(j, 1)
+          //   : (userTrackData[j].totalLevelCount = foobar.length);
         }
-        console.log(userTrackData);
+        
         if (archived === "") {
           return res.status(200).json({ status: 200, success: true, data: userTrackData });
         } else {
