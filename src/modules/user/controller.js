@@ -22,6 +22,7 @@ const {
 const md5 = require("md5");
 const { OTP_EXPIRY } = require("../../models/user/constants");
 const { sendMail } = require("../user/util");
+var axios = require("axios");
 
 exports.getUsers = async (req, res) =>
   getUserWithOrg({ userId: req.user._id }).then((user) =>
@@ -110,7 +111,22 @@ exports.update = async (req, res) => {
   return res.send(updateUser);
 };
 
-const sendOtp = (phone, message) => message;
+const sendOtp = (phone, otp) => {
+  console.log({ phone });
+  var config = {
+    method: "get",
+    url: `https://2factor.in/API/V1/${process.env.OTP_KEY}/SMS/${phone}/${otp}`,
+    headers: {},
+  };
+
+  axios(config)
+    .then(function (response) {
+      console.log(JSON.stringify(response.data));
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
+};
 
 exports.requestOtp = async ({ body }, res) => {
   try {
@@ -125,7 +141,7 @@ exports.requestOtp = async ({ body }, res) => {
       { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } }
     );
     if (User.email) await sendMail(otp, User.email, "");
-    else sendOtp(User.phoneNumber, message);
+    else sendOtp(User.phoneNumber, otp);
     return res.send(message);
   } catch (err) {
     res.status(400).send({ message: err.message });
@@ -163,7 +179,7 @@ exports.forgetPassword = async (req, res) => {
     const user = await getUserAndOrgByEmpId({ employeeId, organization });
     if (user.email)
       await sendMail(0, user.email, generateAccessToken(user._id), user.organization.domain);
-    else sendOtp(user.phoneNumber, "message");
+    else sendOtp(user.phoneNumber, otp);
 
     res.send({ message: "link sent to registered email" });
   } catch (error) {
