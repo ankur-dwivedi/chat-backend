@@ -15,9 +15,13 @@ module.exports = {
           .find({ creatorUserId: userData._id })
           .populate("groupId");
         if (userTrackData === null) {
-          return res.status(200).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(200)
+            .json({ status: "success", message: `no Data in db` });
         }
-        return res.status(200).json({ status: "success", message: userTrackData });
+        return res
+          .status(200)
+          .json({ status: "success", message: userTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -40,15 +44,22 @@ module.exports = {
           .populate("groupId", "-__v -createdAt -updatedAt")
           .lean();
         if (GroupTrackData === null) {
-          return res.status(200).json({ status: "success", message: `no Data in db` });
+          return res
+            .status(200)
+            .json({ status: "success", message: `no Data in db` });
         }
         for (let i = 0; i < GroupTrackData.length; i++) {
           let levelData159 = await level_Model
-            .find({ trackId: GroupTrackData[i]._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .find(
+              { trackId: GroupTrackData[i]._id },
+              { __v: 0, createdAt: 0, updatedAt: 0 }
+            )
             .lean();
           GroupTrackData[i].levelData = levelData159;
         }
-        return res.status(200).json({ status: "success", message: GroupTrackData });
+        return res
+          .status(200)
+          .json({ status: "success", message: GroupTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -63,14 +74,19 @@ module.exports = {
       try {
         let userData = req.user;
         let userTrackData = await track_Model
-          .find({ creatorUserId: userData._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
+          .find(
+            { creatorUserId: userData._id },
+            { __v: 0, createdAt: 0, updatedAt: 0 }
+          )
           .populate({
             path: "groupId",
             select: "employees -_id",
           })
           .lean();
         if (userTrackData === null) {
-          return res.status(200).json({ status: 200, success: false, data: `no Data in db` });
+          return res
+            .status(200)
+            .json({ status: 200, success: false, data: `no Data in db` });
         }
         //filtering this data here so to give user list of track hich does not contains groupId
         let tranformData1 = userTrackData.filter(
@@ -79,15 +95,22 @@ module.exports = {
             element.groupId === undefined ||
             element.groupId.length === 0
         );
-        let tranformData2 = userTrackData.filter((element) => element.botGeneratedGroup === true);
+        let tranformData2 = userTrackData.filter(
+          (element) => element.botGeneratedGroup === true
+        );
         let tranformData = [...tranformData1, ...tranformData2];
         for (let i = 0; i < tranformData.length; i++) {
           let levelData159 = await level_Model
-            .find({ trackId: tranformData[i]._id }, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .find(
+              { trackId: tranformData[i]._id },
+              { __v: 0, createdAt: 0, updatedAt: 0 }
+            )
             .lean();
           tranformData[i].levelData = levelData159;
         }
-        return res.status(200).json({ status: "success", message: tranformData });
+        return res
+          .status(200)
+          .json({ status: "success", message: tranformData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -101,7 +124,11 @@ module.exports = {
     fetchTrackAssignedToLearner: async (req, res) => {
       try {
         let archived =
-          req.query.archived === "true" ? true : req.query.archived === "false" ? false : "";
+          req.query.archived === "true"
+            ? true
+            : req.query.archived === "false"
+            ? false
+            : "";
         let userData = req.user;
         let groupData = await group_Model
           .find({ employees: { $in: [userData._id] } }, { _id: 1 })
@@ -110,44 +137,96 @@ module.exports = {
         let userTrackData = [];
         for (let i = 0; i < groupData.length; i++) {
           let foo = await track_Model
-            .find({ groupId: { $in: [groupData[i]._id] } }, { __v: 0, createdAt: 0, updatedAt: 0 })
+            .find(
+              { groupId: { $in: [groupData[i]._id] } },
+              { __v: 0, createdAt: 0, updatedAt: 0 }
+            )
             .populate({ path: "creatorUserId", select: "name employeeId" })
             .lean();
           // console.log(foo)
-          userTrackData = foo === null ? [...userTrackData, ...foo] : [...userTrackData, ...foo];
+          userTrackData =
+            foo === null
+              ? [...userTrackData, ...foo]
+              : [...userTrackData, ...foo];
         }
+
+        // let filterUserTrackData = userTrackData.filter(async (element)=>{
+        //   let userTrackLevelInfo = await level_Model.find({ trackId: element._id, levelState: "launch" }).lean();
+        //   console.log(userTrackLevelInfo)
+        //   return userTrackLevelInfo.length!==0
+        // })
+
+        // console.log(filterUserTrackData)
+        // console.log(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
+        // console.log(userTrackData)
+
+
+
+        // let filterUserTrackData = userTrackData.filter(async element=>{
+        //   let userTrackLevelInfo = await level_Model.find({ trackId: element._id, levelState: "launch" }).lean();
+        //   console.log(userTrackLevelInfo.length)
+        //   if(userTrackLevelInfo.length!==0){
+        //     let userTrackInfo = undefined
+        //     if(archived===""){
+        //       userTrackInfo =  await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: element._id}).lean();
+        //     }else{
+        //       userTrackInfo =  await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: element._id,isArchived}).lean();
+        //     }
+        //     element.trackProgress = userTrackInfo === null || userTrackInfo.trackProgess === undefined ? "" : userTrackInfo.trackProgress
+        //     element.trackState = userTrackInfo === null || userTrackInfo.trackState === undefined ? "unattempted" : userTrackInfo.trackState
+        //     element.isArchived = userTrackInfo === null || userTrackInfo.isArchived === undefined ? false : userTrackInfo.isArchived
+        //     // userTrackLevelInfo.length === 0 ?  element.totalLevelCount = 0 : element.totalLevelCount = userTrackLevelInfo.length
+        //     element.totalLevelCount = userTrackLevelInfo.length
+        //   }
+        //   return true 
+
+        // })
+        // console.log(filterUserTrackData)
         for (let j = 0; j < userTrackData.length; j++) {
-          let bar = await userTrackInfo_Model
-            .findOne({
-              creatorUserId: userData._id,
-              trackId: userTrackData[j]._id,
-            })
-            .lean();
-          let foobar = await level_Model.find({ trackId: userTrackData[j]._id,levelState:'launch'}).lean();
-          bar === null
-            ? (userTrackData[j].trackProgress = "")
-            : (userTrackData[j].trackProgress =
-                bar.trackProgress === undefined ? "" : bar.trackProgress);
-          bar === null
-            ? (userTrackData[j].trackState = "unattemped")
-            : (userTrackData[j].trackState =
-                bar.trackState === undefined ? "unattemped" : bar.trackState);
-          bar === null
-            ? (userTrackData[j].isArchived = false)
-            : (userTrackData[j].isArchived = bar.isArchived === undefined ? false : bar.isArchived);
-            //no levels in this track hence removing
-            console.log(userTrackData);
-          // foobar.length === 0
-          //   ? userTrackData.splice(j, 1)
-          //   : (userTrackData[j].totalLevelCount = foobar.length);
+          let userTrackInfo = undefined 
+          if(archived===""){
+            userTrackInfo = await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: userTrackData[j]._id}).lean();
+          }else{
+            userTrackInfo = await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: userTrackData[j]._id,isArchived:archived}).lean();
+          } 
+          let userTrackLevelInfo = await level_Model.find({ trackId: userTrackData[j]._id, levelState: "launch" }).lean();
+          userTrackData[j].trackProgress = userTrackInfo === null || userTrackInfo.trackProgess === undefined ? "" : userTrackInfo.trackProgress
+          userTrackData[j].trackState = userTrackInfo === null || userTrackInfo.trackState === undefined ? "unattempted" : userTrackInfo.trackState
+          userTrackData[j].isArchived = userTrackInfo === null || userTrackInfo.isArchived === undefined ? false : userTrackInfo.isArchived
+          // userTrackInfo === null
+          //   ? (userTrackData[j].isArchived = false)
+          //   : (userTrackData[j].isArchived =
+          //       userTrackInfo.isArchived === undefined
+          //         ? false
+          //         : userTrackInfo.isArchived);
+            // userTrackInfo === null
+          //   ? (userTrackData[j].trackProgress = "")
+          //   : (userTrackData[j].trackProgress =
+          //       userTrackInfo.trackProgress === undefined
+          //         ? ""
+          //         : userTrackInfo.trackProgress);
+          // userTrackInfo === null
+          //   ? (userTrackData[j].trackState = "unattemped")
+          //   : (userTrackData[j].trackState =
+          //       userTrackInfo.trackState === undefined
+          //         ? "unattemped"
+          //         : userTrackInfo.trackState);
+          // userTrackInfo === null
+          //   ? (userTrackData[j].isArchived = false)
+          //   : (userTrackData[j].isArchived =
+          //       userTrackInfo.isArchived === undefined
+          //         ? false
+          //         : userTrackInfo.isArchived);
+          //no levels in this track hence removing
+          //userTrackData.splice(j, 1)
+          userTrackLevelInfo.length === 0 ?  userTrackData[j].totalLevelCount = 0 : userTrackData[j].totalLevelCount = userTrackLevelInfo.length
         }
-        
-        if (archived === "") {
-          return res.status(200).json({ status: 200, success: true, data: userTrackData });
-        } else {
-          convertedUserTrack = userTrackData.filter((element) => element.isArchived === archived);
-          return res.status(200).json({ status: 200, success: true, data: convertedUserTrack });
-        }
+
+        let filterUserTrackData = userTrackData.filter(element=>element.totalLevelCount!==0) 
+
+        return res
+            .status(200)
+            .json({ status: 200, success: true, data: filterUserTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -209,9 +288,9 @@ module.exports = {
         let savedData = await track_Model.create(data);
         return res.status(201).json({
           status: 201,
-          success:true,
+          success: true,
           message: `successfully saved the data in db`,
-          data:{id:savedData._id}
+          data: { id: savedData._id },
         });
       } catch (err) {
         console.log(err.name);
@@ -255,7 +334,7 @@ module.exports = {
           status: 201,
           success: true,
           message: `successfully saved the data in db`,
-          data:{id:savedData._id}
+          data: { id: savedData._id },
         });
       } catch (err) {
         console.log(err.name);
@@ -286,7 +365,11 @@ module.exports = {
             let updatedData = await track_Model
               .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
               .updateOne(trackData);
-            if (updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1) {
+            if (
+              updatedData.n === 1 &&
+              updatedData.nModified === 1 &&
+              updatedData.ok === 1
+            ) {
               count = count + 1;
             }
           }
@@ -301,7 +384,8 @@ module.exports = {
         } else {
           throw {
             name: "updation Error",
-            message: "something went wrong while updating data please try again or contact admin",
+            message:
+              "something went wrong while updating data please try again or contact admin",
           };
         }
       } catch (err) {
@@ -332,15 +416,20 @@ module.exports = {
         let updatedData = await track_Model
           .findOne({ creatorUserId: userData._id, _id: trackId })
           .update(data);
-        if (updatedData.n === 1 && updatedData.nModified === 1 && updatedData.ok === 1)
+        if (
+          updatedData.n === 1 &&
+          updatedData.nModified === 1 &&
+          updatedData.ok === 1
+        )
           return res.status(200).json({
             status: 200,
-            success:true,
+            success: true,
             data: `successfully updated the data in db`,
           });
         throw {
           name: "updationError",
-          message: "something went wrong while updating data please try again or contact admin",
+          message:
+            "something went wrong while updating data please try again or contact admin",
         };
       } catch (err) {
         console.log(err.name);
@@ -356,49 +445,94 @@ module.exports = {
       try {
         let userData = req.user;
         let { trackId } = req.params;
-        let {singleGroupId} = req.body;
+        let { singleGroupId } = req.body;
         let { learnerIds } = req.body; //taking arrays of user ids from user
         //fetching track data using trackId
-        let oldTrackData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).lean();
+        let oldTrackData = await track_Model
+          .findOne({ creatorUserId: userData._id, _id: trackId })
+          .lean();
         if (oldTrackData === null) {
           throw {
             name: "validationError",
             message: "please send valid trackId",
           };
         }
-        if(singleGroupId!==undefined){
-        //fetching group data using singleGroupId
-        const oldGroupData = await group_Model.findOne({_id:singleGroupId}).lean();
-        if (oldGroupData === null) {
-          throw {
-            name: "validationError",
-            message: "please send valid groupId",
-          };
-        }
-        //adding new learnerIds to oldGroupData
-        oldGroupData.employees = [...oldGroupData.employees,...learnerIds];
-        //once added updating groupId
-        const updateGroupData = await group_Model.findOne({_id:singleGroupId}).update(oldGroupData);
-        if (updateGroupData.n === 1 && updateGroupData.nModified === 1 && updateGroupData.ok === 1){
-        //updating oldTrackData with new data if avaialable
-        oldTrackData.trackName = req.body.trackName===undefined?oldTrackData.trackName:req.body.trackName;
-        oldTrackData.selectedTheme = req.body.selectedTheme===undefined?oldTrackData.selectedTheme:req.body.selectedTheme;
-        oldTrackData.skillTag = req.body.skillTag===undefined?oldTrackData.skillTag:req.body.skillTag;
-        oldTrackData.description = req.body.description===undefined?oldTrackData.description:req.body.description;
-        oldTrackData.organization = req.body.organization===undefined?oldTrackData.organization:req.body.organization;
-        oldTrackData.botGeneratedGroup = req.body.botGeneratedGroup===undefined?oldTrackData.botGeneratedGroup===undefined?true:oldTrackData.botGeneratedGroup:req.body.botGeneratedGroup;
-        //updating trackData
-        const updateTrackData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).update(oldTrackData);
-        if(updateTrackData.n === 1 && updateTrackData.nModified === 1 && updateTrackData.ok === 1)
-          return res.status(200).json({status:200,success:true,data: `successfully updated the data in db`});
-        throw {name: "updationError",message: "something went wrong while updating data please try again or contact admin"};
-        }else{
-          throw {
-            name: "updationError",
-            message: "something went wrong while updating data please try again or contact admin",
-          };
-        }
-        }else{
+        if (singleGroupId !== undefined) {
+          //fetching group data using singleGroupId
+          const oldGroupData = await group_Model
+            .findOne({ _id: singleGroupId })
+            .lean();
+          if (oldGroupData === null) {
+            throw {
+              name: "validationError",
+              message: "please send valid groupId",
+            };
+          }
+          //adding new learnerIds to oldGroupData
+          oldGroupData.employees = [...oldGroupData.employees, ...learnerIds];
+          //once added updating groupId
+          const updateGroupData = await group_Model
+            .findOne({ _id: singleGroupId })
+            .update(oldGroupData);
+          if (
+            updateGroupData.n === 1 &&
+            updateGroupData.nModified === 1 &&
+            updateGroupData.ok === 1
+          ) {
+            //updating oldTrackData with new data if avaialable
+            oldTrackData.trackName =
+              req.body.trackName === undefined
+                ? oldTrackData.trackName
+                : req.body.trackName;
+            oldTrackData.selectedTheme =
+              req.body.selectedTheme === undefined
+                ? oldTrackData.selectedTheme
+                : req.body.selectedTheme;
+            oldTrackData.skillTag =
+              req.body.skillTag === undefined
+                ? oldTrackData.skillTag
+                : req.body.skillTag;
+            oldTrackData.description =
+              req.body.description === undefined
+                ? oldTrackData.description
+                : req.body.description;
+            oldTrackData.organization =
+              req.body.organization === undefined
+                ? oldTrackData.organization
+                : req.body.organization;
+            oldTrackData.botGeneratedGroup =
+              req.body.botGeneratedGroup === undefined
+                ? oldTrackData.botGeneratedGroup === undefined
+                  ? true
+                  : oldTrackData.botGeneratedGroup
+                : req.body.botGeneratedGroup;
+            //updating trackData
+            const updateTrackData = await track_Model
+              .findOne({ creatorUserId: userData._id, _id: trackId })
+              .update(oldTrackData);
+            if (
+              updateTrackData.n === 1 &&
+              updateTrackData.nModified === 1 &&
+              updateTrackData.ok === 1
+            )
+              return res.status(200).json({
+                status: 200,
+                success: true,
+                data: `successfully updated the data in db`,
+              });
+            throw {
+              name: "updationError",
+              message:
+                "something went wrong while updating data please try again or contact admin",
+            };
+          } else {
+            throw {
+              name: "updationError",
+              message:
+                "something went wrong while updating data please try again or contact admin",
+            };
+          }
+        } else {
           let groupData = {
             name: randomstring.generate({ length: 16, charset: "alphabetic" }),
             employees: learnerIds,
@@ -409,18 +543,47 @@ module.exports = {
           };
           let savedGroupData = await group_Model.create(groupData);
           //updating oldTrackData with new data if avaialable
-          oldTrackData.groupId.push(savedGroupData._id); 
-          oldTrackData.trackName = req.body.trackName===undefined?oldTrackData.trackName:req.body.trackName;
-          oldTrackData.selectedTheme = req.body.selectedTheme===undefined?oldTrackData.selectedTheme:req.body.selectedTheme;
-          oldTrackData.skillTag = req.body.skillTag===undefined?oldTrackData.skillTag:req.body.skillTag;
-          oldTrackData.description = req.body.description===undefined?oldTrackData.description:req.body.description;
-          oldTrackData.organization = req.body.organization===undefined?oldTrackData.organization:req.body.organization;
-          oldTrackData.botGeneratedGroup=true;
+          oldTrackData.groupId.push(savedGroupData._id);
+          oldTrackData.trackName =
+            req.body.trackName === undefined
+              ? oldTrackData.trackName
+              : req.body.trackName;
+          oldTrackData.selectedTheme =
+            req.body.selectedTheme === undefined
+              ? oldTrackData.selectedTheme
+              : req.body.selectedTheme;
+          oldTrackData.skillTag =
+            req.body.skillTag === undefined
+              ? oldTrackData.skillTag
+              : req.body.skillTag;
+          oldTrackData.description =
+            req.body.description === undefined
+              ? oldTrackData.description
+              : req.body.description;
+          oldTrackData.organization =
+            req.body.organization === undefined
+              ? oldTrackData.organization
+              : req.body.organization;
+          oldTrackData.botGeneratedGroup = true;
           //updating trackData
-          const updateTrackData = await track_Model.findOne({creatorUserId:userData._id,_id:trackId}).update(oldTrackData);
-          if (updateTrackData.n === 1 && updateTrackData.nModified === 1 && updateTrackData.ok === 1)
-            return res.status(200).json({status: 200,success:true,data: `successfully updated the data in db`});
-          throw {name: "updationError",message: "something went wrong while updating data please try again or contact admin"};
+          const updateTrackData = await track_Model
+            .findOne({ creatorUserId: userData._id, _id: trackId })
+            .update(oldTrackData);
+          if (
+            updateTrackData.n === 1 &&
+            updateTrackData.nModified === 1 &&
+            updateTrackData.ok === 1
+          )
+            return res.status(200).json({
+              status: 200,
+              success: true,
+              data: `successfully updated the data in db`,
+            });
+          throw {
+            name: "updationError",
+            message:
+              "something went wrong while updating data please try again or contact admin",
+          };
         }
       } catch (err) {
         console.log(err.name);
@@ -442,7 +605,9 @@ module.exports = {
           creatorUserId: userData._id,
           _id: trackId,
         });
-        return res.status(200).json({ status: "success", message: "track deleted successfully" });
+        return res
+          .status(200)
+          .json({ status: "success", message: "track deleted successfully" });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
