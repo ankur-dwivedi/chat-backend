@@ -160,8 +160,6 @@ module.exports = {
         // console.log(';;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;')
         // console.log(userTrackData)
 
-
-
         // let filterUserTrackData = userTrackData.filter(async element=>{
         //   let userTrackLevelInfo = await level_Model.find({ trackId: element._id, levelState: "launch" }).lean();
         //   console.log(userTrackLevelInfo.length)
@@ -178,55 +176,55 @@ module.exports = {
         //     // userTrackLevelInfo.length === 0 ?  element.totalLevelCount = 0 : element.totalLevelCount = userTrackLevelInfo.length
         //     element.totalLevelCount = userTrackLevelInfo.length
         //   }
-        //   return true 
+        //   return true
 
         // })
         // console.log(filterUserTrackData)
         for (let j = 0; j < userTrackData.length; j++) {
-          let userTrackInfo = undefined 
-          if(archived===""){
-            userTrackInfo = await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: userTrackData[j]._id}).lean();
-          }else{
-            userTrackInfo = await userTrackInfo_Model.findOne({creatorUserId: userData._id,trackId: userTrackData[j]._id,isArchived:archived}).lean();
-          } 
-          let userTrackLevelInfo = await level_Model.find({ trackId: userTrackData[j]._id, levelState: "launch" }).lean();
-          userTrackData[j].trackProgress = userTrackInfo === null || userTrackInfo.trackProgess === undefined ? "" : userTrackInfo.trackProgress
-          userTrackData[j].trackState = userTrackInfo === null || userTrackInfo.trackState === undefined ? "unattempted" : userTrackInfo.trackState
-          userTrackData[j].isArchived = userTrackInfo === null || userTrackInfo.isArchived === undefined ? false : userTrackInfo.isArchived
-          // userTrackInfo === null
-          //   ? (userTrackData[j].isArchived = false)
-          //   : (userTrackData[j].isArchived =
-          //       userTrackInfo.isArchived === undefined
-          //         ? false
-          //         : userTrackInfo.isArchived);
-            // userTrackInfo === null
-          //   ? (userTrackData[j].trackProgress = "")
-          //   : (userTrackData[j].trackProgress =
-          //       userTrackInfo.trackProgress === undefined
-          //         ? ""
-          //         : userTrackInfo.trackProgress);
-          // userTrackInfo === null
-          //   ? (userTrackData[j].trackState = "unattemped")
-          //   : (userTrackData[j].trackState =
-          //       userTrackInfo.trackState === undefined
-          //         ? "unattemped"
-          //         : userTrackInfo.trackState);
-          // userTrackInfo === null
-          //   ? (userTrackData[j].isArchived = false)
-          //   : (userTrackData[j].isArchived =
-          //       userTrackInfo.isArchived === undefined
-          //         ? false
-          //         : userTrackInfo.isArchived);
-          //no levels in this track hence removing
-          //userTrackData.splice(j, 1)
-          userTrackLevelInfo.length === 0 ?  userTrackData[j].totalLevelCount = 0 : userTrackData[j].totalLevelCount = userTrackLevelInfo.length
+          let userTrackInfo = undefined;
+          if (archived === "") {
+            userTrackInfo = await userTrackInfo_Model
+              .findOne({
+                creatorUserId: userData._id,
+                trackId: userTrackData[j]._id,
+              })
+              .lean();
+          } else {
+            userTrackInfo = await userTrackInfo_Model
+              .findOne({
+                creatorUserId: userData._id,
+                trackId: userTrackData[j]._id,
+                isArchived: archived,
+              })
+              .lean();
+          }
+          let userTrackLevelInfo = await level_Model
+            .find({ trackId: userTrackData[j]._id, levelState: "launch" })
+            .lean();
+          userTrackData[j].trackProgress =
+            userTrackInfo === null || userTrackInfo.trackProgess === undefined
+              ? ""
+              : userTrackInfo.trackProgress;
+          userTrackData[j].trackState =
+            userTrackInfo === null || userTrackInfo.trackState === undefined
+              ? "unattempted"
+              : userTrackInfo.trackState;
+          userTrackData[j].isArchived =
+            userTrackInfo === null || userTrackInfo.isArchived === undefined
+              ? false
+              : userTrackInfo.isArchived;
+          userTrackLevelInfo.length === 0
+            ? (userTrackData[j].totalLevelCount = 0)
+            : (userTrackData[j].totalLevelCount = userTrackLevelInfo.length);
         }
 
-        let filterUserTrackData = userTrackData.filter(element=>element.totalLevelCount!==0) 
+        let filterUserTrackData = userTrackData.filter(
+          (element) => element.totalLevelCount !== 0
+        );
 
         return res
-            .status(200)
-            .json({ status: 200, success: true, data: filterUserTrackData });
+          .status(200)
+          .json({ status: 200, success: true, data: filterUserTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
