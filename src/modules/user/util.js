@@ -11,7 +11,7 @@ const sendMail = async (otp, email, token, domain) => {
   });
 
   let mailOptions = {
-    from: "Verification<vindication@enron.com>",
+    from: `${process.env.GMAIL_USER}`,
     to: `${email}`,
     subject: "OTP for SignUp verification with PaddleBoat",
     html: `Welcome!
