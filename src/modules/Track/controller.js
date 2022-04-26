@@ -153,25 +153,13 @@ module.exports = {
             self.findIndex((t) => t._id.toString() === value._id.toString())
         );
         userTrackData = [...removeDuplicate];
-
+        console.log(userTrackData.length)
         for (let j = 0; j < userTrackData.length; j++) {
-          let userTrackInfo = undefined;
-          if (archived === "") {
-            userTrackInfo = await userTrackInfo_Model
-              .findOne({
+          let userTrackInfo = await userTrackInfo_Model.findOne({
                 creatorUserId: userData._id,
                 trackId: userTrackData[j]._id,
-              })
-              .lean();
-          } else {
-            userTrackInfo = await userTrackInfo_Model
-              .findOne({
-                creatorUserId: userData._id,
-                trackId: userTrackData[j]._id,
-                isArchived: archived,
-              })
-              .lean();
-          }
+              }).lean();
+          console.log(userTrackInfo)
           let userTrackLevelInfo = await level_Model
             .find({ trackId: userTrackData[j]._id, levelState: "launch" })
             .lean();
@@ -192,9 +180,20 @@ module.exports = {
             : (userTrackData[j].totalLevelCount = userTrackLevelInfo.length);
         }
 
-        let filterUserTrackData = userTrackData.filter(
-          (element) => element.totalLevelCount !== 0
-        );
+        let filterUserTrackData=undefined
+
+        if(archived===''){
+          filterUserTrackData = userTrackData.filter(
+            (element) => element.totalLevelCount !== 0
+          );
+        }else{
+          filterUserTrackData = userTrackData.filter(
+            (element) => element.totalLevelCount !== 0 && element.isArchived === archived
+          );
+        }
+        
+
+        
 
         return res
           .status(200)
