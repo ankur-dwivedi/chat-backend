@@ -144,10 +144,7 @@ module.exports = {
             .populate({ path: "creatorUserId", select: "name employeeId" })
             .lean();
           // console.log(foo)
-          userTrackData =
-            foo === null
-              ? [...userTrackData, ...foo]
-              : [...userTrackData, ...foo];
+          userTrackData = [...userTrackData, ...foo];
         }
         for (let j = 0; j < userTrackData.length; j++) {
           let userTrackInfo = undefined;
