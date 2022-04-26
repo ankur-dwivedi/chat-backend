@@ -80,7 +80,7 @@ module.exports = {
           )
           .populate({
             path: "groupId",
-            select: "employees -_id",
+            select: "employees _id",
           })
           .lean();
         if (userTrackData === null) {
@@ -147,11 +147,13 @@ module.exports = {
         }
 
         //code to remove dublicate surveyId from surveyResponse
-        let removeDuplicate = userTrackData.filter((value, index, self) =>
-        index === self.findIndex((t) => t._id === value._id)
+        let removeDuplicate = userTrackData.filter(
+          (value, index, self) =>
+            index ===
+            self.findIndex((t) => t._id.toString() === value._id.toString())
         );
-        userTrackData = [...removeDuplicate]
-        
+        userTrackData = [...removeDuplicate];
+
         for (let j = 0; j < userTrackData.length; j++) {
           let userTrackInfo = undefined;
           if (archived === "") {
@@ -256,6 +258,7 @@ module.exports = {
           botGeneratedGroup: req.body.groupId === undefined ? undefined : false,
         };
         let savedData = await track_Model.create(data);
+
         return res.status(201).json({
           status: 201,
           success: true,
@@ -512,7 +515,15 @@ module.exports = {
             botGeneratedGroup: true,
           };
           let savedGroupData = await group_Model.create(groupData);
+          // add group id to user collection by ankur
+          const temp = learnerIds.map((data) => {
+            return { _id: data };
+          });
+          await addGroupId({ $or: temp }, savedGroupData._id);
+          // add group id to user collection by ankur
           //updating oldTrackData with new data if avaialable
+          console.log(oldTrackData);
+          console.log(oldTrackData.groupId);
           oldTrackData.groupId.push(savedGroupData._id);
           oldTrackData.trackName =
             req.body.trackName === undefined
@@ -523,7 +534,7 @@ module.exports = {
               ? oldTrackData.selectedTheme
               : req.body.selectedTheme;
           oldTrackData.skillTag =
-            req.body.skillTag === undefined
+            req.body.skillTag === undefined || req.body.skillTag.length === 0
               ? oldTrackData.skillTag
               : req.body.skillTag;
           oldTrackData.description =
