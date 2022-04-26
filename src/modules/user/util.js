@@ -11,7 +11,7 @@ const sendMail = async (otp, email, token, domain) => {
   });
 
   let mailOptions = {
-    from: "Verification<vindication@enron.com>",
+    from: "support@padboat.com",
     to: `${email}`,
     subject: "OTP for SignUp verification with PaddleBoat",
     html: `Welcome!
@@ -29,7 +29,7 @@ const sendMail = async (otp, email, token, domain) => {
   mailOptions =
     otp == 0
       ? {
-          from: "Verification<vindication@enron.com>",
+          from: "support@padboat.com",
           to: `${email}`,
           subject: "Reset Password for PaddleBoat",
           html: `Hi there!<br/><br/>
