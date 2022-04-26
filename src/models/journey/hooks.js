@@ -17,13 +17,10 @@ exports.initHooks = (JourneySchema) => {
       const templateData = await Template.get({ levelId });
       const userLevelData = await UserLevel.get({ id: attemptId });
       const maxScore = templateData.reduce(
-        (total, value) => (value.importance ? total + value.importance * 10 : total),
-        0
-      );
-      const totalTemplate = templateData.reduce(
         (total, value) =>
-          value.type === TEMPLATE_TYPE.MCQ_TEXT || value.type === TEMPLATE_TYPE.MCQ_MEDIA
-            ? total + 1
+          value.importance &&
+          (value.type === TEMPLATE_TYPE.MCQ_TEXT || value.type === TEMPLATE_TYPE.MCQ_MEDIA)
+            ? total + value.importance * 10
             : total,
         0
       );
@@ -48,7 +45,7 @@ exports.initHooks = (JourneySchema) => {
           totalObtainScore: userLevelData.totalObtainScore
             ? userLevelData.totalObtainScore + docs.score
             : docs.score,
-          totalTemplate,
+          totalTemplate: templateData.length,
           templateAttempted: userLevelData.templateAttempted + 1,
           ...passStatus,
           attemptStatus:
@@ -70,18 +67,11 @@ exports.initHooks = (JourneySchema) => {
           levelData.passingScore <= userLevelData.levelScore
             ? LEVEL_STATUS.PASS
             : LEVEL_STATUS.FAIL;
-      const totalTemplate = templateData.reduce(
-        (total, value) =>
-          value.type === TEMPLATE_TYPE.MCQ_TEXT || value.type === TEMPLATE_TYPE.MCQ_MEDIA
-            ? total + 1
-            : total,
-        0
-      );
       //update score in userLevel
       await UserLevel.update(
         { _id: attemptId },
         {
-          totalTemplate,
+          totalTemplate: templateData.length,
           templateAttempted: userLevelData.templateAttempted + 1,
           attemptStatus:
             templateData.length === userLevelData.templateAttempted + 1
