@@ -61,5 +61,15 @@ spec:
                 secretKeyRef:
                   name: mysecret
                   key: OTP_KEY
+            - name: GMAIL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: GMAIL_USER
+            - name: GMAIL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: GMAIL_PASS
               # value: "mongodb://mongodb-service.default:27017/padboat"
               # value: "mongodb+srv://admin:1HKgUksK7q8QDJdM@cluster0.cibal.mongodb.net/padboat"
