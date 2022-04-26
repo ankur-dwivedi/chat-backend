@@ -148,7 +148,7 @@ module.exports = {
 
         //code to remove dublicate surveyId from surveyResponse
         let removeDuplicate = userTrackData.filter((value, index, self) =>
-        index === self.findIndex((t) => t._id === value._id)
+        index === self.findIndex((t) => t._id.toString() === value._id.toString())
         );
         userTrackData = [...removeDuplicate]
         
