@@ -35,7 +35,9 @@ const sendMail = async (otp, email, token, domain) => {
           html: `Hi there!<br/><br/>
 
           We noticed you wanted to reset your password for PaddleBoat. 
-          Head over to this link : https://www.${domain}.padboat.com/reset-password/?token=${token} to quickly set up a new one!
+          Head over to this <a href=${
+            "https://www." + domain + ".padboat.com/reset-password/?token=" + token
+          }>link</a>  to quickly set up a new one!
           <br/><br/>
           Thanks,<br/>
           Team PaddleBoat`,
