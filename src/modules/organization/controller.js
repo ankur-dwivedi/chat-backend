@@ -81,9 +81,20 @@ exports.uploadEmployeeData = async function (req, res) {
       userCreated = [];
     for (value of updatedData) {
       try {
-        const cre = await userCreate({ ...value });
-        userCreated.push(cre);
+        // if (!value.phoneNumber && !value.email) userNotCreated.push(value);
+        if (Number(value.phoneNumber) === 0) {
+          delete value.phoneNumber;
+          if (value.email === "") delete value.email;
+          const cre = await userCreate({ ...value });
+          userCreated.push(cre);
+        } else {
+          const num = value.phoneNumber;
+          if (value.email === "") delete value.email;
+          const cre = await userCreate({ ...value, phoneNumber: Number(num) });
+          userCreated.push(cre);
+        }
       } catch (err) {
+        console.log(value, err.message, userNotCreated.length);
         userNotCreated.push(value);
       }
     }

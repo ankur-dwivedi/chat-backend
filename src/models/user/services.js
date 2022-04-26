@@ -147,8 +147,7 @@ exports.update = (queryObject, updateObject) =>
       throw Error(error);
     });
 
-exports.addGroupId = (query, groupId) =>
-  User.updateMany(query, { $push: { groups: groupId } }).then((response) => response);
+exports.addGroupId = (query, groupId) => User.updateMany(query, { $push: { groups: groupId } });
 
 exports.deleteUser = async (id) =>
   User.deleteOne({ _id: id })
@@ -191,3 +190,5 @@ exports.countEmployeeInOrg = ({ organization }) =>
   User.find({ organization })
     .count()
     .then((response) => response);
+
+// User.deleteMany({ employeeId: /^IVP/ }).then((response) => console.log({ response }));
