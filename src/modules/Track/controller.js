@@ -143,9 +143,15 @@ module.exports = {
             )
             .populate({ path: "creatorUserId", select: "name employeeId" })
             .lean();
-          // console.log(foo)
           userTrackData = [...userTrackData, ...foo];
         }
+
+        //code to remove dublicate surveyId from surveyResponse
+        let removeDuplicate = userTrackData.filter((value, index, self) =>
+        index === self.findIndex((t) => t._id === value._id)
+        );
+        userTrackData = [...removeDuplicate]
+        
         for (let j = 0; j < userTrackData.length; j++) {
           let userTrackInfo = undefined;
           if (archived === "") {
