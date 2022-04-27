@@ -55,14 +55,17 @@ const getAuthorisedUser = async ({ groupId, trackId }) => {
     return group.employees;
   } else if (trackId) {
     const track = await Track.getUsersByTrackId({ id: trackId });
+    console.log(JSON.stringify(track));
     let employees = track.groupId.reduce((ar, data) => [...ar, ...data.employees], []);
+    console.log({ employees });
     employees = employees.reduce((ar, data) => [...ar, data._id], []);
-    return employees;
+    return Array.from(new Set(employees));
   }
 };
 
 const getEmpAttemptData = async ({ groupId, trackId, levelId }) => {
   const employees = await getAuthorisedUser({ groupId, trackId });
+  console.log("getAuthorisedUser", employees);
   let empData = employees.map(async (id) => {
     const userLevel = await getLatestUserLevelByLevel({
       levelId,
@@ -85,6 +88,7 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
   passFailData[2].unattempted = 0;
   for (let x = 0; x <= 9; x++) frequencyData[x].frequency = 0;
   const empData = await getEmpAttemptData({ groupId, trackId, levelId });
+  console.log("getEmpAttemptData", empData);
   empData.map((data) => {
     if (data !== null && data.levelStatus) {
       switch (data.levelStatus) {
