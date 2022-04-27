@@ -83,6 +83,7 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
   passFailData[0].passed = 0;
   passFailData[1].failed = 0;
   passFailData[2].unattempted = 0;
+  for (let x = 0; x <= 9; x++) frequencyData[x].frequency = 0;
   const empData = await getEmpAttemptData({ groupId, trackId, levelId });
   empData.map((data) => {
     if (data !== null && data.levelStatus) {

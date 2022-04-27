@@ -1,6 +1,5 @@
 exports.PORT = process.env.PORT || 4000;
 
-
 exports.passFailData = [
   {
     state: "Passed",
@@ -17,6 +16,10 @@ exports.passFailData = [
 ];
 
 exports.frequencyData = [
+  {
+    bucket: 0,
+    frequency: 0,
+  },
   {
     bucket: 10,
     frequency: 0,
@@ -51,10 +54,6 @@ exports.frequencyData = [
   },
   {
     bucket: 90,
-    frequency: 0,
-  },
-  {
-    bucket: 100,
     frequency: 0,
   },
 ];

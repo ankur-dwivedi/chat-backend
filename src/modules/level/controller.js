@@ -286,7 +286,7 @@ module.exports = {
         console.log(err.name);
         console.log(err.message);
         if (err.message.indexOf("levelName_1") !== -1)
-          return res.status(400).json({
+          return res.status(406).json({
             status: "failed",
             message: `Level Name should be unique for a specific track.`,
           });
@@ -325,7 +325,7 @@ module.exports = {
         console.log(err.name);
         console.log(err.message);
         if (err.message.indexOf("levelName_1") !== -1) {
-          return res.status(400).json({
+          return res.status(406).json({
             status: "failed",
             message: `Level Name should be unique for a specific track`,
           });

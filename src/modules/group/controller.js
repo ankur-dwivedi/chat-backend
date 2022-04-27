@@ -69,7 +69,7 @@ exports.create = async (req, res) => {
   } catch (error) {
     console.log(error.message);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
@@ -129,7 +129,7 @@ exports.createGroupEmployee = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
@@ -179,7 +179,7 @@ exports.createGpByEmpList = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
@@ -234,7 +234,7 @@ exports.update = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
