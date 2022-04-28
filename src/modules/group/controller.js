@@ -33,7 +33,11 @@ exports.getGroupById = async (req, res) =>
 
 exports.create = async (req, res) => {
   try {
-    const group = await create({ ...req.body, createdBy: req.user._id }).then((group) => group);
+    const group = await create({
+      ...req.body,
+      createdBy: req.user._id,
+      organization: req.user.organization,
+    }).then((group) => group);
     let employees = [];
     if (
       req.body.properties.length === 1 &&
@@ -119,6 +123,7 @@ exports.createGroupEmployee = async (req, res) => {
       ...req.body,
       employees: employeeIds,
       createdBy: req.user._id,
+      organization: req.user.organization,
     });
     await updateUserByIds(req.user.organization, employeeIds, group._id);
     return res.send({
@@ -143,14 +148,14 @@ exports.countEmpInCsv = async (req, res) => {
     if (!files.length) return res.status(400).send("No file uploaded.");
     const employeeData = await csvToJsonByStream(files[0].path);
     if (!employeeData.length || !employeeData[0].employeeId)
-      return res.status(400).send({ message: `Invalid file format` });
+      return res.status(406).send({ message: `Invalid file format` });
     const employeeId = employeeData.map((data) => data.employeeId);
     const employeIdNotFound = await checkEmpIdDontExsist({
       employeeId,
       organization: req.user.organization,
     });
     if (employeIdNotFound.length)
-      return res.status(400).send({ message: `employee not found`, data: employeIdNotFound });
+      return res.status(406).send({ message: `employee not found`, data: employeIdNotFound });
     return res.send({
       status: 200,
       success: true,
@@ -158,7 +163,7 @@ exports.countEmpInCsv = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send({ message: `no employee data found` });
+    res.status(406).send({ message: `no employee data found` });
   }
 };
 
@@ -169,6 +174,7 @@ exports.createGpByEmpList = async (req, res) => {
       ...req.body,
       employees: employeeId,
       createdBy: req.user._id,
+      organization: req.user.organization,
     });
     await updateUserByIds(req.user.organization, employeeId, group._id);
     return res.send({
