@@ -81,6 +81,10 @@ module.exports = {
           .populate({
             path: "groupId",
             select: "employees _id",
+            populate:{
+              path: "employees",
+              select:"_id name employeeId"
+            }
           })
           .lean();
         if (userTrackData === null) {
