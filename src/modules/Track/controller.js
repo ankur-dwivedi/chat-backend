@@ -443,7 +443,8 @@ module.exports = {
                       groupId: [groupId[j]],
                       trackName: data.trackName,
                       creatorName:userData.name,
-                      organization:userData.organization
+                      organization:oldTrackData.organization
+                      // organization:userData.organization
                     });
                   }
                 }
@@ -454,7 +455,8 @@ module.exports = {
                 groupId: [groupId[j]],
                 trackName: data.trackName,
                 creatorName:userData.name,
-                organization:userData.organization
+                organization:oldTrackData.organization
+                // organization:userData.organization
               });
             }
           }
@@ -516,7 +518,7 @@ module.exports = {
           //once added updating groupId
           const updateGroupData = await group_Model
             .findOne({ _id: singleGroupId })
-            .update(oldGroupData);
+            .updateOne(oldGroupData);
           if (
             updateGroupData.n === 1 &&
             updateGroupData.nModified === 1 &&
@@ -552,7 +554,7 @@ module.exports = {
             //updating trackData
             const updateTrackData = await track_Model
               .findOne({ creatorUserId: userData._id, _id: trackId })
-              .update(oldTrackData);
+              .updateOne(oldTrackData);
             if (
               updateTrackData.n === 1 &&
               updateTrackData.nModified === 1 &&
@@ -592,8 +594,8 @@ module.exports = {
           await addGroupId({ $or: temp }, savedGroupData._id);
           // add group id to user collection by ankur
           //updating oldTrackData with new data if avaialable
-          console.log(oldTrackData);
-          console.log(oldTrackData.groupId);
+          // console.log(oldTrackData);
+          // console.log(oldTrackData.groupId);
           oldTrackData.groupId.push(savedGroupData._id);
           oldTrackData.trackName =
             req.body.trackName === undefined
@@ -619,7 +621,7 @@ module.exports = {
           //updating trackData
           const updateTrackData = await track_Model
             .findOne({ creatorUserId: userData._id, _id: trackId })
-            .update(oldTrackData);
+            .updateOne(oldTrackData);
           if (
             updateTrackData.n === 1 &&
             updateTrackData.nModified === 1 &&
