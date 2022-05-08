@@ -15,6 +15,7 @@ exports.CurrentStateSchema = new Schema({
   level: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },
   template: { type: Schema.Types.ObjectId, trim: true, ref: "template", required: true },
   completed: { type: Boolean, default: false, required: true },
+  timeSpend: { type: Number, default: 0, required: true },
 });
 
 exports.createGroupFilterQuery = (org, property) => {

@@ -58,8 +58,8 @@ const saveJourneyData = async ({
 };
 
 //save  user current submited  Template
-const saveUserCurrentState = async ({ template, userId }) => {
-  const updatedUserState = await updateUserState({ id: userId, template });
+const saveUserCurrentState = async ({ template, userId,timeSpend }) => {
+  const updatedUserState = await updateUserState({ id: userId, template,timeSpend });
   return updatedUserState;
 };
 
@@ -107,6 +107,7 @@ module.exports = {
         const updatedUserState = await saveUserCurrentState({
           template,
           userId: req.user._id,
+          timeSpend: req.user.currentState?.timeSpend && !req.user.currentState?.completed?req.user.currentState.timeSpend+req.body.timeSpend:req.body.timeSpend
         });
         if (template.levelType !== LEVEL_TYPE.ASSESMENT) {
           if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)

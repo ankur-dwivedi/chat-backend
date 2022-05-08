@@ -17,7 +17,7 @@ const Feedback = require("../../models/feedback/services");
 const { ATTEMPT_STATUS } = require("../../models/userLevel/constants");
 const Journey = require("../../models/journey/services");
 
-const updateUserState = async ({ id, template, completed }) => {
+const updateUserState = async ({ id, template, completed,timeSpend }) => {
   return await User.update(
     { _id: Types.ObjectId(id) },
     {
@@ -26,6 +26,7 @@ const updateUserState = async ({ id, template, completed }) => {
         track: template.trackId,
         template: template._id,
         completed: completed ? completed : false,
+        timeSpend
       },
     }
   );
@@ -58,7 +59,7 @@ const getTemplates = async (req, res) => {
             return res.send({
               status: 200,
               success: true,
-              data: template,
+              data: [{...JSON.parse(JSON.stringify(template[0])),timeSpend:req.user.currentState?.timeSpend}],
             });
           else {
             //update current state  completed property of user
@@ -66,6 +67,7 @@ const getTemplates = async (req, res) => {
               id: req.user._id,
               template: prevTemplate,
               completed: true,
+              timeSpend:req.user.currentState?.timeSpend
             });
             req.user.currentState = updatedUserState.currentState;
             const levelCompleteData = await levelComplete({
@@ -85,7 +87,7 @@ const getTemplates = async (req, res) => {
             return res.send({
               status: 200,
               success: true,
-              data: template,
+              data: [{...JSON.parse(JSON.stringify(template[0])),timeSpend:req.user.currentState?.timeSpend}],
             });
           else
             return res.send({
@@ -101,7 +103,7 @@ const getTemplates = async (req, res) => {
           return res.send({
             status: 200,
             success: true,
-            data: template,
+            data: [{...JSON.parse(JSON.stringify(template[0])),timeSpend:req.user.currentState?.timeSpend}],
           });
         } else
           return res.send({
