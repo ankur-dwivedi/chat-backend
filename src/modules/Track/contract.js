@@ -13,7 +13,7 @@ exports.createTrackUsingLearnerIdContract = Joi.object({
   selectedTheme: Joi.string().required(),
   skillTag: Joi.array().allow(),
   description: Joi.string().required(),
-  learnerIds: Joi.array().required(),
+  learnerIds: Joi.array().allow(),
 });
 
 exports.updateTrackUsingLearnerIdContract = Joi.object({
