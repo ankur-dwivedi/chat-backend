@@ -29,7 +29,7 @@ const refreshAuthUser = (req, res, next) =>
     .catch((error) => res.send(createUnauthorizedError(error)));
 
 const assocAuthUser = (req, res, next) =>
-  User.findById(req.user.userId).populate('organization')
+  User.findById(req.user.userId)//.populate('organization')
     .then((user) => {
       if (!user) {
         res.send(createUnauthorizedError("User not found"));
