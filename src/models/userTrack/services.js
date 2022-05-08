@@ -1,6 +1,7 @@
 const level_model = require("../level/index");
 const userTrackInfo_model = require("../userTrack/index");
 const userLevelInfo_model = require("../userLevel/index");
+const organization_model=require('../organization/index');
 //imports for sending mail are as following
 const group_model = require("../group/index");
 const track_Model = require("../track/index");
@@ -124,7 +125,8 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
       let fetchUserTrackInfo = await userTrackInfo_model
         .findOne({ creatorUserId: groupData[j]._id, trackId: trackData._id })
         .lean();
-      // console.log(trackData);
+      let organizationData = await organization_model.findOne({_id:trackData.organization},{domain:1}).lean();
+      console.log(organizationData.domain)
       if (fetchUserTrackInfo === null) {
         let learnerEmail = groupData[j].email;
         let learnerName = groupData[j].name;
@@ -133,7 +135,7 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
         let html = `<p><span>Hey there <b>${learnerName}!</b></span></p>
         <p><span>You&rsquo;ve just been assigned a new learning track - ${trackData.trackName} by ${trackData.creatorName}.</span></p>
         <p><span>It is always exciting to embark on a new journey! On this note, let&rsquo;s start with the newly added levels in the track.</span></p>
-        <p><span>Head over to https://${trackData.organization.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
+        <p><span>Head over to https://${organizationData.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
         <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
         <p><span>Thanks,</span></p>
         <p><span>Team PaddleBoat</span></p>`;
@@ -157,7 +159,7 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
           let html = `<p><span>Hey there <b>${learnerName}!</b></span></p>
           <p><span>You&rsquo;ve just been assigned a new learning track - ${trackData.trackName} by ${trackData.creatorName}.</span></p>
           <p><span>It is always exciting to embark on a new journey! On this note, let&rsquo;s start with the newly added levels in the track.</span></p>
-          <p><span>Head over to https://${trackData.organization.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
+          <p><span>Head over to https://${organizationData.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
           <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
           <p><span>Thanks,</span></p>
           <p><span>Team PaddleBoat</span></p>`;
