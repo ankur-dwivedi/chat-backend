@@ -71,5 +71,10 @@ spec:
                 secretKeyRef:
                   name: mysecret
                   key: GMAIL_PASS
+            - name: dueDateReminder
+              valueFrom:
+                secretKeyRef:
+                  name: mysecret
+                  key: dueDateReminder
               # value: "mongodb://mongodb-service.default:27017/padboat"
               # value: "mongodb+srv://admin:1HKgUksK7q8QDJdM@cluster0.cibal.mongodb.net/padboat"
