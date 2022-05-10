@@ -23,3 +23,21 @@ exports.createMailingRecord = async (req, res) => {
     });
   }
 };
+
+exports.getMailingList = async (req,res)=>{
+  try {
+    // this returns the list of subscribers 
+    let subscribersData = await mailingList_model.find({},{__v:0}).lean();
+    return res.status(200).json({
+      success:true,
+      status: 200,
+      data: subscribersData,
+    });
+  } catch (err) {
+    res.status(404).json({
+      success: "failed",
+      status:404,
+      message: `err.name : ${err.name}, err.message:${err.message}`,
+    });
+  }
+}
