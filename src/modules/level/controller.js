@@ -111,6 +111,8 @@ module.exports = {
           } else lockedState = LOCKED_STATE.UNLOCKED;
 
           if (userLevelData && userLevelData.length) {
+            if(data.levelType === LEVEL_TYPE.ASSESMENT && !data.allowReattempt)
+            return null;
             const score = userLevelData[0].levelScore;
             const completed =
               (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
@@ -143,6 +145,7 @@ module.exports = {
           return { ...JSON.parse(JSON.stringify(data)), lockedState };
         });
         levelData = await Promise.all(updatedLevlelData);
+        levelData=levelData.filter(data=>data!==null)
         return res.status(201).json({ status: "success", data: levelData });
       } catch (err) {
         console.log(err);
@@ -274,6 +277,7 @@ module.exports = {
           levelType: req.body.levelType,
           organization: req.user.organization,
           isLocked: req.body.isLocked,
+          allowReattempt: req.body.allowReattempt,
         };
         const level = await level_Model.create(data);
         // sendLevelCreationMailsToUsers(req.body.trackId, req.body.levelName, userData._id);
