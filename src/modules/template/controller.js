@@ -67,7 +67,7 @@ const getTemplates = async (req, res) => {
               id: req.user._id,
               template: prevTemplate,
               completed: true,
-              timeSpend:req.user.currentState?.timeSpend
+              timeSpend:0
             });
             req.user.currentState = updatedUserState.currentState;
             const levelCompleteData = await levelComplete({
