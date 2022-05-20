@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "3b68b474-c0ec-4cf0-830e-a62a3102665e",
+		"_postman_id": "4de33cd6-6044-47e8-8cfb-0f24c5bd53b2",
 		"name": "cascade",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12071918"
 	},
 	"item": [
 		{
@@ -134,7 +135,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"IVP-1502\",\r\n    \"password\":\"ankur\",\r\n    \"organization\":\"62309a170aa70e223688e7f2\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"IVP-102\",\r\n    \"password\":\"creator\",\r\n    \"organization\":\"62309a170aa70e223688e7f2\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -212,16 +213,17 @@
 					"name": " reset paswword",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NTA5MTMyOTMsImV4cCI6MTY1MTUxODA5M30.FYkzRT305tmcmhKWzDoY6An6cldVmAhj8YPpQXYft3U",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"password\":\"ankur\"\n}",
@@ -442,6 +444,14 @@
 								"create-access-token"
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "get paginated users",
+					"request": {
+						"method": "GET",
+						"header": []
 					},
 					"response": []
 				}
@@ -758,19 +768,20 @@
 							"name": "create group with employee list",
 							"request": {
 								"auth": {
-									"type": "noauth"
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NTA5MTM5OTgsImV4cCI6MTY1MTUxODc5OH0.FWNUfI3ur4NWE-vYPnVH-z2kY6Lb3ZzuKbfXdIKZsP0",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\":\"Group232\",\n    \"description\":\"SDE2\",\n    \"employeeId\":[\"62309a730aa70e223688eb65\"]\n}",
+									"raw": "{\n    \"name\":\"Group2\",\n    \"description\":\"SDE1\",\n    \"employeeId\":[\"61d2b2995fe75e27248bf470\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1910,100 +1921,6 @@
 							"path": [
 								"track",
 								"createTrack"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "update Track Using Learner Id",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NTA5OTYxMTMsImV4cCI6MTY1MTYwMDkxM30.gqqIF-HsRYqDecCnv_ZlrO_ZtgAdLW2pGjnMiRLqopU",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"trackName\": \"Testing Track Update New\",\r\n  \"description\": \"Tseting\",\r\n  \"selectedTheme\": \"city\",\r\n  \"skillTag\": [],\r\n  \"learnerIds\": [\r\n    \"62309a730aa70e223688e7f6\"\r\n  ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/track/updateTrackUsingLearnerId/626837960a51ac1da23a8993",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"updateTrackUsingLearnerId",
-								"626837960a51ac1da23a8993"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "fetch Track Info For Transfer Tab",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NTA5MTM5OTgsImV4cCI6MTY1MTUxODc5OH0.FWNUfI3ur4NWE-vYPnVH-z2kY6Lb3ZzuKbfXdIKZsP0",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/track/fetchTrackInfoForTransferTab",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"fetchTrackInfoForTransferTab"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create Track Using Learner Id",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/track/createTrackUsingLearnerId",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"createTrackUsingLearnerId"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get Tracks Without User Created Group",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/track/getTracksWithoutUserCreatedGroup",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"getTracksWithoutUserCreatedGroup"
 							]
 						}
 					},
