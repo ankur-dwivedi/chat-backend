@@ -187,7 +187,7 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
 //seven 
 //three
 
-const dueDateReminderSendMailToUsers = async () => {
+const dueDateReminderSendMailToUsers = async (req,res) => {
   const {dueDateReminder} = process.env
   let fetchAllTrackData = await track_Model
     .find({})
@@ -231,10 +231,37 @@ const dueDateReminderSendMailToUsers = async () => {
 
           if(levelDueDate.getFullYear()===todaysDate.getFullYear() && levelDueDate.getMonth()===todaysDate.getMonth()){
             let difference = levelDueDate.getDate() - todaysDate.getDate()
+            console.log(difference)
             if(difference === parseInt(dueDateReminder)){
               let userLevelData = await userLevelInfo_model.findOne({learnerId:filterAllTrackData[i].groupId[0][k]._id,levelId:filterAllLevelData[j]._id}).lean()
               //2)Second Comparizon based on userLevelData 
-              if(userLevelData===null){
+              console.log(userLevelData)
+              //if email is not send then and only then move forward
+              //hence checking
+              if(userLevelData!==null && (userLevelData.dueDateReminder===undefined || userLevelData.dueDateReminder===0)){
+                console.log('inside inside inside')
+                if(userLevelData.levelStatus!=='pass'){
+                  //if user has not passed the level 
+                  //send mail
+                  const email = filterAllTrackData[i].groupId[0][k].email;
+                  const subject = "Deadline approaching soon";
+                  const html = `
+                  <p><span>Hey there <b>${filterAllTrackData[i].groupId[0][k].name}!</b></span></p>
+                  <p><span>We thought we&rsquo;d drop by here and remind you about completing ${filterAllLevelData[j].levelName} which is due soon/is due by <b>${levelDueDate.getDate()}/${levelDueDate.getMonth()+1}/${levelDueDate.getFullYear()}.</b></span></p>
+                  <p><span>Head over to https://${filterAllTrackData[i].groupId[0][k].organization.domain}.padboat.com/tracks/${filterAllTrackData[i]._id}/level-view to complete ${filterAllLevelData[j].levelName} and continue on your learning journey!</span></p>
+                  <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+                  <p><span>Thanks,</span></p>
+                  <p><span>Team PaddleBoat</span></p>
+                  `
+                  console.log('hence send mail to')
+                  let emailStatus = await nodeMailerSendMail(email,subject,html)
+                  if(emailStatus.accepted.includes(filterAllTrackData[i].groupId[0][k].email)){
+                    //hence update the counter
+                    userLevelData.dueDateReminder = userLevelData.dueDateReminder===undefined?1:parseInt(userLevelData.dueDateReminder) + 1;
+                    await userLevelInfo_model.findOne({learnerId:filterAllTrackData[i].groupId[0][k]._id,levelId:filterAllLevelData[j]._id}).updateOne(userLevelData);
+                  }
+                }
+              }else if(userLevelData===null){
                 //if no userLevelData available
                 //send mail
                 const email = filterAllTrackData[i].groupId[0][k].email;
@@ -248,22 +275,11 @@ const dueDateReminderSendMailToUsers = async () => {
                 <p><span>Team PaddleBoat</span></p>
                 `
                 console.log('hence send mail to')
-                nodeMailerSendMail(email,subject,html)
-              }else if(userLevelData.levelStatus!=='pass'){
-                //if user has not passed the level 
-                //send mail
-                const email = filterAllTrackData[i].groupId[0][k].email;
-                const subject = "Deadline approaching soon";
-                const html = `
-                <p><span>Hey there <b>${filterAllTrackData[i].groupId[0][k].name}!</b></span></p>
-                <p><span>We thought we&rsquo;d drop by here and remind you about completing ${filterAllLevelData[j].levelName} which is due soon/is due by <b>${levelDueDate.getDate()}/${levelDueDate.getMonth()+1}/${levelDueDate.getFullYear()}.</b></span></p>
-                <p><span>Head over to https://${filterAllTrackData[i].groupId[0][k].organization.domain}.padboat.com/tracks/${filterAllTrackData[i]._id}/level-view to complete ${filterAllLevelData[j].levelName} and continue on your learning journey!</span></p>
-                <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
-                <p><span>Thanks,</span></p>
-                <p><span>Team PaddleBoat</span></p>
-                `
-                console.log('hence send mail to')
-                nodeMailerSendMail(email,subject,html)
+                let emailStatus = await nodeMailerSendMail(email,subject,html)
+                if(emailStatus.accepted.includes(filterAllTrackData[i].groupId[0][k].email)){
+                  //hence create userLevel data
+                  console.log('hence create userLevel data')
+                }
               }
             }
           }
@@ -273,15 +289,22 @@ const dueDateReminderSendMailToUsers = async () => {
 
     }
   }
+res.status(200).json({
+  status:200,
+  success:true,
+  data:"cron job ran successfully"
+})
 };
 
-const job = new CronJob('00 00 * * *', dueDateReminderSendMailToUsers, null, true, 'Asia/Kolkata');
 
-job.start();
+// const job = new CronJob('00 00 * * *', dueDateReminderSendMailToUsers, null, true, 'Asia/Kolkata');
+
+// job.start();
 
 
 module.exports = {
   updateTrackStatus,
   sendMailToUsersAssignedToTracks,
   nodeMailerSendMail,
+  dueDateReminderSendMailToUsers
 };
