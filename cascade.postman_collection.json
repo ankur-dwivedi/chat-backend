@@ -54,7 +54,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NTY0OTE3ODNjMzAwMjA5ZjI3YzciLCJpYXQiOjE2NTEwNTY4MTcsImV4cCI6MTY1MTY2MTYxN30.Q5vxLu694BNlRBB3zYV9EvtG9D8_XgZQ8ViCV5zkf64",
 									"type": "string"
 								}
 							]
@@ -104,11 +104,21 @@
 				{
 					"name": "update user",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTI4ODA2NzEsImV4cCI6MTY1MzQ4NTQ3MX0.Lh_0qGYL8j43ZknpzIpi1735IVSn6N4lmp8oYQKGrPg",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"61a6b74fa7b8f428a8000418\",\r\n    \"username\":\"abc\",\r\n    \"email\":\"abc@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"admin\",\r\n    \"password\":\"123\"\r\n}",
+							"raw": "{\r\n    \"id\":\"626869b91783c300209f287d\",\r\n    \"email\":\"saswat@padboat.com\",\r\n    \"role\":\"admin\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -135,7 +145,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"IVP-102\",\r\n    \"password\":\"creator\",\r\n    \"organization\":\"62309a170aa70e223688e7f2\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"PB001\",\r\n    \"password\":\"creator01\",\r\n    \"organization\":\"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -450,8 +460,42 @@
 				{
 					"name": "get paginated users",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMwNTY1NzIsImV4cCI6MTY1MzY2MTM3Mn0.lMCM4GQYT282HFP3MxdbdlFO32BgVxl7nQQYx0rfXr4",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/paginated-users?page=1&limit=10&filterCreator=true",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"paginated-users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "filterCreator",
+									"value": "true"
+								}
+							]
+						}
 					},
 					"response": []
 				}
@@ -640,8 +684,28 @@
 				{
 					"name": "get restricted data",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMxMjE5NzUsImV4cCI6MTY1MzcyNjc3NX0.P-qzfSUkFE7YuvAxJqDmZbNgeIn3lqGUcdSfhFvTluM",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/organization/restricted-data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"restricted-data"
+							]
+						}
 					},
 					"response": []
 				}
@@ -664,7 +728,7 @@
 									"bearer": [
 										{
 											"key": "token",
-											"value": "{{token}}",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMxMjE5NzUsImV4cCI6MTY1MzcyNjc3NX0.P-qzfSUkFE7YuvAxJqDmZbNgeIn3lqGUcdSfhFvTluM",
 											"type": "string"
 										}
 									]
@@ -1031,7 +1095,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDg3MTk3NzYsImV4cCI6MTY4MDI3NzM3Nn0.gUJljOpzeubeTYutIXlruvxSnD6MMeZNcmI5NN_KTQ4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NTY0OTE3ODNjMzAwMjA5ZjI3YzciLCJpYXQiOjE2NTEwNTY4MTcsImV4cCI6MTY1MTY2MTYxN30.Q5vxLu694BNlRBB3zYV9EvtG9D8_XgZQ8ViCV5zkf64",
 									"type": "string"
 								}
 							]
@@ -1772,6 +1836,16 @@
 				{
 					"name": "fetch Track With No Groups",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NTEzMTUwODgsImV4cCI6MTY1MTkxOTg4OH0.yfKEDZ829OMCtbTbNxgY6kTIqFyHc9Jk3Pr4Y1me8y0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [
 							{
@@ -1781,13 +1855,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{baseUrl}}/track/fetchTrackWithNoGroups",
+							"raw": "{{baseUrl}}/track/getTracksWithoutUserCreatedGroup",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"track",
-								"fetchTrackWithNoGroups"
+								"getTracksWithoutUserCreatedGroup"
 							]
 						}
 					},
