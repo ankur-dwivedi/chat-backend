@@ -121,7 +121,7 @@ const processPaginatedResults = (data) => {
   // $facet always returns array
   // Add Active Status once implemented
   let processedData = {
-    totalCount: data[0].totalCount[0],
+    totalCount: data[0].totalCount[0].totalCount,
     data: data[0].data.map((user) => {
       return {
         employeeId: user.emplpyeeId,
