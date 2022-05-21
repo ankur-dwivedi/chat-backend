@@ -636,6 +636,14 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get restricted data",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
 				}
 			]
 		},
@@ -977,43 +985,6 @@
 				},
 				{
 					"name": "delete group",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"624f5eb1cb7fb200878320b6\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/group/",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"group",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "delete group Copy",
 					"request": {
 						"auth": {
 							"type": "bearer",
