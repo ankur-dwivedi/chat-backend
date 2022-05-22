@@ -33,7 +33,7 @@ exports.initHooks = (JourneySchema) => {
       //get level passing score
       const levelData = await Level.get({ id: levelId });
       let passStatus = {};
-      if (levelData.passingScore && templateData.length === userLevelData.templateAttempted + 1)
+      if (levelData.passingScore)// && templateData.length === userLevelData.templateAttempted + 1)
         passStatus["levelStatus"] =
           levelData.passingScore <= percentageScore ? LEVEL_STATUS.PASS : LEVEL_STATUS.FAIL;
       //update score in userLevel
@@ -62,7 +62,7 @@ exports.initHooks = (JourneySchema) => {
       const userLevelData = await UserLevel.get({ id: attemptId });
       const levelData = await Level.get({ id: levelId });
       let passStatus = {};
-      if (levelData.passingScore && templateData.length === userLevelData.templateAttempted + 1)
+      if (levelData.passingScore)// && templateData.length === userLevelData.templateAttempted + 1)
         passStatus["levelStatus"] =
           levelData.passingScore <= userLevelData.levelScore
             ? LEVEL_STATUS.PASS
