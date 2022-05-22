@@ -191,4 +191,3 @@ exports.countEmployeeInOrg = ({ organization }) =>
     .count()
     .then((response) => response);
 
-// User.deleteMany({ employeeId: /^IVP/ }).then((response) => console.log({ response }));
