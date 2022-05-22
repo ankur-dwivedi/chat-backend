@@ -1,10 +1,6 @@
 const { LEVEL_STATE, LOCKED_STATE, LEVEL_TYPE } = require("../../models/level/constants");
 const level_Model = require("../../models/level/index");
-const {
-  LEVEL_STATUS,
-  LEVEL_STATUS_ENUM,
-  ATTEMPT_STATUS,
-} = require("../../models/userLevel/constants");
+const { LEVEL_STATUS, LEVEL_STATUS_ENUM, ATTEMPT_STATUS } = require("../../models/userLevel/constants");
 const { getLatestUserLevelByLevel } = require("../../models/userLevel/services");
 const { update, deleteProperty } = require("../../models/level/services");
 const { sendLevelCreationMailsToUsers } = require("./util");
@@ -18,8 +14,7 @@ module.exports = {
           creatorUserId: userData._id,
           _id: req.query.levelId,
         });
-        if (level === null)
-          return res.status(201).json({ status: "success", message: `no Data in db` });
+        if (level === null) return res.status(201).json({ status: "success", message: `no Data in db` });
         return res.status(201).json({ status: 200, success: false, data: level });
       } catch (err) {
         console.log(err.name);
@@ -69,12 +64,10 @@ module.exports = {
     learnerLevelInfo: async (req, res) => {
       try {
         let trackId = req.query.trackId;
-        let levelData = await level_Model
-          .find({ trackId, levelState: LEVEL_STATE.LAUNCH })
-          .populate({
-            path: "trackId",
-            select: "selectedTheme trackName description",
-          });
+        let levelData = await level_Model.find({ trackId, levelState: LEVEL_STATE.LAUNCH }).populate({
+          path: "trackId",
+          select: "selectedTheme trackName description",
+        });
         if (levelData === null || !levelData.length)
           return res.status(204).json({
             status: "failed",
@@ -98,24 +91,17 @@ module.exports = {
                 learnerId: req.user._id,
               });
               if (prevUserLevelData[0] && previousLevel.passingScore) {
-                if (prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS)
-                  lockedState = LOCKED_STATE.UNLOCKED;
+                if (prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS) lockedState = LOCKED_STATE.UNLOCKED;
                 else lockedState = LOCKED_STATE.LOCKED;
-              } else if (
-                prevUserLevelData[0] &&
-                prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate
-              )
-                lockedState = LOCKED_STATE.UNLOCKED;
+              } else if (prevUserLevelData[0] && prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate) lockedState = LOCKED_STATE.UNLOCKED;
               else lockedState = LOCKED_STATE.LOCKED;
             }
           } else lockedState = LOCKED_STATE.UNLOCKED;
 
           if (userLevelData && userLevelData.length) {
-            if(data.levelType === LEVEL_TYPE.ASSESMENT && !data.allowReattempt)
-            return null;
+            if (data.levelType === LEVEL_TYPE.ASSESMENT && !data.allowReattempt) return null;
             const score = userLevelData[0].levelScore;
-            const completed =
-              (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
+            const completed = (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
             const passState = userLevelData[0].levelStatus;
             let ob = {};
             if (data.dueDate)
@@ -145,7 +131,7 @@ module.exports = {
           return { ...JSON.parse(JSON.stringify(data)), lockedState };
         });
         levelData = await Promise.all(updatedLevlelData);
-        levelData=levelData.filter(data=>data!==null)
+        levelData = levelData.filter((data) => data !== null);
         return res.status(201).json({ status: "success", data: levelData });
       } catch (err) {
         console.log(err);
@@ -197,14 +183,7 @@ module.exports = {
             data: "no new unlockedlevel",
           });
         else if (userLevelData && userLevelData.length) {
-          if (
-            (level.levelType === LEVEL_TYPE.ASSESMENT &&
-              userLevelData[0] &&
-              userLevelData[0].levelStatus === LEVEL_STATUS.PASS) ||
-            (level.levelType !== LEVEL_TYPE.ASSESMENT &&
-              userLevelData[0] &&
-              userLevelData[0].attemptStatus === ATTEMPT_STATUS.COMPLETED)
-          ) {
+          if ((level.levelType === LEVEL_TYPE.ASSESMENT && userLevelData[0] && userLevelData[0].levelStatus === LEVEL_STATUS.PASS) || (level.levelType !== LEVEL_TYPE.ASSESMENT && userLevelData[0] && userLevelData[0].attemptStatus === ATTEMPT_STATUS.COMPLETED)) {
             let flag = 0;
             userLevelData.map((data, index) => {
               if (index !== 0 && data.levelStatus === LEVEL_STATUS.PASS) {
@@ -253,6 +232,89 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
+        res.status(201).json({
+          status: "failed",
+          message: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    learnerLevelInfoById: async (req, res) => {
+      try {
+        let levelId = req.query.levelId;
+        let tempData = await level_Model.findOne({ _id: levelId });
+        let trackId = tempData.trackId;
+        let levelData = await level_Model.find({ trackId, levelState: LEVEL_STATE.LAUNCH }).populate({
+          path: "trackId",
+          select: "selectedTheme trackName description",
+        });
+        if (levelData === null || !levelData.length)
+          return res.status(204).json({
+            status: "failed",
+            message: `Track Not Found (Please check the Track ID)`,
+          });
+
+        const updatedLevlelData = levelData.map(async (data, index) => {
+          const userLevelData = await getLatestUserLevelByLevel({
+            levelId: data._id,
+            learnerId: req.user._id,
+          });
+
+          //calculate lock state
+          let lockedState;
+          if (data.isLocked) {
+            if (index == 0) lockedState = LOCKED_STATE.UNLOCKED;
+            else {
+              const previousLevel = levelData[index - 1];
+              const prevUserLevelData = await getLatestUserLevelByLevel({
+                levelId: previousLevel._id,
+                learnerId: req.user._id,
+              });
+              if (prevUserLevelData[0] && previousLevel.passingScore) {
+                if (prevUserLevelData[0].levelStatus === LEVEL_STATUS.PASS) lockedState = LOCKED_STATE.UNLOCKED;
+                else lockedState = LOCKED_STATE.LOCKED;
+              } else if (prevUserLevelData[0] && prevUserLevelData[0].templateAttempted === prevUserLevelData[0].totalTemplate) lockedState = LOCKED_STATE.UNLOCKED;
+              else lockedState = LOCKED_STATE.LOCKED;
+            }
+          } else lockedState = LOCKED_STATE.UNLOCKED;
+
+          if (userLevelData && userLevelData.length) {
+            if (data.levelType === LEVEL_TYPE.ASSESMENT && !data.allowReattempt) return null;
+            const score = userLevelData[0].levelScore;
+            const completed = (userLevelData[0].templateAttempted / userLevelData[0].totalTemplate) * 100;
+            const passState = userLevelData[0].levelStatus;
+            let ob = {};
+            if (data.dueDate)
+              ob = {
+                ...JSON.parse(JSON.stringify(data)),
+                score,
+                completed,
+                passState,
+                lockedState,
+                attemptStatus: userLevelData[0].attemptStatus,
+                isOverdue: data.dueDate < userLevelData[0].updatedAt,
+                lastAttempted: userLevelData[0].updatedAt,
+              };
+            else
+              ob = {
+                ...JSON.parse(JSON.stringify(data)),
+                score,
+                completed,
+                passState,
+                lockedState,
+                attemptStatus: userLevelData[0].attemptStatus,
+                lastAttempted: userLevelData[0].updatedAt,
+              };
+            return ob;
+          }
+
+          return { ...JSON.parse(JSON.stringify(data)), lockedState };
+        });
+        levelData = await Promise.all(updatedLevlelData);
+        levelData = levelData.filter((data) => data !== null);
+        levelData = levelData.filter((data) => data._id ===levelId);
+        return res.status(201).json({ status: "success", data: levelData[0]});
+      } catch (err) {
+        console.log(err);
         res.status(201).json({
           status: "failed",
           message: `err.name : ${err.name}, err.message:${err.message}`,

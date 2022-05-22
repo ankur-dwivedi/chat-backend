@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3b68b474-c0ec-4cf0-830e-a62a3102665e",
+		"_postman_id": "18ea0d97-5e4f-4576-b375-ec8a79b3fd15",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -134,7 +134,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"IVP-1502\",\r\n    \"password\":\"ankur\",\r\n    \"organization\":\"62309a170aa70e223688e7f2\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"PB001\",\r\n    \"password\":\"ankur\",\r\n    \"organization\":\"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -188,7 +188,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\",\r\n    \"otp\":147006\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"em-12\",\r\n    \"organization\":\"61b064bee20da142b8dea48c\",\r\n    \"otp\":542244\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -212,16 +212,17 @@
 					"name": " reset paswword",
 					"request": {
 						"auth": {
-							"type": "noauth"
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
 						},
 						"method": "PATCH",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NTA5MTMyOTMsImV4cCI6MTY1MTUxODA5M30.FYkzRT305tmcmhKWzDoY6An6cldVmAhj8YPpQXYft3U",
-								"type": "text"
-							}
-						],
+						"header": [],
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"password\":\"ankur\"\n}",
@@ -403,43 +404,6 @@
 									"key": "levelId",
 									"value": "6214c0ae6de8d66209bc02b1"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create access token",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/user/create-access-token",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"create-access-token"
 							]
 						}
 					},
@@ -626,6 +590,43 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "create access token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/create-access-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"create-access-token"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -692,7 +693,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"name\":\"Group\",\r\n    \"description\":\"SDE1\",\r\n    \"properties\":[{\"name\":\"department\",\"value\":[\"IT\",\"CS\"]}]\r\n}",
+									"raw": "{\r\n    \"name\":\"Group 5\",\r\n    \"description\":\"SDE1\",\r\n    \"properties\":[{\"name\":\"All Employees\", \"value\":[\"All Employees\"]}]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -758,19 +759,20 @@
 							"name": "create group with employee list",
 							"request": {
 								"auth": {
-									"type": "noauth"
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
 								},
 								"method": "POST",
-								"header": [
-									{
-										"key": "Authorization",
-										"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NTA5MTM5OTgsImV4cCI6MTY1MTUxODc5OH0.FWNUfI3ur4NWE-vYPnVH-z2kY6Lb3ZzuKbfXdIKZsP0",
-										"type": "text"
-									}
-								],
+								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\":\"Group232\",\n    \"description\":\"SDE2\",\n    \"employeeId\":[\"62309a730aa70e223688eb65\"]\n}",
+									"raw": "{\n    \"name\":\"Group2\",\n    \"description\":\"SDE1\",\n    \"employeeId\":[\"61d2b2995fe75e27248bf470\"]\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1379,7 +1381,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MWJkNzIyNDhlYTY4NjEwZDhiMmIxYWUiLCJpYXQiOjE2NDI1Mzk4MDR9.Y_4KfuzSm0KoWmdsJcVNmt-U-y8XPtOdfIcXyr_c2Hs",
+									"value": "{{token}}",
 									"type": "string"
 								}
 							]
@@ -1914,100 +1916,6 @@
 						}
 					},
 					"response": []
-				},
-				{
-					"name": "update Track Using Learner Id",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGU3ZjYiLCJpYXQiOjE2NTA5OTYxMTMsImV4cCI6MTY1MTYwMDkxM30.gqqIF-HsRYqDecCnv_ZlrO_ZtgAdLW2pGjnMiRLqopU",
-								"type": "text"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n  \"trackName\": \"Testing Track Update New\",\r\n  \"description\": \"Tseting\",\r\n  \"selectedTheme\": \"city\",\r\n  \"skillTag\": [],\r\n  \"learnerIds\": [\r\n    \"62309a730aa70e223688e7f6\"\r\n  ]\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/track/updateTrackUsingLearnerId/626837960a51ac1da23a8993",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"updateTrackUsingLearnerId",
-								"626837960a51ac1da23a8993"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "fetch Track Info For Transfer Tab",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Authorization",
-								"value": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjMwOWE3MzBhYTcwZTIyMzY4OGViNjUiLCJpYXQiOjE2NTA5MTM5OTgsImV4cCI6MTY1MTUxODc5OH0.FWNUfI3ur4NWE-vYPnVH-z2kY6Lb3ZzuKbfXdIKZsP0",
-								"type": "text"
-							}
-						],
-						"url": {
-							"raw": "{{baseUrl}}/track/fetchTrackInfoForTransferTab",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"fetchTrackInfoForTransferTab"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create Track Using Learner Id",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/track/createTrackUsingLearnerId",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"createTrackUsingLearnerId"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "get Tracks Without User Created Group",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{baseUrl}}/track/getTracksWithoutUserCreatedGroup",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"track",
-								"getTracksWithoutUserCreatedGroup"
-							]
-						}
-					},
-					"response": []
 				}
 			]
 		},
@@ -2031,7 +1939,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 4\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true\n}",
+							"raw": "{\n    \"trackId\": \"621ab37f04d46bfeeb398d19\",\n    \"levelName\": \"Level 4\",\n    \"levelDescription\": \"description\",\n    \"levelState\":\"launch\",\n    \"passingScore\":60,\n    \"employeeRetryInDays\": 2,\n    \"dueDate\": \"1/12/2022\",\n    \"levelType\":\"assessment\",\n    \"isLocked\":true,\n    \"allowReattempt\": false\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -2246,6 +2154,47 @@
 							"path": [
 								"level",
 								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get learner level by id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/level/learner-level-info-id?levelId=6214c0ae6de8d66209bc02b1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"level",
+								"learner-level-info-id"
+							],
+							"query": [
+								{
+									"key": "levelId",
+									"value": "6214c0ae6de8d66209bc02b1"
+								}
 							]
 						}
 					},
