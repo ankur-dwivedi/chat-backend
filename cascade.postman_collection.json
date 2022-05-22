@@ -1,8 +1,9 @@
 {
 	"info": {
-		"_postman_id": "18ea0d97-5e4f-4576-b375-ec8a79b3fd15",
+		"_postman_id": "6e1dedf7-20d2-410e-8e61-34562d511bc8",
 		"name": "cascade",
-		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12071918"
 	},
 	"item": [
 		{
@@ -134,7 +135,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"employeeId\":\"PB001\",\r\n    \"password\":\"ankur\",\r\n    \"organization\":\"626868b71783c300209f287b\"\r\n}",
+							"raw": "{\r\n    \"employeeId\":\"PB001\",\r\n    \"password\":\"creator01\",\r\n    \"organization\":\"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -408,6 +409,52 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "get paginated users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMyMjQxNjEsImV4cCI6MTY1MzgyODk2MX0.c--XBegTp1HVmkz95aP23urHmfBM6NfRC1MQS8zf4bk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/paginated-users?page=1&limit=10&filterCreator=true&search=sa",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"paginated-users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "filterCreator",
+									"value": "true"
+								},
+								{
+									"key": "search",
+									"value": "sa"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -623,6 +670,34 @@
 							"path": [
 								"user",
 								"create-access-token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get restricted data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMyMjQxNjEsImV4cCI6MTY1MzgyODk2MX0.c--XBegTp1HVmkz95aP23urHmfBM6NfRC1MQS8zf4bk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/organization/restricted-data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"restricted-data"
 							]
 						}
 					},

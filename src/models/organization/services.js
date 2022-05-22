@@ -40,3 +40,8 @@ exports.deleteOrganization = async (id) =>
   Organization.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
     .catch((error) => error);
+
+exports.getRestrictedInfo = async (id) =>
+  Organization.findOne({ _id: id })
+    .then((response) => response)
+    .catch((error) => error);

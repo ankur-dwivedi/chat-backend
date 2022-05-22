@@ -8,10 +8,21 @@ const {
   setSession,
   analytics,
   analyticsEmpData,
+  getPaginatedUsers,
 } = require("./controller");
-const { requestOtp, verifyOtp, forgetPassword, resetpass, searchUser } = require("./controller");
+const {
+  requestOtp,
+  verifyOtp,
+  forgetPassword,
+  resetpass,
+  searchUser,
+} = require("./controller");
 const { getFilteredEmp } = require("./controller");
-const { withAuthUser, withNewUser } = require("../../middlewares/auth");
+const {
+  withAuthUser,
+  withNewUser,
+  withAdminAccess,
+} = require("../../middlewares/auth");
 const { validate } = require("../../middlewares/schema");
 
 const {
@@ -35,12 +46,27 @@ userRouter.post("/request-otp", validate(reqOtpForgetPassContract), requestOtp);
 userRouter.post("/verify-otp", validate(verifyOtpContract), verifyOtp);
 userRouter.delete("/", withAuthUser, validate(deleteContract), deleteUser);
 userRouter.patch("/", withAuthUser, validate(editUserContract), update);
-userRouter.post("/forget-password", validate(reqOtpForgetPassContract), forgetPassword);
+userRouter.post(
+  "/forget-password",
+  validate(reqOtpForgetPassContract),
+  forgetPassword
+);
 userRouter.patch("/resetpass", withAuthUser, resetpass);
-userRouter.post("/filter-emp", withAuthUser, validate(getFilEmpContract), getFilteredEmp);
-userRouter.patch("/set-session", withAuthUser, validate(setSessionContract), setSession);
+userRouter.post(
+  "/filter-emp",
+  withAuthUser,
+  validate(getFilEmpContract),
+  getFilteredEmp
+);
+userRouter.patch(
+  "/set-session",
+  withAuthUser,
+  validate(setSessionContract),
+  setSession
+);
 userRouter.get("/analytics", withAuthUser, analytics);
 userRouter.get("/analytics-list", withAuthUser, analyticsEmpData);
 userRouter.post("/create-access-token", withNewUser);
+userRouter.get("/paginated-users", withAdminAccess, getPaginatedUsers);
 
 module.exports = userRouter;

@@ -1,11 +1,26 @@
 const bcrypt = require("bcrypt");
-const { update, get, create, deleteUser, getGroupEmployee, searchByEmp, getUserWithOrg, getUserAndOrgByEmpId, passwordCompare } = require("../../models/user/services");
+const {
+  update,
+  get,
+  create,
+  deleteUser,
+  getGroupEmployee,
+  searchByEmp,
+  getUserWithOrg,
+  getUserAndOrgByEmpId,
+  passwordCompare,
+  findPaginatedUsers,
+} = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
 const { generateAccessToken, generateOtp, analyicsData, analyicslist, generateRefreshToken } = require("../../utils/general");
 const md5 = require("md5");
 const { OTP_EXPIRY } = require("../../models/user/constants");
-const { sendMail } = require("../user/util");
+const {
+  sendMail,
+  createDynamicQueryPagination,
+  processPaginatedResults,
+} = require("../user/util");
 var axios = require("axios");
 
 exports.getUsers = async (req, res) =>
@@ -79,7 +94,12 @@ exports.login = (req, res, next) => {
     });
 };
 
-exports.deleteUser = async (req, res) => deleteUser(req.body.id).then((user) => (user.deletedCount ? res.send("User deleted") : res.send("User aleready deleted or doesnt exist")));
+exports.deleteUser = async (req, res) =>
+  deleteUser(req.body.id).then((user) =>
+    user.deletedCount
+      ? res.send("User deleted")
+      : res.send("User aleready deleted or doesnt exist")
+  );
 
 exports.update = async (req, res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
@@ -199,7 +219,8 @@ exports.getFilteredEmp = async (req, res) => {
           value: filterObject[data],
         });
       }
-    } else employees = await getOrgEmployee({ organization: req.user.organization });
+    } else
+      employees = await getOrgEmployee({ organization: req.user.organization });
     employees = employees.map((data) => {
       const ob = {
         ...JSON.parse(JSON.stringify(data)),
@@ -258,5 +279,35 @@ exports.analyticsEmpData = async (req, res) => {
     });
   } catch (error) {
     res.status(204).send({ error: error.message });
+  }
+};
+
+exports.getPaginatedUsers = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page);
+    const limit = parseInt(req.query.limit);
+    const skipIndex = (page - 1) * limit;
+    const { search, filterCreator, filterInactive } = req.query;
+    const query = createDynamicQueryPagination(
+      search,
+      filterCreator,
+      filterInactive,
+      req.user.organization
+    );
+
+    const data = await findPaginatedUsers({
+      limit,
+      skipIndex,
+      query,
+    });
+    // Process data returned from DB
+    const processedData = processPaginatedResults(data);
+    return res.send({
+      status: 200,
+      success: true,
+      data: processedData,
+    });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
   }
 };

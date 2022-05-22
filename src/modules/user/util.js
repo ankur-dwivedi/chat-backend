@@ -36,7 +36,10 @@ const sendMail = async (otp, email, token, domain) => {
 
           We noticed you wanted to reset your password for PaddleBoat. 
           Head over to this <a href=${
-            "https://www." + domain + ".padboat.com/reset-password/?token=" + token
+            "https://www." +
+            domain +
+            ".padboat.com/reset-password/?token=" +
+            token
           }>link</a>  to quickly set up a new one!
           <br/><br/>
           Thanks,<br/>
@@ -55,4 +58,87 @@ const sendMail = async (otp, email, token, domain) => {
   });
 };
 
-module.exports = { sendMail };
+const createDynamicQueryPagination = (
+  search,
+  filterCreator,
+  filterInactive,
+  organization
+) => {
+  // Ensure query happens within organization
+  let dynamicQuery = {
+    $and: [
+      {
+        organization: organization,
+      },
+    ],
+  };
+  // Dynamically build query based on parameters
+  if (search || filterCreator || filterInactive) {
+    if (search) {
+      const searchQuery = {
+        $or: [
+          {
+            $and: [
+              {
+                employeeId: { $regex: search + ".*", $options: "i" },
+              },
+              { organization: organization },
+            ],
+          },
+          {
+            $and: [
+              { name: { $regex: search + ".*", $options: "i" } },
+              { organization: organization },
+            ],
+          },
+        ],
+      };
+      dynamicQuery.$and.push(searchQuery);
+    }
+    if (filterCreator) {
+      const filterCreatorQuery = {
+        $and: [{ role: "creator" }, { organization: organization }],
+      };
+      dynamicQuery.$and.push(filterCreatorQuery);
+    }
+    // Enable once activeStatus is enabled in User Schema
+    // if (filterInactive) {
+    //   const filterInactiveQuery = {
+    //     $and: [
+    //       {
+    //         activeStatus: false,
+    //       },
+    //       { organization: organization },
+    //     ],
+    //   };
+    //   dynamicQuery.$and.push(filterInactiveQuery);
+    // }
+  }
+  return dynamicQuery;
+};
+
+const processPaginatedResults = (data) => {
+  // $facet always returns array
+  // Add Active Status once implemented
+  let processedData = {
+    totalCount: data[0].totalCount[0].totalCount,
+    data: data[0].data.map((user) => {
+      return {
+        employeeId: user.employeeId,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        employeeData: user.employeeData,
+        // accessStatus: user.accessStatus
+      };
+    }),
+  };
+  return processedData;
+};
+
+module.exports = {
+  sendMail,
+  createDynamicQueryPagination,
+  processPaginatedResults,
+};
