@@ -23,5 +23,6 @@ levelRouter.patch(
   withAdminAuthUser,
   levelController.patch.update
 );
+levelRouter.get("/learner-level-info-id", withAuthUser, levelController.get.learnerLevelInfoById);
 
 module.exports = levelRouter;

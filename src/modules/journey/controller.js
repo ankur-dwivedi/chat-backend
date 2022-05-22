@@ -63,6 +63,15 @@ const saveUserCurrentState = async ({ template, userId,timeSpend }) => {
   return updatedUserState;
 };
 
+const levelComplete = async ({ levelId, learnerId }) => {
+  const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId, learnerId });
+  if (userLevelData && userLevelData[0]) {
+    const score = userLevelData[0].levelScore;
+    const passState = userLevelData[0].levelStatus;
+    return { score, passState };
+  }
+};
+
 module.exports = {
   get: {},
   post: {
@@ -155,8 +164,15 @@ module.exports = {
               currentState: null,
             }
           );
-          return res.json({
-            message: `Attempt closed successfully`,
+          const levelCompleteData = await levelComplete({
+            levelId: req.body.levelId,
+            learnerId: req.user._id,
+          });
+          return res.send({
+            status: 200,
+            success: true,
+            message: "Attempt closed successfully",
+            data: { ...levelCompleteData },
           });
         } else
           return res.status(400).json({

@@ -35,6 +35,7 @@ const UserSchema = new Schema(
     otp: { type: OtpSchema },
     password: { type: String },
     currentState: { type: CurrentStateSchema },
+    blocked: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

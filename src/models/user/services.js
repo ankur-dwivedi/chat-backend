@@ -237,4 +237,3 @@ exports.findPaginatedUsers = async ({ limit, skipIndex, query }) =>
     .then((response) => response)
     .catch((error) => error);
 
-// User.deleteMany({ employeeId: /^IVP/ }).then((response) => console.log({ response }));
