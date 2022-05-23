@@ -93,13 +93,13 @@ const assocAuthLearner = (req, res, next) =>
       res.status(204).send(createUnauthorizedError(error));
     });
 
-// TODO: This authenticates if Creator has access to Level not Admin role
+// TODO: This authenticates if Creator/Admin has access to Level not Admin role
 const isAdmin = (req, res, next) =>
   User.findById(req.user.userId)
     .then(async (user) => {
       if (!user) {
         res.send(createUnauthorizedError("Not Authorized"));
-      } else if (user.role !== ROLE.CREATOR) {
+      } else if (user.role !== ROLE.CREATOR && user.role !== ROLE.ADMIN) {
         res.send(createUnauthorizedError("Not Authorized"));
       } else {
         req.user = user;
