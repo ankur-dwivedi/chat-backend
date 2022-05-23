@@ -13,7 +13,13 @@ const {
 } = require("../../models/user/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
-const { generateAccessToken, generateOtp, analyicsData, analyicslist, generateRefreshToken } = require("../../utils/general");
+const {
+  generateAccessToken,
+  generateOtp,
+  analyicsData,
+  analyicslist,
+  generateRefreshToken,
+} = require("../../utils/general");
 const md5 = require("md5");
 const { OTP_EXPIRY } = require("../../models/user/constants");
 const {
@@ -89,7 +95,8 @@ exports.login = (req, res, next) => {
         : generateError();
     })
     .catch((err) => {
-      if (err.message.indexOf("User is blocked") !== -1) res.status(400).send({ message: err.message });
+      if (err.message.indexOf("User is blocked") !== -1)
+        res.status(400).send({ message: err.message });
       res.status(400).send({ message: `Invalid Employee ID or Password` });
     });
 };
@@ -137,47 +144,67 @@ exports.requestOtp = async ({ body }, res) => {
     const otp = generateOtp();
     const message = `Otp sent`;
     const User = await get({ employeeId, organization });
-    if (User && User.password) generateError("This ID is already registered, please go to login or forgot password");
+    if (User && User.password)
+      generateError(
+        "This ID is already registered, please go to login or forgot password"
+      );
     if (User.blocked) return generateError("User is blocked");
-    await update({ $and: [{ employeeId: employeeId }, { organization: organization }] }, { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } });
+    await update(
+      { $and: [{ employeeId: employeeId }, { organization: organization }] },
+      { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } }
+    );
     if (User.email) await sendMail(otp, User.email, "");
     else sendOtp(User.phoneNumber, otp);
     return res.send(message);
   } catch (err) {
-    if (err.message.indexOf("User is blocked") !== -1) res.status(400).send({ message: err.message });
+    if (err.message.indexOf("User is blocked") !== -1)
+      res.status(400).send({ message: err.message });
     res.status(400).send({ message: err.message });
   }
 };
 
 exports.verifyOtp = async ({ body }, res) =>
-  get({ employeeId: body.employeeId, organization: body.organization }).then((user) => {
-    const savedOtp = user.otp.value;
-    const { expiry } = user.otp;
-    const currentDate = new Date();
-    const difference = expiry - currentDate.getTime();
-    const status = body.otp === savedOtp ? (difference > 0 ? "Success" : "Otp has Expired") : "Invalid OTP";
-    status === "Success"
-      ? res.send({
-          status: 200,
-          success: true,
-          data: {
-            ...JSON.parse(JSON.stringify(user)),
-            refreshToken: generateRefreshToken(user._id),
-            accessToken: generateAccessToken(user._id),
-          },
-        })
-      : res.status(400).send({
-          success: false,
-          data: null,
-          message: status,
-        });
-  });
+  get({ employeeId: body.employeeId, organization: body.organization }).then(
+    (user) => {
+      const savedOtp = user.otp.value;
+      const { expiry } = user.otp;
+      const currentDate = new Date();
+      const difference = expiry - currentDate.getTime();
+      const status =
+        body.otp === savedOtp
+          ? difference > 0
+            ? "Success"
+            : "Otp has Expired"
+          : "Invalid OTP";
+      status === "Success"
+        ? res.send({
+            status: 200,
+            success: true,
+            data: {
+              ...JSON.parse(JSON.stringify(user)),
+              refreshToken: generateRefreshToken(user._id),
+              accessToken: generateAccessToken(user._id),
+            },
+          })
+        : res.status(400).send({
+            success: false,
+            data: null,
+            message: status,
+          });
+    }
+  );
 
 exports.forgetPassword = async (req, res) => {
   try {
     const { employeeId, organization } = req.body;
     const user = await getUserAndOrgByEmpId({ employeeId, organization });
-    if (user.email) await sendMail(0, user.email, generateAccessToken(user._id), user.organization.domain);
+    if (user.email)
+      await sendMail(
+        0,
+        user.email,
+        generateAccessToken(user._id),
+        user.organization.domain
+      );
     else sendOtp(user.phoneNumber, otp);
 
     res.send({ message: "link sent to registered email" });
@@ -194,7 +221,11 @@ exports.resetpass = async (req, res, next) => {
       password: await bcrypt.hash(req.body.password, 10),
     }
   )
-    .then((user) => (user ? res.send("Password Reset Succesfully") : generateError("Unable to reset Password")))
+    .then((user) =>
+      user
+        ? res.send("Password Reset Succesfully")
+        : generateError("Unable to reset Password")
+    )
     .catch((err) => {
       res.status(400).send({ message: `${err.message} Already exists` });
     });
@@ -209,8 +240,16 @@ exports.getFilteredEmp = async (req, res) => {
       const filterObject = {};
       for (let data of employees) {
         for (let empData of data.employeeData) {
-          if (filterObject[empData.name] && filterObject[empData.name].indexOf(empData.value) === -1) filterObject[empData.name] = [...filterObject[empData.name], empData.value];
-          else if (!filterObject[empData.name]) filterObject[empData.name] = [empData.value];
+          if (
+            filterObject[empData.name] &&
+            filterObject[empData.name].indexOf(empData.value) === -1
+          )
+            filterObject[empData.name] = [
+              ...filterObject[empData.name],
+              empData.value,
+            ];
+          else if (!filterObject[empData.name])
+            filterObject[empData.name] = [empData.value];
         }
       }
       for (let data in filterObject) {
@@ -294,12 +333,12 @@ exports.getPaginatedUsers = async (req, res) => {
       filterInactive,
       req.user.organization
     );
-
     const data = await findPaginatedUsers({
       limit,
       skipIndex,
       query,
     });
+    console.log(data);
     // Process data returned from DB
     const processedData = processPaginatedResults(data);
     return res.send({

@@ -101,18 +101,17 @@ const createDynamicQueryPagination = (
       };
       dynamicQuery.$and.push(filterCreatorQuery);
     }
-    // Enable once activeStatus is enabled in User Schema
-    // if (filterInactive) {
-    //   const filterInactiveQuery = {
-    //     $and: [
-    //       {
-    //         activeStatus: false,
-    //       },
-    //       { organization: organization },
-    //     ],
-    //   };
-    //   dynamicQuery.$and.push(filterInactiveQuery);
-    // }
+    if (filterInactive) {
+      const filterInactiveQuery = {
+        $and: [
+          {
+            blocked: true,
+          },
+          { organization: organization },
+        ],
+      };
+      dynamicQuery.$and.push(filterInactiveQuery);
+    }
   }
   return dynamicQuery;
 };
@@ -121,7 +120,8 @@ const processPaginatedResults = (data) => {
   // $facet always returns array
   // Add Active Status once implemented
   let processedData = {
-    totalCount: data[0].totalCount[0].totalCount,
+    totalCount:
+      data[0].totalCount.length > 0 ? data[0].totalCount[0].totalCount : 0,
     data: data[0].data.map((user) => {
       return {
         employeeId: user.employeeId,
@@ -130,7 +130,7 @@ const processPaginatedResults = (data) => {
         email: user.email,
         phoneNumber: user.phoneNumber,
         employeeData: user.employeeData,
-        // accessStatus: user.accessStatus
+        blocked: user.blocked,
       };
     }),
   };
