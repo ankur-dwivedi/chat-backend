@@ -30,7 +30,8 @@ const {
   registerUserContract,
   editUserContract,
   loginContract,
-  deleteContract,
+  deleteSingleContract,
+  deleteMultipleContract,
   reqOtpForgetPassContract,
   verifyOtpContract,
   getFilEmpContract,
@@ -51,12 +52,13 @@ userRouter.delete(
   validate(deleteSingleContract),
   deleteUser
 );
-userRouter.deleteUsers(
+userRouter.delete(
   "/delete-users",
-  withAdminAuthUser,
+  withAdminAccess,
   validate(deleteMultipleContract),
   deleteUsers
-);userRouter.patch("/", withAuthUser, validate(editUserContract), update);
+);
+userRouter.patch("/", withAuthUser, validate(editUserContract), update);
 userRouter.post(
   "/forget-password",
   validate(reqOtpForgetPassContract),

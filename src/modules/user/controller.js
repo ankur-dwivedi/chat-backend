@@ -4,6 +4,7 @@ const {
   get,
   create,
   deleteUser,
+  deleteUsers,
   getGroupEmployee,
   searchByEmp,
   getUserWithOrg,
@@ -109,12 +110,11 @@ exports.deleteUser = async (req, res) =>
   );
 
 exports.deleteUsers = async (req, res) =>
-  deleteUsers(req.body.data).then((document) => {
+  deleteUsers(req.body.employees).then((document) => {
     document.deletedCount
       ? res.send(`${document.deletedCount} users deleted`)
-      : res.send("Delete falied");
+      : res.send("Delete failed");
   });
-
 
 exports.update = async (req, res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
