@@ -180,14 +180,13 @@ exports.deleteUser = async (id) =>
     .then((response) => (response ? response : null))
     .catch((error) => error);
 
-exports.deleteUsers = async (userIdArray) => {
-  return User.deleteMany({ _id: { $in: userIdArray } })
+exports.deleteUsers = async (userIdArray) =>
+  User.deleteMany({ _id: { $in: userIdArray } })
     .then((response) => {
       console.log(response);
       return response ? response : null;
     })
     .catch((error) => error);
-};
 
 exports.updateUserByIds = (org, employeeIds, groupId) =>
   User.updateMany(createUserIdQuery(org, employeeIds), {
