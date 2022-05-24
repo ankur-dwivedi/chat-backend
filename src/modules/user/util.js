@@ -124,6 +124,7 @@ const processPaginatedResults = (data) => {
       data[0].totalCount.length > 0 ? data[0].totalCount[0].totalCount : 0,
     data: data[0].data.map((user) => {
       return {
+        _id: user._id,
         employeeId: user.employeeId,
         name: user.name,
         role: user.role,
