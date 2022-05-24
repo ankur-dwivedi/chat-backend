@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1afa96d1-9a6b-411b-bced-ae527b1d58ea",
+		"_postman_id": "02b7ca93-7ec0-49ba-b820-775bf4b897f8",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12071918"
@@ -17,7 +17,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMzOTQ4NjMsImV4cCI6MTY1Mzk5OTY2M30.m_kkxq3Die70-Q1JFO7lqFJ6FNJ5Ho-8J6QpOmTkZHY",
 									"type": "string"
 								}
 							]
@@ -459,8 +459,37 @@
 				{
 					"name": "delete multiple users",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMzOTQ4NjMsImV4cCI6MTY1Mzk5OTY2M30.m_kkxq3Die70-Q1JFO7lqFJ6FNJ5Ho-8J6QpOmTkZHY",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
-						"header": []
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"employees\": [\"628ccdf75b834e062747a4a9\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/delete-users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"delete-users"
+							]
+						}
 					},
 					"response": []
 				}
