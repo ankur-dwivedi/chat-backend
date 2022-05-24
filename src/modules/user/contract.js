@@ -47,7 +47,11 @@ exports.editUserContract = Joi.object({
   password: Joi.string(),
 });
 
-exports.deleteContract = Joi.object({
+exports.deleteMultipleContract = Joi.object({
+  data: Joi.array().items(Joi.string().required()),
+});
+
+exports.deleteSingleContract = Joi.object({
   id: Joi.string().required(),
 });
 

@@ -105,8 +105,16 @@ exports.deleteUser = async (req, res) =>
   deleteUser(req.body.id).then((user) =>
     user.deletedCount
       ? res.send("User deleted")
-      : res.send("User aleready deleted or doesnt exist")
+      : res.send("User already deleted or doesn't exist")
   );
+
+exports.deleteUsers = async (req, res) =>
+  deleteUsers(req.body.data).then((document) => {
+    document.deletedCount
+      ? res.send(`${document.deletedCount} users deleted`)
+      : res.send("Delete falied");
+  });
+
 
 exports.update = async (req, res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
