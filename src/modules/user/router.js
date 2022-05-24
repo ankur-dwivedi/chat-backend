@@ -4,6 +4,7 @@ const {
   getUsers,
   login,
   deleteUser,
+  deleteUsers,
   update,
   setSession,
   analytics,
@@ -29,7 +30,8 @@ const {
   registerUserContract,
   editUserContract,
   loginContract,
-  deleteContract,
+  deleteSingleContract,
+  deleteMultipleContract,
   reqOtpForgetPassContract,
   verifyOtpContract,
   getFilEmpContract,
@@ -44,7 +46,18 @@ userRouter.post("/", withAuthUser, validate(registerUserContract), register);
 userRouter.post("/learner-login", validate(loginContract), login);
 userRouter.post("/request-otp", validate(reqOtpForgetPassContract), requestOtp);
 userRouter.post("/verify-otp", validate(verifyOtpContract), verifyOtp);
-userRouter.delete("/", withAuthUser, validate(deleteContract), deleteUser);
+userRouter.delete(
+  "/delete-user",
+  withAuthUser,
+  validate(deleteSingleContract),
+  deleteUser
+);
+userRouter.delete(
+  "/delete-users",
+  withAdminAccess,
+  validate(deleteMultipleContract),
+  deleteUsers
+);
 userRouter.patch("/", withAuthUser, validate(editUserContract), update);
 userRouter.post(
   "/forget-password",

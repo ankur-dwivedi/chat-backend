@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6e1dedf7-20d2-410e-8e61-34562d511bc8",
+		"_postman_id": "1afa96d1-9a6b-411b-bced-ae527b1d58ea",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12071918"
@@ -418,7 +418,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMyMjQxNjEsImV4cCI6MTY1MzgyODk2MX0.c--XBegTp1HVmkz95aP23urHmfBM6NfRC1MQS8zf4bk",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMyMjQ3MjIsImV4cCI6MTY1MzgyOTUyMn0.v22jnJcjAYHTwiZC0VQuc_5EBGIEbEqUOx0Xpe1G9Z4",
 									"type": "string"
 								}
 							]
@@ -453,6 +453,14 @@
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete multiple users",
+					"request": {
+						"method": "DELETE",
+						"header": []
 					},
 					"response": []
 				}

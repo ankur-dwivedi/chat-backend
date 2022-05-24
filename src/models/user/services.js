@@ -180,6 +180,15 @@ exports.deleteUser = async (id) =>
     .then((response) => (response ? response : null))
     .catch((error) => error);
 
+exports.deleteUsers = async (userIdArray) => {
+  return User.deleteMany({ _id: { $in: userIdArray } })
+    .then((response) => {
+      console.log(response);
+      return response ? response : null;
+    })
+    .catch((error) => error);
+};
+
 exports.updateUserByIds = (org, employeeIds, groupId) =>
   User.updateMany(createUserIdQuery(org, employeeIds), {
     $push: { groups: groupId },
@@ -236,4 +245,3 @@ exports.findPaginatedUsers = async ({ limit, skipIndex, query }) =>
   ])
     .then((response) => response)
     .catch((error) => error);
-
