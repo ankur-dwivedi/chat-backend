@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"abc@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-21\",\r\n    \"phoneNumber\":12345,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"password\":\"123\"\r\n}",
+							"raw": "{\r\n    \"email\":\"abcd@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-212\",\r\n    \"phoneNumber\":123456,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"password\":\"123\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -418,7 +418,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMyMjQ3MjIsImV4cCI6MTY1MzgyOTUyMn0.v22jnJcjAYHTwiZC0VQuc_5EBGIEbEqUOx0Xpe1G9Z4",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMzOTQ4NjMsImV4cCI6MTY1Mzk5OTY2M30.m_kkxq3Die70-Q1JFO7lqFJ6FNJ5Ho-8J6QpOmTkZHY",
 									"type": "string"
 								}
 							]
@@ -426,7 +426,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/user/paginated-users?page=1&limit=10&filterCreator=true&search=sa",
+							"raw": "{{baseUrl}}/user/paginated-users?page=1&limit=10",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -442,14 +442,6 @@
 								{
 									"key": "limit",
 									"value": "10"
-								},
-								{
-									"key": "filterCreator",
-									"value": "true"
-								},
-								{
-									"key": "search",
-									"value": "sa"
 								}
 							]
 						}
@@ -473,7 +465,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"employees\": [\"628ccdf75b834e062747a4a9\"]\n}",
+							"raw": "{\n    \"employees\": [\"628cd70f5b834e062747a4db\"]\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1116,43 +1108,6 @@
 					"response": []
 				},
 				{
-					"name": "delete group Copy",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "DELETE",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"624f5eb1cb7fb200878320b6\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/group/",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"group",
-								""
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "get group",
 					"protocolProfileBehavior": {
 						"disableBodyPruning": true
@@ -1270,43 +1225,6 @@
 									"key": "id",
 									"value": "61bf814dc93b593384d3b4a3"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "update group",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "PATCH",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"623780f41a23a2042d38a5d4\",\r\n    \"name\":\"Group 41\",\r\n    \"employees\":[\"61d2b2995fe75e27248bf470\",\"61ef477855a276a32ce61f88\"],\r\n    \"description\":\"SDE1\"\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/group/",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"group",
-								""
 							]
 						}
 					},
@@ -2412,6 +2330,169 @@
 							"path": [
 								"updateUserTrackInfo",
 								"621ab37f04d46bfeeb398d19"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "mailing list",
+			"item": [
+				{
+					"name": "get mailing list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM0NjExNTIsImV4cCI6MTY1NDA2NTk1Mn0.J1OCG9rckoS284zhC15OmkNa5x4FSyvHF5XO7qUy0EA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/mailingList/getMailingList",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mailingList",
+								"getMailingList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "request a demo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM0NjExNTIsImV4cCI6MTY1NDA2NTk1Mn0.J1OCG9rckoS284zhC15OmkNa5x4FSyvHF5XO7qUy0EA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"emailAddress\":\"testpostman@gmail.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/mailingList",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"mailingList"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "applicant",
+			"item": [
+				{
+					"name": "get applicant",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM0NjE5NzYsImV4cCI6MTY1NDA2Njc3Nn0.0u7VDiaGPH-NacWBaBlz5CRmQLU70h28I8JnKFAJRNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/applicant/getApplicant",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"applicant",
+								"getApplicant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "submit application",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Saswat\",\n    \"emailAddress\": \"saswat@padboat.com\",\n    \"linkedin\": \"https://www.linkedin.com/in/saswat-mishra-752303150/\",\n    \"otherLink\": \"https://github.com/saswatmishra811\",\n    \"resume\": \"https://cascade-content.s3.amazonaws.com/resumes/Get_Started_With_Smallpdf.pdf\",\n    \"jobId\": \"123112324\",\n    \"jobTitle\": \"Full-Stack Software Developer (MERN)\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/applicant",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"applicant"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload resume",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/Get_Started_With_Smallpdf.pdf"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/applicant/upload",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"applicant",
+								"upload"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": null,
+									"disabled": true
+								}
 							]
 						}
 					},
