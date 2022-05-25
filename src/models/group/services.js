@@ -10,11 +10,12 @@ exports.get = async (query) =>
         .catch((error) => error)
     : query.createdBy
     ? Group.aggregate()
-        .match({ $and: [({ createdBy: query.createdBy }, { botGeneratedGroup: false })] })
+        .match({ $and: [{ createdBy: query.createdBy }, { botGeneratedGroup: false }] })
         .project({
           _id: 1,
           name: 1,
           description: 1,
+          createdBy: 1,
           employees: { $size: "$employees" },
         })
     : query.id

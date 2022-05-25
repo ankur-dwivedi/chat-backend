@@ -1,12 +1,18 @@
 const { generateError } = require("../../utils/error");
 const User = require("./");
-const { createGroupFilterQuery, createUserIdQuery, createUserIdFindQuery } = require("./utils");
+const {
+  createGroupFilterQuery,
+  createUserIdQuery,
+  createUserIdFindQuery,
+} = require("./utils");
 const md5 = require("md5");
 const { Types } = require("mongoose");
 const bcrypt = require("bcrypt");
+const { truncate } = require("lodash");
 
-exports.get = async (query) =>
-  query.id
+exports.get = async (query) => {
+  console.log(query);
+  return query.id
     ? User.findOne({ _id: query.id })
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
@@ -15,23 +21,54 @@ exports.get = async (query) =>
         {
           $and: [
             { employeeId: query.employeeId },
-            { password: query.password },
             { organization: query.organization },
           ],
         },
-        { otp: 0, __v: 0, password: 0 }
-      ).then((response) => (response ? response : generateError("invalid employeeId or password")))
+        { otp: 0, __v: 0 }
+      )
+        .lean()
+        .then((response) =>
+          response ? response : generateError("invalid employeeId or password")
+        )
     : query.employeeId && query.organization
     ? User.findOne({
-        $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
-      }).then((response) => (response ? response : generateError("Invalid Employee ID")))
+        $and: [
+          { employeeId: query.employeeId },
+          { organization: query.organization },
+          { __v: 0 },
+        ],
+      }).then((response) =>
+        response ? response : generateError("Invalid Employee ID")
+      )
     : User.find()
         .then((response) => response)
         .catch((error) => error);
+};
+
+exports.getEmpByOrg = ({ organization }) =>
+  User.find({ organization }).then((response) =>
+    response ? response : generateError("Invalid Employee ID")
+  );
+
+//function to compare and check/validate password
+exports.passwordCompare = async (password, storedPassword) => {
+  try {
+    let match = await bcrypt.compare(password, storedPassword);
+    console.log(match);
+    return match;
+  } catch (err) {
+    console.log(err.name);
+    console.log(err.message);
+    return { errName: err.name, errMessage: err.message };
+  }
+};
 
 exports.getEmpBempIdOrg = async (query) =>
   User.findOne({
-    $and: [{ employeeId: query.employeeId }, { organization: query.organization }],
+    $and: [
+      { employeeId: query.employeeId },
+      { organization: query.organization },
+    ],
   }).then((response) => response);
 
 exports.getUserAnalytics = async (query) =>
@@ -49,7 +86,9 @@ exports.getUserAndOrgByEmpId = ({ employeeId, organization }) =>
       path: "organization",
       select: "domain",
     })
-    .then((response) => (response ? response : generateError("Invalid Employee ID")));
+    .then((response) =>
+      response ? response : generateError("Invalid Employee ID")
+    );
 
 exports.getUserWithOrg = ({ userId }) =>
   User.findById(userId)
@@ -76,7 +115,9 @@ exports.searchByEmp = (query) =>
         $or: [
           {
             $and: [
-              { employeeId: { $regex: query.employeeId + ".*", $options: "i" } },
+              {
+                employeeId: { $regex: query.employeeId + ".*", $options: "i" },
+              },
               { organization: query.organization },
             ],
           },
@@ -110,8 +151,11 @@ exports.getOrgEmployee = ({ organization }) =>
     .catch((error) => error);
 
 exports.create = async (userData) => {
-  if (userData && userData.password) userData.password = await bcrypt.hash(userData.password, 10);
-  return User.create({ ...userData, createdAt: new Date() }).then((response) => response);
+  if (userData && userData.password)
+    userData.password = await bcrypt.hash(userData.password, 10);
+  return User.create({ ...userData, createdAt: new Date() }).then(
+    (response) => response
+  );
 };
 
 exports.findUsers = (query) =>
@@ -129,11 +173,19 @@ exports.update = (queryObject, updateObject) =>
     });
 
 exports.addGroupId = (query, groupId) =>
-  User.updateMany(query, { $push: { groups: groupId } }).then((response) => response);
+  User.updateMany(query, { $push: { groups: groupId } });
 
 exports.deleteUser = async (id) =>
   User.deleteOne({ _id: id })
     .then((response) => (response ? response : null))
+    .catch((error) => error);
+
+exports.deleteUsers = async (userIdArray) =>
+  User.deleteMany({ _id: { $in: userIdArray } })
+    .then((response) => {
+      console.log(response);
+      return response ? response : null;
+    })
     .catch((error) => error);
 
 exports.updateUserByIds = (org, employeeIds, groupId) =>
@@ -168,7 +220,27 @@ exports.removeGroupIdByEmpId = ({ groupId, employeeId }) =>
     }
   );
 
-exports.countEmployeeInOrg = ({ organization }) =>
+exports.countEmployeeInOrg = ({ organization }) => {
   User.find({ organization })
     .count()
+    .then((response) => {
+      console.log(response);
+      return response;
+    });
+  return User.find({ organization })
+    .count()
     .then((response) => response);
+};
+
+exports.findPaginatedUsers = async ({ limit, skipIndex, query }) =>
+  User.aggregate([
+    { $match: query },
+    {
+      $facet: {
+        totalCount: [{ $count: "totalCount" }],
+        data: [{ $sort: { _id: 1 } }, { $skip: skipIndex }, { $limit: limit }],
+      },
+    },
+  ])
+    .then((response) => response)
+    .catch((error) => error);

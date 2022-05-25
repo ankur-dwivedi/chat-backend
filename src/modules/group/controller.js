@@ -1,9 +1,4 @@
-const {
-  get,
-  create,
-  deleteGroup,
-  update,
-} = require("../../models/group/services");
+const { get, create, deleteGroup, update } = require("../../models/group/services");
 const { removeTrackGroupId } = require("../../models/Track/services");
 const {
   getGroupEmployee,
@@ -38,31 +33,47 @@ exports.getGroupById = async (req, res) =>
 
 exports.create = async (req, res) => {
   try {
-    const group = await create({ ...req.body, createdBy: req.user._id }).then(
-      (group) => group
-    );
-    const employees = await getGroupEmployee(
-      req.user.organization,
-      req.body.properties
-    );
-    const employeeIds = employees.map((value) => value._id);
-    await update(
-      { $and: [{ _id: group._id }] },
-      { employees: employeeIds, updatedAt: new Date() }
-    );
-    await addGroupId(
-      createGroupFilterQuery(req.user.organization, req.body.properties),
-      group._id
-    );
-    return res.send({
-      status: 200,
-      success: true,
-      data: { group },
-    });
+    const group = await create({
+      ...req.body,
+      createdBy: req.user._id,
+      organization: req.user.organization,
+    }).then((group) => group);
+    let employees = [];
+    if (
+      req.body.properties.length === 1 &&
+      req.body.properties[0].name === "All Employees" &&
+      req.body.properties[0].value[0] === "All Employees"
+    ) {
+      employees = await User.getEmpByOrg({ organization: req.user.organization });
+      const employeeIds = employees.map((value) => value._id);
+      await update({ $and: [{ _id: group._id }] }, { employees: employeeIds });
+      const temp = employeeIds.map((data) => {
+        return { _id: data };
+      });
+      await addGroupId({ $or: temp }, group._id);
+      return res.send({
+        status: 200,
+        success: true,
+        data: { group },
+      });
+    } else {
+      employees = await getGroupEmployee(req.user.organization, req.body.properties);
+      const employeeIds = employees.map((value) => value._id);
+      await update({ $and: [{ _id: group._id }] }, { employees: employeeIds });
+      await addGroupId(
+        createGroupFilterQuery(req.user.organization, req.body.properties),
+        group._id
+      );
+      return res.send({
+        status: 200,
+        success: true,
+        data: { group },
+      });
+    }
   } catch (error) {
     console.log(error.message);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
@@ -95,16 +106,10 @@ exports.createGroupEmployee = async (req, res) => {
     const { files } = req;
     if (!files.length) res.status(400).send("No file uploaded.");
     const finalbucket =
-      `${process.env.AWS_BUCKET_NAME}` +
-      "/" +
-      `${req.query.org}` +
-      "/employee-data";
+      `${process.env.AWS_BUCKET_NAME}` + "/" + `${req.query.org}` + "/employee-data";
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
-    let employeeIds = await findIdByEmloyeeId(
-      employeeData,
-      req.user.organization
-    );
+    let employeeIds = await findIdByEmloyeeId(employeeData, req.user.organization);
     if (!employeeData.length || !employeeData[0].employeeId)
       return res.status(400).send({ message: `Invalid file format` });
     const employeeId = employeeData.map((data) => data.employeeId);
@@ -113,13 +118,12 @@ exports.createGroupEmployee = async (req, res) => {
       organization: req.user.organization,
     });
     if (employeIdNotFound.length)
-      return res
-        .status(400)
-        .send({ message: `employee not found`, data: employeIdNotFound });
+      return res.status(400).send({ message: `employee not found`, data: employeIdNotFound });
     const group = await create({
       ...req.body,
       employees: employeeIds,
       createdBy: req.user._id,
+      organization: req.user.organization,
     });
     await updateUserByIds(req.user.organization, employeeIds, group._id);
     return res.send({
@@ -130,7 +134,7 @@ exports.createGroupEmployee = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
@@ -144,16 +148,14 @@ exports.countEmpInCsv = async (req, res) => {
     if (!files.length) return res.status(400).send("No file uploaded.");
     const employeeData = await csvToJsonByStream(files[0].path);
     if (!employeeData.length || !employeeData[0].employeeId)
-      return res.status(400).send({ message: `Invalid file format` });
+      return res.status(406).send({ message: `Invalid file format` });
     const employeeId = employeeData.map((data) => data.employeeId);
     const employeIdNotFound = await checkEmpIdDontExsist({
       employeeId,
       organization: req.user.organization,
     });
     if (employeIdNotFound.length)
-      return res
-        .status(400)
-        .send({ message: `employee not found`, data: employeIdNotFound });
+      return res.status(406).send({ message: `employee not found`, data: employeIdNotFound });
     return res.send({
       status: 200,
       success: true,
@@ -161,7 +163,7 @@ exports.countEmpInCsv = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(400).send({ message: `no employee data found` });
+    res.status(406).send({ message: `no employee data found` });
   }
 };
 
@@ -172,6 +174,7 @@ exports.createGpByEmpList = async (req, res) => {
       ...req.body,
       employees: employeeId,
       createdBy: req.user._id,
+      organization: req.user.organization,
     });
     await updateUserByIds(req.user.organization, employeeId, group._id);
     return res.send({
@@ -182,7 +185,7 @@ exports.createGpByEmpList = async (req, res) => {
   } catch (error) {
     console.log(error);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });
@@ -221,31 +224,23 @@ exports.update = async (req, res) => {
             employeeId: empIdTobeRemoved,
           });
       }
-      const empIdTobeAdded = req.body.employees.filter(
-        (data) => !new Set(old).has(data)
-      );
+      const empIdTobeAdded = req.body.employees.filter((data) => !new Set(old).has(data));
       if (empIdTobeAdded.length)
-        await updateUserByIds(
-          req.user.organization,
-          empIdTobeAdded,
-          req.body.id
-        );
+        await updateUserByIds(req.user.organization, empIdTobeAdded, req.body.id);
     }
     const queryObject = { $and: [{ _id: req.body.id }] };
     const updateObject = { ...req.body };
     delete updateObject.id;
-    const updateGroup = await update(queryObject, updateObject).then(
-      (user) => ({
-        status: 200,
-        success: true,
-        data: "Group updated successfully",
-      })
-    );
+    const updateGroup = await update(queryObject, updateObject).then((user) => ({
+      status: 200,
+      success: true,
+      data: "Group updated successfully",
+    }));
     return res.send(updateGroup);
   } catch (error) {
     console.log(error);
     if (error.message.indexOf("name_1") !== -1)
-      return res.status(400).json({
+      return res.status(406).json({
         status: "failed",
         message: `Group Name needs to be unique`,
       });

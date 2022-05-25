@@ -3,8 +3,6 @@ const Joi = require("joi");
 exports.createContract = Joi.object({
   type: Joi.string().required(),
   levelId: Joi.string().required(),
-  trackId: Joi.string().required(),
-  organization: Joi.string().required(),
   question: Joi.object({
     value: Joi.string().required(),
     type: Joi.string().required(),
@@ -14,8 +12,8 @@ exports.createContract = Joi.object({
     type: Joi.string().required(),
   }).allow(""),
   options: Joi.array().items({
-    value: Joi.string().required(),
-    type: Joi.string().required(),
+    value: Joi.string().allow(""),
+    type: Joi.string().allow(""),
   }),
   answer: Joi.array().items(Joi.string()),
   importance: Joi.number(),
@@ -63,8 +61,8 @@ exports.updateContract = Joi.object({
     type: Joi.string().required(),
   }),
   options: Joi.array().items({
-    value: Joi.string().required(),
-    type: Joi.string().required(),
+    value: Joi.string().allow(""),
+    type: Joi.string().allow(""),
   }),
   answer: Joi.array().items(Joi.string()),
   importance: Joi.number(),

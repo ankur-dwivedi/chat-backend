@@ -1,9 +1,12 @@
 const level_model = require("../level/index");
 const userTrackInfo_model = require("../userTrack/index");
 const userLevelInfo_model = require("../userLevel/index");
+const organization_model=require('../organization/index');
 //imports for sending mail are as following
 const group_model = require("../group/index");
+const track_Model = require("../Track/index");
 const nodemailer = require("nodemailer");
+const CronJob = require('cron').CronJob;
 
 const updateTrackStatus = async (learnerId, trackId) => {
   try {
@@ -35,7 +38,8 @@ const updateTrackStatus = async (learnerId, trackId) => {
       score = activeLevels.length;
       status = "inProgress";
     } else {
-      let completedScore = (completedLevels.length / fetchAllTrackLevels.length) * 100;
+      let completedScore =
+        (completedLevels.length / fetchAllTrackLevels.length) * 100;
       let activeScore = activeLevels.length;
       score = completedScore + activeScore;
       status = score === 100 ? "completed" : "inProgress";
@@ -65,35 +69,35 @@ const updateTrackStatus = async (learnerId, trackId) => {
   }
 };
 
-// let transport = nodemailer.createTransport({
-//   host: "smtp.gmail.com",
-//   port: 465,
-//   secure: true,
-//   auth: {
-//     user: "signtalklearnisl@gmail.com",
-//     pass: "testing@SIGNTALK1",
-//   },
-// });
+let transport = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
+  auth: {
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
+  },
+});
 
-// let verify = async () => {
-//   try {
-//     let status = await transport.verify();
-//     await console.log(status);
-//   } catch (err) {
-//     console.log(err);
-//   }
-// };
-// verify();
+let verify = async () => {
+  try {
+    let status = await transport.verify();
+    await console.log(status);
+  } catch (err) {
+    console.log(err);
+  }
+};
+verify();
 
 const nodeMailerSendMail = async (email, subject, html) => {
   let status = await transport.sendMail({
-    from: `padboat.com`,
+    from: "support@padboat.com",
     to: email,
     subject: subject,
     html: html,
   });
   try {
-    //  console.log(status)
+    return status;
   } catch (err) {
     console.log(err);
   }
@@ -111,27 +115,170 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
           select: "name email employeeId",
         })
         .lean();
-      fetchGroupData === null ? "" : (groupData = [...groupData, ...fetchGroupData.employees]);
+      fetchGroupData === null
+        ? ""
+        : (groupData = [...groupData, ...fetchGroupData.employees]);
     }
-    console.log(groupData);
+    // console.log(groupData);
     //logic to access that perticular email and send email
     for (let j = 0; j < groupData.length; j++) {
-      let learnerEmail = groupData[j].email;
-      let learnerName = groupData[j].name;
-      let learnerId = groupData[j].employeeId;
-      let subject = `Update from Padboat`;
-      let html = `
-            <h3>Hello, ${learnerName}(${learnerId}) a new Track has been assigned to you</h3>
-            <b>Greetings from Padboat!</b>`;
-      nodeMailerSendMail(learnerEmail, subject, html);
+      let fetchUserTrackInfo = await userTrackInfo_model
+        .findOne({ creatorUserId: groupData[j]._id, trackId: trackData._id })
+        .lean();
+      let organizationData = await organization_model.findOne({_id:trackData.organization},{domain:1}).lean();
+      console.log(organizationData.domain)
+      if (fetchUserTrackInfo === null) {
+        let learnerEmail = groupData[j].email;
+        let learnerName = groupData[j].name;
+        let learnerId = groupData[j].employeeId;
+        let subject = `New Learning Track assigned`;
+        let html = `<p><span>Hey there <b>${learnerName}!</b></span></p>
+        <p><span>You&rsquo;ve just been assigned a new learning track - ${trackData.trackName} by ${trackData.creatorName}.</span></p>
+        <p><span>It is always exciting to embark on a new journey! On this note, let&rsquo;s start with the newly added levels in the track.</span></p>
+        <p><span>Head over to https://${organizationData.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
+        <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+        <p><span>Thanks,</span></p>
+        <p><span>Team PaddleBoat</span></p>`;
+        let status = await nodeMailerSendMail(learnerEmail, subject, html);
+        // console.log(status);
+        if (status.accepted.includes(learnerEmail)) {
+          //this means mail was send successfully
+          let userTrackData = {
+            creatorUserId: groupData[j]._id,
+            trackId: trackData._id,
+            welcomeMailSend: true,
+          };
+          await userTrackInfo_model.create(userTrackData);
+        }
+      } else {
+        if (fetchUserTrackInfo.welcomeMailSend !== true) {
+          let learnerEmail = groupData[j].email;
+          let learnerName = groupData[j].name;
+          let learnerId = groupData[j].employeeId;
+          let subject = `New Learning Track assigned`;
+          let html = `<p><span>Hey there <b>${learnerName}!</b></span></p>
+          <p><span>You&rsquo;ve just been assigned a new learning track - ${trackData.trackName} by ${trackData.creatorName}.</span></p>
+          <p><span>It is always exciting to embark on a new journey! On this note, let&rsquo;s start with the newly added levels in the track.</span></p>
+          <p><span>Head over to https://${organizationData.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
+          <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+          <p><span>Thanks,</span></p>
+          <p><span>Team PaddleBoat</span></p>`;
+          let status = await nodeMailerSendMail(learnerEmail, subject, html);
+          // console.log(status);
+          if (status.accepted.includes(learnerEmail)) {
+            //this means mail was send successfully
+            let userTrackData = {
+              creatorUserId: groupData[j]._id,
+              trackId: trackData._id,
+              welcomeMailSend: true,
+            };
+            await userTrackInfo_model.create(userTrackData);
+          }
+        } else {
+          console.log("mail already send before");
+        }
+      }
     }
   } catch (err) {
     console.log(err.name);
     console.log(err.message);
   }
 };
+//seven 
+//three
 
-// sendMailToUsersAssignedToTracks({_id:'6230fd35c8a4072b850ea278',groupId:['6230f66fc8a4072b850ea225'],trackName:'gomu gomu no mi'})
+const dueDateReminderSendMailToUsers = async () => {
+  const {dueDateReminder} = process.env
+  let fetchAllTrackData = await track_Model
+    .find({})
+    .populate({
+      path: "groupId",
+      select: "employees -_id",
+      populate: {
+        path: "employees",
+        select: "name email _id",
+        populate:{
+          path:"organization",
+          select:'domain -_id'
+        }
+      },
+    }).lean();
+ 
+  let filterAllTrackData = fetchAllTrackData.filter(
+    (element) => element.groupId !== null && element.groupId.length !== 0
+  ).map(element=>{
+    return{
+      _id:element._id,
+      trackName:element.trackName,
+      groupId:element.groupId.map(element=>element.employees)
+    }
+  });
+
+  for (let i = 0; i < filterAllTrackData.length; i++) {
+    let allLevelData = await level_model.find({ trackId: filterAllTrackData[i]._id }).lean();
+    //this condition statisfy for track created without levels
+    if(allLevelData.length!==0){
+      let filterAllLevelData = allLevelData.filter((element) => element.dueDate !== undefined);
+      for(let j=0;j<filterAllLevelData.length;j++){
+        for(let k=0;k<filterAllTrackData[i].groupId[0].length;k++){
+          let todaysDate = new Date()
+          let levelDueDate = new Date(filterAllLevelData[j].dueDate)
+          //1)First Comparing today's date with dueDate
+          // logic to compare today's date with dueDate
+
+          // console.log("today's Date",`${todaysDate.getDate()}/${todaysDate.getMonth()}/${todaysDate.getFullYear()}`)
+          // console.log("due Date",`${levelDueDate.getDate()}/${levelDueDate.getMonth()}/${levelDueDate.getFullYear()}`)
+
+          if(levelDueDate.getFullYear()===todaysDate.getFullYear() && levelDueDate.getMonth()===todaysDate.getMonth()){
+            let difference = levelDueDate.getDate() - todaysDate.getDate()
+            if(difference === parseInt(dueDateReminder)){
+              let userLevelData = await userLevelInfo_model.findOne({learnerId:filterAllTrackData[i].groupId[0][k]._id,levelId:filterAllLevelData[j]._id}).lean()
+              //2)Second Comparizon based on userLevelData 
+              if(userLevelData===null){
+                //if no userLevelData available
+                //send mail
+                const email = filterAllTrackData[i].groupId[0][k].email;
+                const subject = "Deadline approaching soon";
+                const html = `
+                <p><span>Hey there <b>${filterAllTrackData[i].groupId[0][k].name}!</b></span></p>
+                <p><span>We thought we&rsquo;d drop by here and remind you about completing ${filterAllLevelData[j].levelName} which is due soon/is due by <b>${levelDueDate.getDate()}/${levelDueDate.getMonth()+1}/${levelDueDate.getFullYear()}.</b></span></p>
+                <p><span>Head over to https://${filterAllTrackData[i].groupId[0][k].organization.domain}.padboat.com/tracks/${filterAllTrackData[i]._id}/level-view to complete ${filterAllLevelData[j].levelName} and continue on your learning journey!</span></p>
+                <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+                <p><span>Thanks,</span></p>
+                <p><span>Team PaddleBoat</span></p>
+                `
+                console.log('hence send mail to')
+                nodeMailerSendMail(email,subject,html)
+              }else if(userLevelData.levelStatus!=='pass'){
+                //if user has not passed the level 
+                //send mail
+                const email = filterAllTrackData[i].groupId[0][k].email;
+                const subject = "Deadline approaching soon";
+                const html = `
+                <p><span>Hey there <b>${filterAllTrackData[i].groupId[0][k].name}!</b></span></p>
+                <p><span>We thought we&rsquo;d drop by here and remind you about completing ${filterAllLevelData[j].levelName} which is due soon/is due by <b>${levelDueDate.getDate()}/${levelDueDate.getMonth()+1}/${levelDueDate.getFullYear()}.</b></span></p>
+                <p><span>Head over to https://${filterAllTrackData[i].groupId[0][k].organization.domain}.padboat.com/tracks/${filterAllTrackData[i]._id}/level-view to complete ${filterAllLevelData[j].levelName} and continue on your learning journey!</span></p>
+                <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+                <p><span>Thanks,</span></p>
+                <p><span>Team PaddleBoat</span></p>
+                `
+                console.log('hence send mail to')
+                nodeMailerSendMail(email,subject,html)
+              }
+            }
+          }
+          
+        }
+      }
+
+    }
+  }
+};
+
+const job = new CronJob('00 00 * * *', dueDateReminderSendMailToUsers, null, true, 'Asia/Kolkata');
+
+job.start();
+
 
 module.exports = {
   updateTrackStatus,

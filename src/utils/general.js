@@ -21,8 +21,7 @@ exports.generateRefreshToken = (userId) =>
     expiresIn: "90d",
   });
 
-exports.createUnauthorizedError = (error = "Unauthorized") =>
-  httpErrors(401, error);
+exports.createUnauthorizedError = (error = "Unauthorized") => httpErrors(401, error);
 
 exports.csvToJson = async (csvUrl) => {
   let jsonArray = [];
@@ -56,17 +55,17 @@ const getAuthorisedUser = async ({ groupId, trackId }) => {
     return group.employees;
   } else if (trackId) {
     const track = await Track.getUsersByTrackId({ id: trackId });
-    let employees = track.groupId.reduce(
-      (ar, data) => [...ar, ...data.employees],
-      []
-    );
+    console.log(JSON.stringify(track));
+    let employees = track.groupId.reduce((ar, data) => [...ar, ...data.employees], []);
+    console.log({ employees });
     employees = employees.reduce((ar, data) => [...ar, data._id], []);
-    return employees;
+    return Array.from(new Set(employees));
   }
 };
 
 const getEmpAttemptData = async ({ groupId, trackId, levelId }) => {
   const employees = await getAuthorisedUser({ groupId, trackId });
+  console.log("getAuthorisedUser", employees);
   let empData = employees.map(async (id) => {
     const userLevel = await getLatestUserLevelByLevel({
       levelId,
@@ -84,7 +83,12 @@ const getEmpAttemptData = async ({ groupId, trackId, levelId }) => {
 };
 
 exports.analyicsData = async ({ groupId, trackId, levelId }) => {
+  passFailData[0].passed = 0;
+  passFailData[1].failed = 0;
+  passFailData[2].unattempted = 0;
+  for (let x = 0; x <= 9; x++) frequencyData[x].frequency = 0;
   const empData = await getEmpAttemptData({ groupId, trackId, levelId });
+  console.log("getEmpAttemptData", empData);
   empData.map((data) => {
     if (data !== null && data.levelStatus) {
       switch (data.levelStatus) {
@@ -98,10 +102,7 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
     } else passFailData[2].unattempted += 1;
 
     if (data !== null && data.levelScore) {
-      const index =
-        Math.abs(data.levelScore / 10) !== 0
-          ? Math.abs(data.levelScore / 10) - 1
-          : 0;
+      const index = Math.abs(data.levelScore / 10) !== 0 ? Math.abs(data.levelScore / 10) - 1 : 0;
       frequencyData[index].frequency += 1;
     }
   });
@@ -125,6 +126,7 @@ exports.analyicslist = async ({ groupId, trackId, levelId }) => {
         name: userData.name,
         employeeId: userData.employeeId,
         score: data.levelScore,
+        status: data.levelStatus,
         numOfAttempts: data.session,
         dateOfAttempt: data.updatedAt,
       };

@@ -4,6 +4,10 @@ const userTrackInfo_Model = require("../../models/userTrack/index");
 const level_Model = require("../../models/level/index");
 const randomstring = require("randomstring");
 const user_model = require("../../models/user/index");
+const { addGroupId } = require("../../models/user/services");
+const {
+  sendMailToUsersAssignedToTracks,
+} = require("../../models/userTrack/services");
 
 module.exports = {
   get: {
@@ -24,9 +28,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -61,9 +66,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -74,9 +80,14 @@ module.exports = {
           .find(
             { creatorUserId: userData._id },
             { __v: 0, createdAt: 0, updatedAt: 0 }
-          ).populate({
-            path:'groupId',
-            select:'employees -_id'
+          )
+          .populate({
+            path: "groupId",
+            select: "employees _id",
+            populate:{
+              path: "employees",
+              select:"_id name employeeId"
+            }
           })
           .lean();
         if (userTrackData === null) {
@@ -110,9 +121,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -138,51 +150,61 @@ module.exports = {
             )
             .populate({ path: "creatorUserId", select: "name employeeId" })
             .lean();
-          // console.log(foo)
-          userTrackData =
-            foo === null
-              ? [...userTrackData, ...foo]
-              : [...userTrackData, ...foo];
+          userTrackData = [...userTrackData, ...foo];
         }
+
+        //code to remove dublicate surveyId from surveyResponse
+        let removeDuplicate = userTrackData.filter(
+          (value, index, self) =>
+            index ===
+            self.findIndex((t) => t._id.toString() === value._id.toString())
+        );
+        userTrackData = [...removeDuplicate];
+        console.log(userTrackData.length);
         for (let j = 0; j < userTrackData.length; j++) {
-          let bar = await userTrackInfo_Model
+          let userTrackInfo = await userTrackInfo_Model
             .findOne({
               creatorUserId: userData._id,
               trackId: userTrackData[j]._id,
             })
             .lean();
-          let foobar = await level_Model
-            .find({ trackId: userTrackData[j]._id })
+          console.log(userTrackInfo);
+          let userTrackLevelInfo = await level_Model
+            .find({ trackId: userTrackData[j]._id, levelState: "launch" })
             .lean();
-          bar === null
-            ? (userTrackData[j].trackProgress = "")
-            : (userTrackData[j].trackProgress =
-                bar.trackProgress === undefined ? "" : bar.trackProgress);
-          bar === null
-            ? (userTrackData[j].trackState = "unattemped")
-            : (userTrackData[j].trackState =
-                bar.trackState === undefined ? "unattemped" : bar.trackState);
-          bar === null
-            ? (userTrackData[j].isArchived = false)
-            : (userTrackData[j].isArchived =
-                bar.isArchived === undefined ? false : bar.isArchived);
-          foobar.length === 0
-            ? userTrackData.splice(j, 1)
-            : (userTrackData[j].totalLevelCount = foobar.length);
+          userTrackData[j].trackProgress =
+            userTrackInfo === null || userTrackInfo.trackProgess === undefined
+              ? ""
+              : userTrackInfo.trackProgress;
+          userTrackData[j].trackState =
+            userTrackInfo === null || userTrackInfo.trackState === undefined
+              ? "unattempted"
+              : userTrackInfo.trackState;
+          userTrackData[j].isArchived =
+            userTrackInfo === null || userTrackInfo.isArchived === undefined
+              ? false
+              : userTrackInfo.isArchived;
+          userTrackLevelInfo.length === 0
+            ? (userTrackData[j].totalLevelCount = 0)
+            : (userTrackData[j].totalLevelCount = userTrackLevelInfo.length);
         }
-        console.log(userTrackData);
+
+        let filterUserTrackData = undefined;
+
         if (archived === "") {
-          return res
-            .status(200)
-            .json({ status: 200, success: true, data: userTrackData });
-        } else {
-          convertedUserTrack = userTrackData.filter(
-            (element) => element.isArchived === archived
+          filterUserTrackData = userTrackData.filter(
+            (element) => element.totalLevelCount !== 0
           );
-          return res
-            .status(200)
-            .json({ status: 200, success: true, data: convertedUserTrack });
+        } else {
+          filterUserTrackData = userTrackData.filter(
+            (element) =>
+              element.totalLevelCount !== 0 && element.isArchived === archived
+          );
         }
+
+        return res
+          .status(200)
+          .json({ status: 200, success: true, data: filterUserTrackData });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
@@ -197,7 +219,9 @@ module.exports = {
       try {
         let userData = req.user;
         let organization = userData.organization;
-        let organizationData = await user_model.find({organization,role:'creator'},{_id:1,name:1}).lean();
+        let organizationData = await user_model
+          .find({ organization, role: "creator" }, { _id: 1, name: 1 })
+          .lean();
         let trackData = await track_Model
           .find(
             { creatorUserId: userData._id },
@@ -212,7 +236,7 @@ module.exports = {
         return res.status(200).json({
           status: 200,
           success: true,
-          data: {trackData,creatorData:organizationData},
+          data: { trackData, creatorData: organizationData },
         });
       } catch (err) {
         console.log(err.name);
@@ -233,7 +257,6 @@ module.exports = {
           creatorUserId: userData._id,
           trackName: req.body.trackName,
           groupId: req.body.groupId,
-          groupName: req.body.groupName,
           selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
           description: req.body.description,
@@ -241,16 +264,25 @@ module.exports = {
           botGeneratedGroup: req.body.groupId === undefined ? undefined : false,
         };
         let savedData = await track_Model.create(data);
+        savedData.creatorName = userData.name
+        savedData.organization = userData.organization
+        //code to send mail to the learners
+        if (savedData.groupId !== undefined || savedData.groupId.length !== 0) {
+          sendMailToUsersAssignedToTracks(savedData);
+        }
         return res.status(201).json({
-          status: "success",
+          status: 201,
+          success: true,
           message: `successfully saved the data in db`,
+          data: { id: savedData._id },
         });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -258,57 +290,85 @@ module.exports = {
       try {
         let userData = req.user;
         let { learnerIds } = req.body; //taking arrays of user ids from user
-        let groupData = {
-          name: randomstring.generate({ length: 16, charset: "alphabetic" }),
-          employees: learnerIds,
-          organization: userData.organization,
-          description: "this is generated by code",
-          createdBy: userData._id,
-          botGeneratedGroup: true,
-        };
-        let savedGroupData = await group_Model.create(groupData);
-        let data = {
-          creatorUserId: userData._id,
-          trackName: req.body.trackName,
-          groupId: savedGroupData._id,
-          groupName: req.body.groupName,
-          selectedTheme: req.body.selectedTheme,
-          skillTag: req.body.skillTag,
-          description: req.body.description,
-          organization: req.user.organization,
-          botGeneratedGroup: true,
-        };
-        let savedData = await track_Model.create(data);
+        let trackData = undefined;
+        if (learnerIds === undefined || learnerIds.length === 0) {
+          trackData = {
+            creatorUserId: userData._id,
+            trackName: req.body.trackName,
+            selectedTheme: req.body.selectedTheme,
+            skillTag: req.body.skillTag,
+            description: req.body.description,
+            organization: req.user.organization,
+            botGeneratedGroup: false,
+          };
+        } else {
+          let groupData = {
+            name: randomstring.generate({ length: 16, charset: "alphabetic" }),
+            employees: learnerIds,
+            organization: userData.organization,
+            description: "this is generated by code",
+            createdBy: userData._id,
+            botGeneratedGroup: true,
+          };
+          let savedGroupData = await group_Model.create(groupData);
+          trackData = {
+            creatorUserId: userData._id,
+            trackName: req.body.trackName,
+            groupId: savedGroupData._id,
+            selectedTheme: req.body.selectedTheme,
+            skillTag: req.body.skillTag,
+            description: req.body.description,
+            organization: req.user.organization,
+            botGeneratedGroup: true,
+          };
+          //code to sync up groupId with users
+          const temp = learnerIds.map((data) => {
+            return { _id: data };
+          });
+          await addGroupId({ $or: temp }, savedGroupData._id);
+          // end of code to sync up groupId with users
+        }
+        let savedData = await track_Model.create(trackData);
+        savedData.creatorName = userData.name
+        savedData.organization = userData.organization
+        //code to send mail to learners    
+        if (savedData.groupId !== undefined || savedData.groupId.length !== 0) {
+          sendMailToUsersAssignedToTracks(savedData);
+        }
         return res.status(201).json({
           status: 201,
           success: true,
-          data: `successfully saved the data in db`,
+          message: `successfully saved the data in db`,
+          data: { id: savedData._id },
         });
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
     transferTrackOwner: async (req, res) => {
       try {
-        let currentUserId = req.userData._id;
+        let currentUserId = req.user._id;
         let newUserId = req.body.newUserId;
         let trackId = req.body.trackId;
         let count = 0;
+        let nullCount = 0;
         for (let i = 0; i < trackId.length; i++) {
           let trackData = await track_Model
             .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
             .lean();
           if (trackData === null) {
+            nullCount = nullCount + 1;
             continue;
           } else {
             trackData.creatorUserId = newUserId;
             let updatedData = await track_Model
-              .findOne({ creatorUserId: currentUserId, _id: trackId })
+              .findOne({ creatorUserId: currentUserId, _id: trackId[i] })
               .updateOne(trackData);
             if (
               updatedData.n === 1 &&
@@ -319,7 +379,8 @@ module.exports = {
             }
           }
         }
-        if (count.length === trackId.length) {
+
+        if (parseInt(nullCount) + parseInt(count) === trackId.length) {
           return res.status(200).json({
             status: 200,
             success: true,
@@ -348,10 +409,17 @@ module.exports = {
       try {
         let userData = req.user;
         let trackId = req.params.trackId;
+        let { groupId } = req.body;
+        let oldTrackData = await track_Model.findOne({ _id: trackId }).lean();
+        if (oldTrackData === null) {
+          throw {
+            name: "validationError",
+            message: "please send a valid Id",
+          };
+        }
         let data = {
           trackName: req.body.trackName,
           groupId: req.body.groupId,
-          groupName: req.body.groupName,
           selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
           description: req.body.description,
@@ -360,27 +428,223 @@ module.exports = {
         };
         let updatedData = await track_Model
           .findOne({ creatorUserId: userData._id, _id: trackId })
-          .update(data);
+          .updateOne(data);
+
+        //code to validate and send mail to new learners
+        if (groupId !== undefined) {
+          if (groupId.length !== 0) {
+            if (oldTrackData.groupId !== null && oldTrackData.groupId.length!==0) {
+              for (let i = 0; i < oldTrackData.groupId.length; i++) {
+                for (let j = 0; j < groupId.length; j++) {
+                  //enable this if you get single groupId
+                  if (oldTrackData.groupId[i].toString() !== groupId[j].toString()) {
+                    sendMailToUsersAssignedToTracks({
+                      _id: trackId,
+                      groupId: [groupId[j]],
+                      trackName: data.trackName,
+                      creatorName:userData.name,
+                      organization:oldTrackData.organization
+                      // organization:userData.organization
+                    });
+                  }
+                }
+              }
+            } else {
+              sendMailToUsersAssignedToTracks({
+                _id: trackId,
+                groupId: [groupId[j]],
+                trackName: data.trackName,
+                creatorName:userData.name,
+                organization:oldTrackData.organization
+                // organization:userData.organization
+              });
+            }
+          }
+        }
         if (
           updatedData.n === 1 &&
           updatedData.nModified === 1 &&
           updatedData.ok === 1
         )
           return res.status(200).json({
-            status: "success",
-            message: `successfully updated the data in db`,
+            status: 200,
+            success: true,
+            data: `successfully updated the data in db`,
           });
         throw {
-          name: "updation Error",
+          name: "updationError",
           message:
             "something went wrong while updating data please try again or contact admin",
         };
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
+        });
+      }
+    },
+    updateTrackUsingLearnerId: async (req, res) => {
+      try {
+        let userData = req.user;
+        let { trackId } = req.params;
+        let { singleGroupId } = req.body;
+        let { learnerIds } = req.body; //taking arrays of user ids from user
+        //fetching track data using trackId
+        let oldTrackData = await track_Model
+          .findOne({ creatorUserId: userData._id, _id: trackId })
+          .lean();
+        if (oldTrackData === null) {
+          throw {
+            name: "validationError",
+            message: "please send valid trackId",
+          };
+        }
+        if (singleGroupId !== undefined) {
+          //fetching group data using singleGroupId
+          const oldGroupData = await group_Model
+            .findOne({ _id: singleGroupId })
+            .lean();
+          if (oldGroupData === null) {
+            throw {
+              name: "validationError",
+              message: "please send valid groupId",
+            };
+          }
+          //adding new learnerIds to oldGroupData
+          oldGroupData.employees = [...oldGroupData.employees, ...learnerIds];
+          //once added updating groupId
+          const updateGroupData = await group_Model
+            .findOne({ _id: singleGroupId })
+            .updateOne(oldGroupData);
+          if (
+            updateGroupData.n === 1 &&
+            updateGroupData.nModified === 1 &&
+            updateGroupData.ok === 1
+          ) {
+            //updating oldTrackData with new data if avaialable
+            oldTrackData.trackName =
+              req.body.trackName === undefined
+                ? oldTrackData.trackName
+                : req.body.trackName;
+            oldTrackData.selectedTheme =
+              req.body.selectedTheme === undefined
+                ? oldTrackData.selectedTheme
+                : req.body.selectedTheme;
+            oldTrackData.skillTag =
+              req.body.skillTag === undefined
+                ? oldTrackData.skillTag
+                : req.body.skillTag;
+            oldTrackData.description =
+              req.body.description === undefined
+                ? oldTrackData.description
+                : req.body.description;
+            oldTrackData.organization =
+              req.body.organization === undefined
+                ? oldTrackData.organization
+                : req.body.organization;
+            oldTrackData.botGeneratedGroup =
+              req.body.botGeneratedGroup === undefined
+                ? oldTrackData.botGeneratedGroup === undefined
+                  ? true
+                  : oldTrackData.botGeneratedGroup
+                : req.body.botGeneratedGroup;
+            //updating trackData
+            const updateTrackData = await track_Model
+              .findOne({ creatorUserId: userData._id, _id: trackId })
+              .updateOne(oldTrackData);
+            if (
+              updateTrackData.n === 1 &&
+              updateTrackData.nModified === 1 &&
+              updateTrackData.ok === 1
+            )
+              return res.status(200).json({
+                status: 200,
+                success: true,
+                data: `successfully updated the data in db`,
+              });
+            throw {
+              name: "updationError",
+              message:
+                "something went wrong while updating data please try again or contact admin",
+            };
+          } else {
+            throw {
+              name: "updationError",
+              message:
+                "something went wrong while updating data please try again or contact admin",
+            };
+          }
+        } else {
+          let groupData = {
+            name: randomstring.generate({ length: 16, charset: "alphabetic" }),
+            employees: learnerIds,
+            organization: userData.organization,
+            description: "this is generated by code",
+            createdBy: userData._id,
+            botGeneratedGroup: true,
+          };
+          let savedGroupData = await group_Model.create(groupData);
+          // add group id to user collection by ankur
+          const temp = learnerIds.map((data) => {
+            return { _id: data };
+          });
+          await addGroupId({ $or: temp }, savedGroupData._id);
+          // add group id to user collection by ankur
+          //updating oldTrackData with new data if avaialable
+          // console.log(oldTrackData);
+          // console.log(oldTrackData.groupId);
+          oldTrackData.groupId.push(savedGroupData._id);
+          oldTrackData.trackName =
+            req.body.trackName === undefined
+              ? oldTrackData.trackName
+              : req.body.trackName;
+          oldTrackData.selectedTheme =
+            req.body.selectedTheme === undefined
+              ? oldTrackData.selectedTheme
+              : req.body.selectedTheme;
+          oldTrackData.skillTag =
+            req.body.skillTag === undefined || req.body.skillTag.length === 0
+              ? oldTrackData.skillTag
+              : req.body.skillTag;
+          oldTrackData.description =
+            req.body.description === undefined
+              ? oldTrackData.description
+              : req.body.description;
+          oldTrackData.organization =
+            req.body.organization === undefined
+              ? oldTrackData.organization
+              : req.body.organization;
+          oldTrackData.botGeneratedGroup = true;
+          //updating trackData
+          const updateTrackData = await track_Model
+            .findOne({ creatorUserId: userData._id, _id: trackId })
+            .updateOne(oldTrackData);
+          if (
+            updateTrackData.n === 1 &&
+            updateTrackData.nModified === 1 &&
+            updateTrackData.ok === 1
+          )
+            return res.status(200).json({
+              status: 200,
+              success: true,
+              data: `successfully updated the data in db`,
+            });
+          throw {
+            name: "updationError",
+            message:
+              "something went wrong while updating data please try again or contact admin",
+          };
+        }
+      } catch (err) {
+        console.log(err.name);
+        console.log(err.message);
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },
@@ -400,9 +664,10 @@ module.exports = {
       } catch (err) {
         console.log(err.name);
         console.log(err.message);
-        res.status(200).json({
-          status: "failed",
-          message: `err.name : ${err.name}, err.message:${err.message}`,
+        res.status(400).json({
+          status: 400,
+          success: false,
+          data: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
     },

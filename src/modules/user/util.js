@@ -5,25 +5,45 @@ const sendMail = async (otp, email, token, domain) => {
   const transporter = await nodemailer.createTransport({
     service: "gmail",
     auth: {
-      user: "signtalklearnisl@gmail.com",
-      pass: "testing@SIGNTALK1", // naturally, replace both with your real credentials or an application-specific password
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS, // naturally, replace both with your real credentials or an application-specific password
     },
   });
 
   let mailOptions = {
-    from: "Verification<vindication@enron.com>",
+    from: "support@padboat.com",
     to: `${email}`,
-    subject: "Your Email Verification Code for Cascade",
-    html: `Your code is ${otp}`,
+    subject: "OTP for SignUp verification with PaddleBoat",
+    html: `Welcome!
+    <br/>
+    <br/>
+    We're excited to get you started! First, let’s verify your account. Here is your OTP for verification: ${otp}
+    <br/><br/>
+    Reach out to the system admin in case you face any difficulties. 
+    <br/>
+    <br/>
+    Thanks,<br/>
+    Team PaddleBoat`,
   };
 
   mailOptions =
     otp == 0
       ? {
-          from: "Verification<vindication@enron.com>",
+          from: "support@padboat.com",
           to: `${email}`,
-          subject: "Reset your Password for Cascade",
-          html: `Please visit this link to reset your password : <br> <br> <a href = "https://www.${domain}.padboat.com/reset-password/?token=${token}">Reset your Password</a>`,
+          subject: "Reset Password for PaddleBoat",
+          html: `Hi there!<br/><br/>
+
+          We noticed you wanted to reset your password for PaddleBoat. 
+          Head over to this <a href=${
+            "https://www." +
+            domain +
+            ".padboat.com/reset-password/?token=" +
+            token
+          }>link</a>  to quickly set up a new one!
+          <br/><br/>
+          Thanks,<br/>
+          Team PaddleBoat`,
         }
       : mailOptions;
   console.log({ mailOptions, otp, email, token });
@@ -38,4 +58,88 @@ const sendMail = async (otp, email, token, domain) => {
   });
 };
 
-module.exports = { sendMail };
+const createDynamicQueryPagination = (
+  search,
+  filterCreator,
+  filterInactive,
+  organization
+) => {
+  // Ensure query happens within organization
+  let dynamicQuery = {
+    $and: [
+      {
+        organization: organization,
+      },
+    ],
+  };
+  // Dynamically build query based on parameters
+  if (search || filterCreator || filterInactive) {
+    if (search) {
+      const searchQuery = {
+        $or: [
+          {
+            $and: [
+              {
+                employeeId: { $regex: search + ".*", $options: "i" },
+              },
+              { organization: organization },
+            ],
+          },
+          {
+            $and: [
+              { name: { $regex: search + ".*", $options: "i" } },
+              { organization: organization },
+            ],
+          },
+        ],
+      };
+      dynamicQuery.$and.push(searchQuery);
+    }
+    if (filterCreator) {
+      const filterCreatorQuery = {
+        $and: [{ role: "creator" }, { organization: organization }],
+      };
+      dynamicQuery.$and.push(filterCreatorQuery);
+    }
+    if (filterInactive) {
+      const filterInactiveQuery = {
+        $and: [
+          {
+            blocked: true,
+          },
+          { organization: organization },
+        ],
+      };
+      dynamicQuery.$and.push(filterInactiveQuery);
+    }
+  }
+  return dynamicQuery;
+};
+
+const processPaginatedResults = (data) => {
+  // $facet always returns array
+  // Add Active Status once implemented
+  let processedData = {
+    totalCount:
+      data[0].totalCount.length > 0 ? data[0].totalCount[0].totalCount : 0,
+    data: data[0].data.map((user) => {
+      return {
+        _id: user._id,
+        employeeId: user.employeeId,
+        name: user.name,
+        role: user.role,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        employeeData: user.employeeData,
+        blocked: user.blocked,
+      };
+    }),
+  };
+  return processedData;
+};
+
+module.exports = {
+  sendMail,
+  createDynamicQueryPagination,
+  processPaginatedResults,
+};

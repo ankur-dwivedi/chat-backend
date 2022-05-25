@@ -22,3 +22,10 @@ exports.update = (queryObject, updateObject) =>
     .catch((error) => {
       throw Error(error);
     });
+
+exports.deleteProperty = (queryObject, unset) =>
+  Level.findOneAndUpdate(queryObject, { $unset: unset }, { new: true })
+    .then((response) => response)
+    .catch((error) => {
+      throw Error(error);
+    });

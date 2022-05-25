@@ -58,9 +58,18 @@ const saveJourneyData = async ({
 };
 
 //save  user current submited  Template
-const saveUserCurrentState = async ({ template, userId }) => {
-  const updatedUserState = await updateUserState({ id: userId, template });
+const saveUserCurrentState = async ({ template, userId,timeSpend }) => {
+  const updatedUserState = await updateUserState({ id: userId, template,timeSpend });
   return updatedUserState;
+};
+
+const levelComplete = async ({ levelId, learnerId }) => {
+  const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId, learnerId });
+  if (userLevelData && userLevelData[0]) {
+    const score = userLevelData[0].levelScore;
+    const passState = userLevelData[0].levelStatus;
+    return { score, passState };
+  }
 };
 
 module.exports = {
@@ -107,13 +116,14 @@ module.exports = {
         const updatedUserState = await saveUserCurrentState({
           template,
           userId: req.user._id,
+          timeSpend: req.user.currentState?.timeSpend && !req.user.currentState?.completed?req.user.currentState.timeSpend+req.body.timeSpend:req.body.timeSpend
         });
         if (template.levelType !== LEVEL_TYPE.ASSESMENT) {
           if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
             return res.json({ ...saveData });
           else return res.json({ message: `Template submitted successfully` });
         } else {
-          if (template.information) {
+          if (template.information && template.type !== TEMPLATE_TYPE.DOC) {
             return res.json({
               answerExplainer: template.information,
             });
@@ -154,8 +164,15 @@ module.exports = {
               currentState: null,
             }
           );
-          return res.json({
-            message: `Attempt closed successfully`,
+          const levelCompleteData = await levelComplete({
+            levelId: req.body.levelId,
+            learnerId: req.user._id,
+          });
+          return res.send({
+            status: 200,
+            success: true,
+            message: "Attempt closed successfully",
+            data: { ...levelCompleteData },
           });
         } else
           return res.status(400).json({
