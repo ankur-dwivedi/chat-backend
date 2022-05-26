@@ -51,8 +51,14 @@ exports.searchUser = async (req, res) => {
     .catch((error) => res.status(400).send({ message: error }));
 };
 
-exports.register = async (req, res) =>
-  create({ ...req.body, organization: req.user.organization })
+exports.register = async (req, res) => {
+  query = {
+    ...req.body,
+    organization: req.body.organization
+      ? req.body.organization
+      : req.user.organization,
+  };
+  return create(query)
     .then((user) =>
       res.send({
         status: 200,
@@ -63,6 +69,7 @@ exports.register = async (req, res) =>
     .catch((err) => {
       res.status(400).send({ message: `Invalid Data` });
     });
+};
 
 exports.login = (req, res, next) => {
   let query = {};
@@ -120,7 +127,8 @@ exports.update = async (req, res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
   const updateObject = { ...req.body };
   delete updateObject.id;
-  if (updateObject.password) updateObject.password = md5(updateObject.password);
+  if (updateObject.password)
+    updateObject.password = await bcrypt.hash(updateObject.password, 10);
   const updateUser = await update(queryObject, updateObject).then((user) => ({
     status: 200,
     success: true,

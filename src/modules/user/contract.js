@@ -13,7 +13,6 @@ exports.registerUserContract = Joi.object({
     .required(),
   organization: Joi.string().allow(""),
   role: Joi.string().required(),
-  password: Joi.string().required(),
 });
 
 exports.loginContract = Joi.object({
@@ -44,6 +43,11 @@ exports.editUserContract = Joi.object({
   email: Joi.string(),
   name: Joi.string(),
   role: Joi.string(),
+  employeeData: Joi.array().items({
+    name: Joi.string().required(),
+    value: Joi.string().required(),
+  }),
+  blocked: Joi.boolean(),
   password: Joi.string(),
 });
 

@@ -17,7 +17,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMzOTQ4NjMsImV4cCI6MTY1Mzk5OTY2M30.m_kkxq3Die70-Q1JFO7lqFJ6FNJ5Ho-8J6QpOmTkZHY",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM0ODk3NjgsImV4cCI6MTY1NDA5NDU2OH0.J3o1-WxVEuJcDB8eGL4Z7-_Y00SZhFec_-wE6ppEGQs",
 									"type": "string"
 								}
 							]
@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"abcd@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-212\",\r\n    \"phoneNumber\":123456,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"password\":\"123\"\r\n}",
+							"raw": "{\r\n    \"email\":\"abcde@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-211\",\r\n    \"phoneNumber\":123452,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"organization\": \"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -104,11 +104,21 @@
 				{
 					"name": "update user",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM1MTYwMzgsImV4cCI6MTY1NDEyMDgzOH0.NYU7PzM5C9bOWmF5q6KLa9oTJQrP_h5U6a2j0NnAL_0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"61a6b74fa7b8f428a8000418\",\r\n    \"username\":\"abc\",\r\n    \"email\":\"abc@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"admin\",\r\n    \"password\":\"123\"\r\n}",
+							"raw": "{\r\n    \"id\":\"628e4a6c4f5d00006bb2dc1b\",\r\n    \"employeeId\":\"Test1\",\r\n    \"phoneNumber\": \"12345\",\r\n    \"email\":\"test@gmail.com\",\r\n    \"name\":\"API-TEST\",\r\n    \"role\":\"learner\",\r\n    \"employeeData\": [{\r\n        \"name\": \"Designation\",\r\n        \"value\": \"Software\"\r\n    }],\r\n    \"password\":\"123\",\r\n    \"blocked\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
