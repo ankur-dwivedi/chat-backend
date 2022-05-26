@@ -42,7 +42,7 @@ const userRouter = Router();
 
 userRouter.get("/", withAuthUser, getUsers);
 userRouter.get("/search", withAuthUser, searchUser);
-userRouter.post("/", withAuthUser, validate(registerUserContract), register);
+userRouter.post("/", withAdminAccess, validate(registerUserContract), register);
 userRouter.post("/learner-login", validate(loginContract), login);
 userRouter.post("/request-otp", validate(reqOtpForgetPassContract), requestOtp);
 userRouter.post("/verify-otp", validate(verifyOtpContract), verifyOtp);
@@ -58,7 +58,7 @@ userRouter.delete(
   validate(deleteMultipleContract),
   deleteUsers
 );
-userRouter.patch("/", withAuthUser, validate(editUserContract), update);
+userRouter.patch("/", withAdminAccess, validate(editUserContract), update);
 userRouter.post(
   "/forget-password",
   validate(reqOtpForgetPassContract),
