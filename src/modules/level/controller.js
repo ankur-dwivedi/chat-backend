@@ -128,7 +128,7 @@ module.exports = {
           } else lockedState = LOCKED_STATE.UNLOCKED;
 
           if (userLevelData && userLevelData.length) {
-            if (data.levelType === LEVEL_TYPE.ASSESMENT && !data.allowReattempt)
+            if (data.levelType === LEVEL_TYPE.ASSESMENT )
               return null;
             const score = userLevelData[0].levelScore;
             const completed =
@@ -329,7 +329,7 @@ module.exports = {
           } else lockedState = LOCKED_STATE.UNLOCKED;
 
           if (userLevelData && userLevelData.length) {
-            if (data.levelType === LEVEL_TYPE.ASSESMENT && !data.allowReattempt)
+            if (data.levelType === LEVEL_TYPE.ASSESMENT )
               return null;
             const score = userLevelData[0].levelScore;
             const completed =

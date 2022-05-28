@@ -1,6 +1,7 @@
 const journey_Model = require("../../models/journey/index");
 const Template = require("../../models/template/services");
 const UserLevel = require("../../models/userLevel/services");
+const Level = require("../../models/level/services");
 const User = require("../../models/user/services");
 const { updateUserState } = require("../template/controller");
 const { TEMPLATE_TYPE } = require("../../models/template/constants");
@@ -17,14 +18,7 @@ const checkIfFirstAttempt = async ({ levelId, template }) => {
 };
 
 //save journey Data
-const saveJourneyData = async ({
-  template,
-  user,
-  submittedAnswer,
-  timeSpend,
-  anyIssue,
-  attemptId,
-}) => {
+const saveJourneyData = async ({ template, user, submittedAnswer, timeSpend, anyIssue, attemptId }) => {
   const data = {
     learnerId: user._id,
     trackId: template.trackId,
@@ -37,20 +31,13 @@ const saveJourneyData = async ({
     templateType: template.type,
     levelType: template.levelType,
   };
-  if (
-    template.levelType === LEVEL_TYPE.ASSESMENT &&
-    (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
-  ) {
-    data["isSubmittedAnswerCorrect"] =
-      template.answer.indexOf(submittedAnswer) != -1 ? true : false;
+  if (template.levelType === LEVEL_TYPE.ASSESMENT && (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)) {
+    data["isSubmittedAnswerCorrect"] = template.answer.indexOf(submittedAnswer) != -1 ? true : false;
     data["score"] = template.answer.indexOf(submittedAnswer) != -1 ? template.importance * 10 : 0;
     data["maxScore"] = template.importance * 10;
   }
   let savedData = await journey_Model.create(data);
-  if (
-    template.levelType !== LEVEL_TYPE.ASSESMENT &&
-    (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
-  )
+  if (template.levelType !== LEVEL_TYPE.ASSESMENT && (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA))
     savedData = {
       isSubmittedAnswerCorrect: template.answer.indexOf(submittedAnswer) != -1 ? true : false,
     };
@@ -58,8 +45,8 @@ const saveJourneyData = async ({
 };
 
 //save  user current submited  Template
-const saveUserCurrentState = async ({ template, userId,timeSpend }) => {
-  const updatedUserState = await updateUserState({ id: userId, template,timeSpend });
+const saveUserCurrentState = async ({ template, userId, timeSpend }) => {
+  const updatedUserState = await updateUserState({ id: userId, template, timeSpend });
   return updatedUserState;
 };
 
@@ -97,6 +84,16 @@ module.exports = {
             attemptId: userLevelData._id,
           });
         } else {
+          // check if  allready attempted and level is allowed to reattempt
+          const levelData = await Level.get({ id: template.levelId });
+          if (!levelData.allowReattempt) {
+            const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId: template.levelId, learnerId: req.user._id });
+            if(userLevelData[0])
+            return res.status(400).json({
+              status: "failed",
+              message: `Level is not allowed to re-attempt`,
+            });
+          }
           const useLevelData = await UserLevel.create({
             learnerId: req.user._id,
             levelId: template.levelId,
@@ -116,11 +113,10 @@ module.exports = {
         const updatedUserState = await saveUserCurrentState({
           template,
           userId: req.user._id,
-          timeSpend: req.user.currentState?.timeSpend && !req.user.currentState?.completed?req.user.currentState.timeSpend+req.body.timeSpend:req.body.timeSpend
+          timeSpend: req.user.currentState?.timeSpend && !req.user.currentState?.completed ? req.user.currentState.timeSpend + req.body.timeSpend : req.body.timeSpend,
         });
         if (template.levelType !== LEVEL_TYPE.ASSESMENT) {
-          if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
-            return res.json({ ...saveData });
+          if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA) return res.json({ ...saveData });
           else return res.json({ message: `Template submitted successfully` });
         } else {
           if (template.information && template.type !== TEMPLATE_TYPE.DOC) {
@@ -154,10 +150,7 @@ module.exports = {
           learnerId: req.user._id,
         });
         if (userLevelData) {
-          await UserLevel.update(
-            { _id: userLevelData._id },
-            { attemptStatus: ATTEMPT_STATUS.CLOSED }
-          );
+          await UserLevel.update({ _id: userLevelData._id }, { attemptStatus: ATTEMPT_STATUS.CLOSED });
           await User.update(
             { _id: Types.ObjectId(req.user._id) },
             {
