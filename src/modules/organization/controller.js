@@ -12,6 +12,7 @@ const {
 const { uploadFiles } = require(".././../libs/aws/upload");
 const { csvToJson } = require("../../utils/general");
 const { createUserObject } = require("./utils");
+const { get: getFilterData } = require("../../models/filterData/services");
 
 exports.getOrganizations = async (req, res) =>
   get(req.query).then((organization) =>
@@ -138,6 +139,8 @@ exports.getRestrictedData = async (req, res) => {
           totalEmployees: await countEmployeeInOrg({
             organization: organization._id,
           }),
+          filterData: (await getFilterData({ organization: organization._id }))
+            .data,
         };
       }
     );
