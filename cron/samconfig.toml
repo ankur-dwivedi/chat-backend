@@ -1,0 +1,12 @@
+version = 0.1
+[default]
+[default.deploy]
+[default.deploy.parameters]
+stack_name = "paddleBoat-cron"
+s3_bucket = "aws-sam-cli-managed-default-samclisourcebucket-1r47qozdn6q4f"
+s3_prefix = "paddleBoat-cron"
+region = "ap-south-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+parameter_overrides = "roleArn=\"arn:aws:iam::944617656133:role/developer\""
+image_repositories = []
