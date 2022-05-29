@@ -3,7 +3,11 @@ const { create: userCreate, countEmployeeInOrg, createUserAfterReplace } = requi
 const { uploadFiles } = require(".././../libs/aws/upload");
 const { csvToJson, csvToJsonByStream } = require("../../utils/general");
 const { createUserObject } = require("./utils");
+<<<<<<< HEAD
 const User = require("../../models/user");
+=======
+const { get: getFilterData } = require("../../models/filterData/services");
+>>>>>>> 6fe5208a30f0a73bc4abf37e1e0c665e1494922d
 
 exports.getOrganizations = async (req, res) =>
   get(req.query).then((organization) =>
@@ -107,14 +111,18 @@ exports.uploadEmployeeData = async function (req, res) {
 
 exports.getRestrictedData = async (req, res) => {
   try {
-    const restrictedData = await getRestrictedInfo(req.user.organization).then(async (organization) => {
-      return {
-        updatedAt: organization.updatedAt,
-        totalEmployees: await countEmployeeInOrg({
-          organization: organization._id,
-        }),
-      };
-    });
+    const restrictedData = await getRestrictedInfo(req.user.organization).then(
+      async (organization) => {
+        return {
+          updatedAt: organization.updatedAt,
+          totalEmployees: await countEmployeeInOrg({
+            organization: organization._id,
+          }),
+          filterData: (await getFilterData({ organization: organization._id }))
+            .data,
+        };
+      }
+    );
     return res.send({
       status: 200,
       success: true,
