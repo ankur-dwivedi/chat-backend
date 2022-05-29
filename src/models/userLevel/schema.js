@@ -18,6 +18,7 @@ const userLevel = new Schema(
       enum: ATTEMPT_STATUS_ENUM,
     },
     lastAttemptedTemplate: { type: Schema.Types.ObjectId, trim: true, ref: "template" },
+    dueDateReminder:{type:Number,trim:true,default:0}
   },
   { timestamps: true }
 );
