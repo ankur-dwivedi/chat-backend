@@ -158,6 +158,12 @@ exports.create = async (userData) => {
   );
 };
 
+exports.createUserAfterReplace = async (userData) => {
+  return User.create({ ...userData, createdAt: new Date() }).then(
+    (response) => response
+  );
+};
+
 exports.findUsers = (query) =>
   User.find({ createdBy: query.createdBy })
     .then((response) => response)

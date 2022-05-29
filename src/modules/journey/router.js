@@ -10,14 +10,14 @@ const journeyRouter = Router();
 journeyRouter.post(
   "/submit",
   withAuthLearner,
-  validate(createJourneyContract),
+  validate("body",createJourneyContract),
   journeyController.post.createJourney,
   getTemplates
 );
 journeyRouter.post(
   "/close-attempt",
   withAuthUser,
-  validate(closeAttemptContract),
+  validate("body",closeAttemptContract),
   journeyController.post.closeAttempt
 );
 module.exports = journeyRouter;

@@ -1,7 +1,8 @@
-exports.validate = (schema) => {
+exports.validate = (type,schema) => {
+
   return async (req, res, next) => {
     try {
-      const submitData = { ...req.body };
+      const submitData = req[type];
       await schema.validateAsync(submitData);
       next();
     } catch (err) {

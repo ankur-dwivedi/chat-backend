@@ -7,7 +7,7 @@ const { validate } = require("../../middlewares/schema");
 const userTrackRouter = Router();
 
 userTrackRouter.get("/fetchUserTrackInfo", withAuthUser, userTrackController.get.fetchUserTrackInfo);
-userTrackRouter.post("/createUserTrackInfo", withAuthUser,validate(createUserTrackInfoContract), userTrackController.post.createUserTrackInfo);
-// userTrackRouter.put("/updateUserTrackInfo/:userTrackId", withAuthUser,validate(updateUserTrackInfoContract), userTrackController.put.updateUserTrackInfo);
+userTrackRouter.post("/createUserTrackInfo", withAuthUser,validate("body",createUserTrackInfoContract), userTrackController.post.createUserTrackInfo);
+// userTrackRouter.put("/updateUserTrackInfo/:userTrackId", withAuthUser,validate("body",updateUserTrackInfoContract), userTrackController.put.updateUserTrackInfo);
 
 module.exports = userTrackRouter;

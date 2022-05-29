@@ -34,15 +34,15 @@ const groupRouter = Router();
 
 groupRouter.get("/", withAuthUser, getGroups);
 groupRouter.get("/group-id", withAuthUser, getGroupById);
-groupRouter.post("/", withAuthUser, validate(createContract), create);
-groupRouter.delete("/", withAuthUser, validate(deleteContract), deleteGroup);
+groupRouter.post("/", withAuthUser, validate("body",createContract), create);
+groupRouter.delete("/", withAuthUser, validate("body",deleteContract), deleteGroup);
 groupRouter.post("/create-custom", withAuthUser, upload.array("files"), createGroupEmployee);
 groupRouter.post("/count-employee", withAuthUser, upload.array("files"), countEmpInCsv);
 groupRouter.post(
   "/create-by-list",
   withAuthUser,
-  validate(createByEmpListContract),
+  validate("body",createByEmpListContract),
   createGpByEmpList
 );
-groupRouter.patch("/", withAdminAuthUser, validate(updateContract), update);
+groupRouter.patch("/", withAdminAuthUser, validate("body",updateContract), update);
 module.exports = groupRouter;

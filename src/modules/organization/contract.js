@@ -17,3 +17,8 @@ exports.editOrganizationContract = Joi.object({
 exports.deleteContract = Joi.object({
   id: Joi.string().required(),
 });
+
+exports.replaceOrganizationContract = Joi.object({
+  org: Joi.string().required(),
+  role: Joi.string().allow(""),
+});

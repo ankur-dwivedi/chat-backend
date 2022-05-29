@@ -42,39 +42,39 @@ const userRouter = Router();
 
 userRouter.get("/", withAuthUser, getUsers);
 userRouter.get("/search", withAuthUser, searchUser);
-userRouter.post("/", withAdminAccess, validate(registerUserContract), register);
-userRouter.post("/learner-login", validate(loginContract), login);
-userRouter.post("/request-otp", validate(reqOtpForgetPassContract), requestOtp);
-userRouter.post("/verify-otp", validate(verifyOtpContract), verifyOtp);
+userRouter.post("/", withAdminAccess, validate("body",registerUserContract), register);
+userRouter.post("/learner-login", validate("body",loginContract), login);
+userRouter.post("/request-otp", validate("body",reqOtpForgetPassContract), requestOtp);
+userRouter.post("/verify-otp", validate("body",verifyOtpContract), verifyOtp);
 userRouter.delete(
   "/delete-user",
   withAuthUser,
-  validate(deleteSingleContract),
+  validate("body",deleteSingleContract),
   deleteUser
 );
 userRouter.delete(
   "/delete-users",
   withAdminAccess,
-  validate(deleteMultipleContract),
+  validate("body",deleteMultipleContract),
   deleteUsers
 );
-userRouter.patch("/", withAdminAccess, validate(editUserContract), update);
+userRouter.patch("/", withAdminAccess, validate("body",editUserContract), update);
 userRouter.post(
   "/forget-password",
-  validate(reqOtpForgetPassContract),
+  validate("body",reqOtpForgetPassContract),
   forgetPassword
 );
 userRouter.patch("/resetpass", withAuthUser, resetpass);
 userRouter.post(
   "/filter-emp",
   withAuthUser,
-  validate(getFilEmpContract),
+  validate("body",getFilEmpContract),
   getFilteredEmp
 );
 userRouter.patch(
   "/set-session",
   withAuthUser,
-  validate(setSessionContract),
+  validate("body",setSessionContract),
   setSession
 );
 userRouter.get("/analytics", withAuthUser, analytics);
