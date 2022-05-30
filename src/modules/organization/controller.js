@@ -188,10 +188,9 @@ exports.addUsersBulk = async (req, res) => {
         (organization) => organization
       );
 
-    // let employeeExistence = await findIdByEmloyeeId(value?.employeeId, org);
-
-
+    
     for (value of updatedData) {
+      // let employeeExistence = await findIdByEmloyeeId(value?.employeeId, org);
       // if (employeeExistence) {
         try {
           if (Number(value.phoneNumber) === 0) {
@@ -211,7 +210,7 @@ exports.addUsersBulk = async (req, res) => {
           console.log(value, err.message, userNotCreated.length);
           userNotCreated.push(value);
         }
-      }
+      // }
       // else userNotCreated.push(value)
     }
 
