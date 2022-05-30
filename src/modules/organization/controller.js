@@ -157,14 +157,14 @@ exports.addUsersBulk = async (req, res) => {
   try {
     const { files } = req;
     console.log("files",req)
-    const org = req.org ? req.org : req.user.organization;
+    const org = req.body.org ? req.body.org : req.user.organization;
     if (!files.length) {res.status(400).send("No file uploaded.")};
 
     //saving csv to AWS
     const finalbucket =
       `${process.env.AWS_BUCKET_NAME}` +
       "/" +
-      `${req.query.org}` +
+      `${org}` +
       "/employee-data";
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
@@ -188,7 +188,7 @@ exports.addUsersBulk = async (req, res) => {
         (organization) => organization
       );
     for (value of updatedData) {
-      let employeeExistence = await findIdByEmloyeeId(value?.employeeId, req.user.organization);
+      let employeeExistence = await findIdByEmloyeeId(value?.employeeId, org);
       if (employeeExistence) {
         try {
           if (Number(value.phoneNumber) === 0) {
