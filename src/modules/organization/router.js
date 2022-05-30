@@ -42,6 +42,6 @@ organizationRouter.post(
   uploadEmployeeData
 );
 organizationRouter.get("/restricted-data", withAdminAccess, getRestrictedData);
-organizationRouter.post("/add-users-bulk", upload.array("files"), withAdminAccess, addUsersBulk);
+organizationRouter.post("/add-users-bulk", withAdminAccess, upload.array("files"), addUsersBulk);
 
 module.exports = organizationRouter;
