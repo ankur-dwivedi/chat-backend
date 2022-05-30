@@ -7,6 +7,7 @@ const {
   uploadLogo,
   uploadEmployeeData,
   getRestrictedData,
+  addUsersBulk
 } = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const {
@@ -41,5 +42,6 @@ organizationRouter.post(
   uploadEmployeeData
 );
 organizationRouter.get("/restricted-data", withAdminAccess, getRestrictedData);
+organizationRouter.post("/add-users-bulk", upload.array("files"), withAdminAccess, addUsersBulk);
 
 module.exports = organizationRouter;
