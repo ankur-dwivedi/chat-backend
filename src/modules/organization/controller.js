@@ -174,7 +174,7 @@ exports.addUsersBulk = async (req, res) => {
       {return res.status(400).send({ message: `Invalid file format` });}
 
     const updatedData = employeeData.map((value) =>
-      createUserObject(req.query.org, value, req.query.role)
+      createUserObject(org, value)
     );
     const userNotCreated = [],
       userCreated = [];
@@ -204,8 +204,6 @@ exports.addUsersBulk = async (req, res) => {
             const cre = await userCreate({ ...value, phoneNumber: Number(num) });
             userCreated.push(cre);
           }
-  
-  
         } catch (err) {
           console.log(value, err.message, userNotCreated.length);
           userNotCreated.push(value);
