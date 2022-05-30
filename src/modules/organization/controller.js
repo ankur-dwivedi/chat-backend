@@ -187,9 +187,12 @@ exports.addUsersBulk = async (req, res) => {
       await update(orgQueryObject, orgUpdateObject).then(
         (organization) => organization
       );
+
+    // let employeeExistence = await findIdByEmloyeeId(value?.employeeId, org);
+
+
     for (value of updatedData) {
-      let employeeExistence = await findIdByEmloyeeId(value?.employeeId, org);
-      if (employeeExistence) {
+      // if (employeeExistence) {
         try {
           if (Number(value.phoneNumber) === 0) {
             delete value.phoneNumber;
@@ -209,7 +212,7 @@ exports.addUsersBulk = async (req, res) => {
           userNotCreated.push(value);
         }
       }
-      else userNotCreated.push(value)
+      // else userNotCreated.push(value)
     }
 
     return res.status(200).send({
