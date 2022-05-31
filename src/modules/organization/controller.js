@@ -1,5 +1,16 @@
-const { update, get, create, deleteOrganization, getRestrictedInfo } = require("../../models/organization/services");
-const { create: userCreate, countEmployeeInOrg, createUserAfterReplace } = require("../../models/user/services");
+const {
+  update,
+  get,
+  create,
+  deleteOrganization,
+  getRestrictedInfo,
+} = require("../../models/organization/services");
+const {
+  create: userCreate,
+  countEmployeeInOrg,
+  findIdByEmloyeeId,
+   createUserAfterReplace
+} = require("../../models/user/services");
 const { uploadFiles } = require(".././../libs/aws/upload");
 const { csvToJson, csvToJsonByStream } = require("../../utils/general");
 const { createUserObject } = require("./utils");
@@ -130,6 +141,70 @@ exports.getRestrictedData = async (req, res) => {
   }
 };
 
+exports.addUsersBulk = async (req, res) => {
+  console.log("api");
+  try {
+    const { files } = req;
+    console.log("files", req);
+    const org = req.body.org ? req.body.org : req.user.organization;
+    if (!files.length) {
+      res.status(400).send("No file uploaded.");
+    }
+
+    //saving csv to AWS
+    const finalbucket =
+      `${process.env.AWS_BUCKET_NAME}` + "/" + `${org}` + "/employee-data";
+    const uploadedFiles = await uploadFiles(finalbucket, files);
+    const employeeData = await csvToJson(uploadedFiles[0].Location);
+
+    // check for right file type
+    if (!employeeData.length || !employeeData[0].employeeId) {
+      return res.status(400).send({ message: `Invalid file format` });
+    }
+
+    const updatedData = employeeData.map((value) =>
+      createUserObject(org, value)
+    );
+    const userNotCreated = [],
+      userCreated = [];
+
+    //updating Org update time
+    const orgQueryObject = { $and: [{ _id: org }] };
+    const orgUpdateObject = {
+      updatedAt: new Date(),
+    };
+    await update(orgQueryObject, orgUpdateObject).then(
+      (organization) => organization
+    );
+
+    for (value of updatedData) {
+      try {
+        if (Number(value.phoneNumber) === 0) {
+          delete value.phoneNumber;
+          if (value.email === "") delete value.email;
+          const createdUser = await userCreate({ ...value });
+          userCreated.push(createdUser);
+        } else {
+          const num = value.phoneNumber;
+          if (value.email === "") delete value.email;
+          const cre = await userCreate({ ...value, phoneNumber: Number(num) });
+           userCreated.push(cre);
+        }
+      } catch (err) {
+        console.log(value, err.message, userNotCreated.length);
+        userNotCreated.push(value);
+      }
+    }
+    return res.status(200).send({
+      status: "success",
+      message: "files uploaded successfully",
+      data: { userCreated, userNotCreated },
+    });
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+    }
+};
+
 // replace employeed Data with csv retain if email or phone found
 exports.replaceEmployeeData = async function (req, res) {
   try {
@@ -199,4 +274,4 @@ exports.replaceEmployeeData = async function (req, res) {
     // console.log(error);
     return res.status(400).send({ message: error.message });
   }
-};
+};    

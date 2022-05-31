@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"abcde@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-211\",\r\n    \"phoneNumber\":123452,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"organization\": \"626868b71783c300209f287b\"\r\n}",
+							"raw": "{\r\n    \"email\":\"test1@padboat.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"PB012\",\r\n    \"phoneNumber\":1234567892,\r\n    \"employeeData\":[{\r\n        \"name\":\"department\",\r\n        \"value\":\"SDE3\"\r\n    }],\r\n    \"organization\": \"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -775,6 +775,44 @@
 									"key": "role",
 									"value": "creator"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add users bulk",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM1ODAzNjUsImV4cCI6MTY1NDE4NTE2NX0.QrY4DiRjNDe-WwGbWXnCayAEseXNi_RtPrI06RfQ_gk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/employeeData.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/add-users-bulk",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"add-users-bulk"
 							]
 						}
 					},

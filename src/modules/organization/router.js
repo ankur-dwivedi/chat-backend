@@ -1,5 +1,15 @@
 const { Router } = require("express");
-const { create, getOrganizations, deleteOrganization, update, uploadLogo, uploadEmployeeData, getRestrictedData, replaceEmployeeData } = require("./controller");
+const {
+  create,
+  getOrganizations,
+  deleteOrganization,
+  update,
+  uploadLogo,
+  uploadEmployeeData,
+  getRestrictedData,
+  addUsersBulk,
+  replaceEmployeeData
+} = require("./controller");
 const { validate } = require("../../middlewares/schema");
 const { createOrganizationContract, editOrganizationContract, deleteContract, replaceOrganizationContract } = require("./contract");
 const { withAdminAccess } = require("../../middlewares/auth");
@@ -26,5 +36,6 @@ organizationRouter.post("/upload-logo", upload.array("files"), uploadLogo);
 organizationRouter.post("/upload-employee-data", upload.array("files"), uploadEmployeeData);
 organizationRouter.post("/replace-employee-data", validate("query", replaceOrganizationContract), upload.array("files"), replaceEmployeeData);
 organizationRouter.get("/restricted-data", withAdminAccess, getRestrictedData);
+organizationRouter.post("/add-users-bulk", withAdminAccess, upload.array("files"), addUsersBulk);
 
 module.exports = organizationRouter;
