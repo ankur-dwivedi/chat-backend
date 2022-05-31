@@ -10,7 +10,7 @@ levelRouter.get("/fetchUserLevel", withAuthUser, levelController.get.fetchUserLe
 levelRouter.get("/creator-level", withAuthUser, levelController.get.fetchUserLevelByTrack);
 levelRouter.post(
   "/createLevel",
-  validate(createLevelContract),
+  validate("body",createLevelContract),
   withAuthUser,
   levelController.post.createLevel
 );
@@ -19,7 +19,7 @@ levelRouter.get("/new-unlocked", withAuthUser, levelController.get.newUnlockedLe
 levelRouter.get("/creator", withAdminAuthUser, levelController.get.fetchLevelByIdAndCreator);
 levelRouter.patch(
   "/",
-  validate(updateLevelContract),
+  validate("body",updateLevelContract),
   withAdminAuthUser,
   levelController.patch.update
 );

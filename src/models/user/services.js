@@ -158,6 +158,12 @@ exports.create = async (userData) => {
   );
 };
 
+exports.createUserAfterReplace = async (userData) => {
+  return User.create({ ...userData, createdAt: new Date() }).then(
+    (response) => response
+  );
+};
+
 exports.findUsers = (query) =>
   User.find({ createdBy: query.createdBy })
     .then((response) => response)
@@ -166,11 +172,11 @@ exports.findUsers = (query) =>
     });
 
 exports.update = (queryObject, updateObject) =>
-  User.findOneAndUpdate(queryObject, { $set: updateObject }, { new: true })
-    .then((response) => response)
-    .catch((error) => {
-      throw Error(error);
-    });
+  User.findOneAndUpdate(
+    queryObject,
+    { $set: updateObject },
+    { new: true }
+  ).then((response) => response);
 
 exports.addGroupId = (query, groupId) =>
   User.updateMany(query, { $push: { groups: groupId } });
