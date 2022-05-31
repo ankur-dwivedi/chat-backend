@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "02b7ca93-7ec0-49ba-b820-775bf4b897f8",
+		"_postman_id": "1605a056-4b6b-41d7-8214-d58377e96f13",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12071918"
@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"abcde@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-211\",\r\n    \"phoneNumber\":123452,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"organization\": \"626868b71783c300209f287b\"\r\n}",
+							"raw": "{\r\n    \"email\":\"test1@padboat.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"PB012\",\r\n    \"phoneNumber\":1234567892,\r\n    \"employeeData\":[{\r\n        \"name\":\"department\",\r\n        \"value\":\"SDE3\"\r\n    }],\r\n    \"organization\": \"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -737,6 +737,82 @@
 							"path": [
 								"organization",
 								"restricted-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "replace employee data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/employeeData.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/replace-employee-data?org=61b064bee20da142b8dea48c&role=creator",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"replace-employee-data"
+							],
+							"query": [
+								{
+									"key": "org",
+									"value": "61b064bee20da142b8dea48c"
+								},
+								{
+									"key": "role",
+									"value": "creator"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add users bulk",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM1ODAzNjUsImV4cCI6MTY1NDE4NTE2NX0.QrY4DiRjNDe-WwGbWXnCayAEseXNi_RtPrI06RfQ_gk",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/employeeData.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/add-users-bulk",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"add-users-bulk"
 							]
 						}
 					},
@@ -2500,7 +2576,7 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]
