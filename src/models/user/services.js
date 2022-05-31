@@ -172,11 +172,11 @@ exports.findUsers = (query) =>
     });
 
 exports.update = (queryObject, updateObject) =>
-  User.findOneAndUpdate(queryObject, { $set: updateObject }, { new: true })
-    .then((response) => response)
-    .catch((error) => {
-      throw Error(error);
-    });
+  User.findOneAndUpdate(
+    queryObject,
+    { $set: updateObject },
+    { new: true }
+  ).then((response) => response);
 
 exports.addGroupId = (query, groupId) =>
   User.updateMany(query, { $push: { groups: groupId } });
