@@ -8,7 +8,7 @@ const {
 const {
   create: userCreate,
   countEmployeeInOrg,
-  findIdByEmloyeeId
+  findIdByEmloyeeId,
 } = require("../../models/user/services");
 const { uploadFiles } = require(".././../libs/aws/upload");
 const { csvToJson } = require("../../utils/general");
@@ -153,25 +153,25 @@ exports.getRestrictedData = async (req, res) => {
 };
 
 exports.addUsersBulk = async (req, res) => {
-  console.log('api')
+  console.log("api");
   try {
     const { files } = req;
-    console.log("files",req)
+    console.log("files", req);
     const org = req.body.org ? req.body.org : req.user.organization;
-    if (!files.length) {res.status(400).send("No file uploaded.")};
+    if (!files.length) {
+      res.status(400).send("No file uploaded.");
+    }
 
     //saving csv to AWS
     const finalbucket =
-      `${process.env.AWS_BUCKET_NAME}` +
-      "/" +
-      `${org}` +
-      "/employee-data";
+      `${process.env.AWS_BUCKET_NAME}` + "/" + `${org}` + "/employee-data";
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
 
     // check for right file type
-    if (!employeeData.length || !employeeData[0].employeeId)
-      {return res.status(400).send({ message: `Invalid file format` });}
+    if (!employeeData.length || !employeeData[0].employeeId) {
+      return res.status(400).send({ message: `Invalid file format` });
+    }
 
     const updatedData = employeeData.map((value) =>
       createUserObject(org, value)
@@ -182,34 +182,29 @@ exports.addUsersBulk = async (req, res) => {
     //updating Org update time
     const orgQueryObject = { $and: [{ _id: org }] };
     const orgUpdateObject = {
-        updatedAt: new Date(),
-      };
-      await update(orgQueryObject, orgUpdateObject).then(
-        (organization) => organization
-      );
+      updatedAt: new Date(),
+    };
+    await update(orgQueryObject, orgUpdateObject).then(
+      (organization) => organization
+    );
 
-    
     for (value of updatedData) {
-      // let employeeExistence = await findIdByEmloyeeId(value?.employeeId, org);
-      // if (employeeExistence) {
-        try {
-          if (Number(value.phoneNumber) === 0) {
-            delete value.phoneNumber;
-            if (value.email === "") delete value.email;
-            const createdUser = await userCreate({ ...value });
-            userCreated.push(createdUser);
-          } else {
-            const num = value.phoneNumber;
-            if (value.email === "") delete value.email;
-            const cre = await userCreate({ ...value, phoneNumber: Number(num) });
-            userCreated.push(cre);
-          }
-        } catch (err) {
-          console.log(value, err.message, userNotCreated.length);
-          userNotCreated.push(value);
+      try {
+        if (Number(value.phoneNumber) === 0) {
+          delete value.phoneNumber;
+          if (value.email === "") delete value.email;
+          const createdUser = await userCreate({ ...value });
+          userCreated.push(createdUser);
+        } else {
+          const num = value.phoneNumber;
+          if (value.email === "") delete value.email;
+          const cre = await userCreate({ ...value, phoneNumber: Number(num) });
+          userCreated.push(cre);
         }
-      // }
-      // else userNotCreated.push(value)
+      } catch (err) {
+        console.log(value, err.message, userNotCreated.length);
+        userNotCreated.push(value);
+      }
     }
 
     return res.status(200).send({
@@ -217,12 +212,6 @@ exports.addUsersBulk = async (req, res) => {
       message: "files uploaded successfully",
       data: { userCreated, userNotCreated },
     });
-    // const employeeIds = employeeData.map((data) => data.employeeId);
-    // const employeIdNotFound = await checkEmpIdDontExsist({
-    //   employeeIds,
-    //   organization: org,
-    // });
-    // if (employeIdNotFound.length) {}
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
