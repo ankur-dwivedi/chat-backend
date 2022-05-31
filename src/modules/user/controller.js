@@ -12,6 +12,7 @@ const {
   passwordCompare,
   findPaginatedUsers,
 } = require("../../models/user/services");
+const { update: updateOrg } = require("../../models/organization/services");
 const { getOrgEmployee } = require("../../models/user/services");
 const { generateError } = require("../../utils/error");
 const {
@@ -52,23 +53,41 @@ exports.searchUser = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
-  query = {
-    ...req.body,
-    organization: req.body.organization
+  try {
+    const org = req.body.organization
       ? req.body.organization
-      : req.user.organization,
-  };
-  return create(query)
-    .then((user) =>
-      res.send({
-        status: 200,
-        success: true,
-        data: user,
-      })
-    )
-    .catch((err) => {
-      res.status(400).send({ message: `Invalid Data` });
+      : req.user.organization;
+    query = {
+      ...req.body,
+      organization: org,
+    };
+    const userData = await create(query);
+    //updating Org update time
+    const orgQueryObject = { $and: [{ _id: org }] };
+    const orgUpdateObject = {
+      updatedAt: new Date(),
+    };
+    await updateOrg(orgQueryObject, orgUpdateObject);
+    res.send({
+      status: 200,
+      success: true,
+      data: userData,
     });
+  } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyValue);
+      const processedField = field.includes("phoneNumber")
+        ? "phone number"
+        : field.includes("employeeId")
+        ? "Employee ID"
+        : field;
+      res.status(409).send({
+        message: `An account with that ${processedField} already exists.`,
+      });
+    } else {
+      res.status(400).send({ message: err.message });
+    }
+  }
 };
 
 exports.login = (req, res, next) => {
@@ -105,7 +124,7 @@ exports.login = (req, res, next) => {
     .catch((err) => {
       if (err.message.indexOf("User is blocked") !== -1)
         res.status(400).send({ message: err.message });
-      res.status(400).send({ message: `Invalid Employee ID or Password` });
+      else res.status(400).send({ message: `Invalid Employee ID or Password` });
     });
 };
 
@@ -116,25 +135,56 @@ exports.deleteUser = async (req, res) =>
       : res.send("User already deleted or doesn't exist")
   );
 
-exports.deleteUsers = async (req, res) =>
-  deleteUsers(req.body.employees).then((document) => {
-    document.deletedCount
-      ? res.send(`${document.deletedCount} users deleted`)
-      : res.send("Delete failed");
-  });
+exports.deleteUsers = async (req, res) => {
+  const deleteResponse = await deleteUsers(req.body.employees);
+  //updating Org update time
+  const orgQueryObject = { $and: [{ _id: req.user.organization }] };
+  const orgUpdateObject = {
+    updatedAt: new Date(),
+  };
+  await updateOrg(orgQueryObject, orgUpdateObject);
+  res.send(
+    deleteResponse.deletedCount
+      ? `${deleteResponse.deletedCount} users deleted`
+      : "Delete Failed"
+  );
+};
 
 exports.update = async (req, res) => {
-  const queryObject = { $and: [{ _id: req.body.id }] };
-  const updateObject = { ...req.body };
-  delete updateObject.id;
-  if (updateObject.password)
-    updateObject.password = await bcrypt.hash(updateObject.password, 10);
-  const updateUser = await update(queryObject, updateObject).then((user) => ({
-    status: 200,
-    success: true,
-    data: user,
-  }));
-  return res.send(updateUser);
+  try {
+    const queryObject = { $and: [{ _id: req.body.id }] };
+    const updateObject = { ...req.body };
+    delete updateObject.id;
+    if (updateObject.password)
+      updateObject.password = await bcrypt.hash(updateObject.password, 10);
+
+    const updateUser = await update(queryObject, updateObject);
+    //updating Org update time
+    const orgQueryObject = { $and: [{ _id: req.user.organization }] };
+    const orgUpdateObject = {
+      updatedAt: new Date(),
+    };
+    await updateOrg(orgQueryObject, orgUpdateObject);
+    res.send({
+      status: 200,
+      success: true,
+      data: updateUser,
+    });
+  } catch (err) {
+    if (err.code === 11000) {
+      const field = Object.keys(err.keyValue);
+      const processedField = field.includes("phoneNumber")
+        ? "phone number"
+        : field.includes("employeeId")
+        ? "Employee ID"
+        : field;
+      res.status(409).send({
+        message: `An account with that ${processedField} already exists.`,
+      });
+    } else {
+      res.status(400).send({ message: err.message });
+    }
+  }
 };
 
 const sendOtp = (phone, otp) => {
@@ -354,7 +404,6 @@ exports.getPaginatedUsers = async (req, res) => {
       skipIndex,
       query,
     });
-    console.log(data);
     // Process data returned from DB
     const processedData = processPaginatedResults(data);
     return res.send({
