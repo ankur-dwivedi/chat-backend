@@ -419,6 +419,14 @@ exports.replaceEmployeeData = async function (req, res) {
         userNotCreated.push(value);
       }
     }
+    //updating Org update time
+    const orgQueryObject = { $and: [{ _id: org }] };
+    const orgUpdateObject = {
+      updatedAt: new Date(),
+    };
+    await update(orgQueryObject, orgUpdateObject).then(
+      (organization) => organization
+    );
     return res.status(200).send({
       status: "success",
       message: "files uploaded successfully",
