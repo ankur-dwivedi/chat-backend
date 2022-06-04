@@ -6,7 +6,19 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/index.js",
-    "dev": "nodemon ./src/index.js"
+    "dev": "nodemon ./src/index.js",
+    "prettier-format": "prettier --config --ignore-path .gitignore .prettierrc './**.ts' --write && git add ."
+
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.+(ts|js|json|css|html|md)": [
+      "npm run prettier-format"
+    ]
   },
   "author": "",
   "license": "ISC",
