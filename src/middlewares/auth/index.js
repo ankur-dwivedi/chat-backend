@@ -1,29 +1,26 @@
-const expressJwt = require("express-jwt");
-const User = require("../../models/user");
-const Level = require("../../models/level");
-const Template = require("../../models/template");
-const Track = require("../../models/Track");
-const {
-  createUnauthorizedError,
-  generateAccessToken,
-} = require("../../utils/general");
-const { ROLE } = require("../../models/user/constants");
+const expressJwt = require('express-jwt');
+const User = require('../../models/user');
+const Level = require('../../models/level');
+const Template = require('../../models/template');
+const Track = require('../../models/Track');
+const { createUnauthorizedError, generateAccessToken } = require('../../utils/general');
+const { ROLE } = require('../../models/user/constants');
 
 const verifyAccessToken = expressJwt({
   secret: process.env.ACCESS_TOKEN_SECRET,
-  algorithms: ["HS256"],
+  algorithms: ['HS256'],
 });
 
 const verifyRefreshToken = expressJwt({
   secret: process.env.REFRESH_TOKEN_SECRET,
-  algorithms: ["HS256"],
+  algorithms: ['HS256'],
 });
 
 const refreshAuthUser = (req, res, next) =>
   User.findById(req.user.userId)
     .then((user) => {
       if (!user) {
-        res.send(createUnauthorizedError("User not found"));
+        res.send(createUnauthorizedError('User not found'));
       } else {
         req.user = user;
         res.send({
@@ -39,7 +36,7 @@ const assocAuthUser = (req, res, next) =>
   User.findById(req.user.userId) //.populate('organization')
     .then((user) => {
       if (!user) {
-        res.send(createUnauthorizedError("User not found"));
+        res.send(createUnauthorizedError('User not found'));
       } else {
         req.user = user;
         next();
@@ -52,7 +49,7 @@ const assocAuthLearner = (req, res, next) =>
   User.findById(req.user.userId)
     .then(async (user) => {
       if (!user) {
-        res.send(createUnauthorizedError("User not found"));
+        res.send(createUnauthorizedError('User not found'));
       } else {
         req.user = user;
         if (req.body.templateId) {
@@ -64,15 +61,12 @@ const assocAuthLearner = (req, res, next) =>
           if (filteredArray && filteredArray.length) {
             req.template = template;
             next();
-          } else
-            return res
-              .status(401)
-              .send({ message: "User not Authorised for template" });
+          } else return res.status(401).send({ message: 'User not Authorised for template' });
         } else if (req.query.levelId) {
           const level = await Level.findById(req.query.levelId);
           if (!level)
             return res.status(204).send({
-              message: " Level Not Found (Please check the Level ID)",
+              message: ' Level Not Found (Please check the Level ID)',
             });
           const track = await Track.findById(level.trackId);
           const filteredArray = track.groupId.filter(function (n) {
@@ -81,10 +75,7 @@ const assocAuthLearner = (req, res, next) =>
           if (filteredArray && filteredArray.length) {
             req.level = level;
             next();
-          } else
-            return res
-              .status(401)
-              .send({ message: "User not Authorised for level" });
+          } else return res.status(401).send({ message: 'User not Authorised for level' });
         } else next();
       }
     })
@@ -98,15 +89,15 @@ const isAdmin = (req, res, next) =>
   User.findById(req.user.userId)
     .then(async (user) => {
       if (!user) {
-        res.send(createUnauthorizedError("Not Authorized"));
+        res.send(createUnauthorizedError('Not Authorized'));
       } else if (user.role !== ROLE.CREATOR && user.role !== ROLE.ADMIN) {
-        res.send(createUnauthorizedError("Not Authorized"));
+        res.send(createUnauthorizedError('Not Authorized'));
       } else {
         req.user = user;
         if (req.body.levelId) {
           const level = await Level.findById(req.body.levelId);
           if (level && level.creatorUserId.toString() !== user._id.toString()) {
-            res.status(401).send({ message: "User not Authorised for level" });
+            res.status(401).send({ message: 'User not Authorised for level' });
           }
         }
         next();
@@ -119,7 +110,7 @@ const checkAdminAccess = (req, res, next) => {
   User.findById(req.user.userId)
     .then(async (user) => {
       if (!user || user?.role !== ROLE.ADMIN) {
-        res.send(createUnauthorizedError("Not Authorized"));
+        res.send(createUnauthorizedError('Not Authorized'));
       } else {
         req.user = user;
         next();

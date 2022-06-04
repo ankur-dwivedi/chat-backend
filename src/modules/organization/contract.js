@@ -1,11 +1,11 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 exports.createOrganizationContract = Joi.object({
   name: Joi.string().required(),
-  logo: Joi.string().allow(""),
+  logo: Joi.string().allow(''),
   domain: Joi.string().required(),
-  revenueScheme: Joi.string().allow(""),
-  licenseExpiryDate: Joi.date().allow(""),
+  revenueScheme: Joi.string().allow(''),
+  licenseExpiryDate: Joi.date().allow(''),
 });
 
 exports.editOrganizationContract = Joi.object({
@@ -20,5 +20,5 @@ exports.deleteContract = Joi.object({
 
 exports.replaceOrganizationContract = Joi.object({
   org: Joi.string(),
-  role: Joi.string().allow(""),
+  role: Joi.string().allow(''),
 });

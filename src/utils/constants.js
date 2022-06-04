@@ -2,15 +2,15 @@ exports.PORT = process.env.PORT || 4000;
 
 exports.passFailData = [
   {
-    state: "Passed",
+    state: 'Passed',
     passed: 0,
   },
   {
-    state: "Failed",
+    state: 'Failed',
     failed: 0,
   },
   {
-    state: "Unattempted",
+    state: 'Unattempted',
     unattempted: 0,
   },
 ];

@@ -1,12 +1,12 @@
-const level_model = require("../level/index");
-const userTrackInfo_model = require("../userTrack/index");
-const userLevelInfo_model = require("../userLevel/index");
-const organization_model = require("../organization/index");
+const level_model = require('../level/index');
+const userTrackInfo_model = require('../userTrack/index');
+const userLevelInfo_model = require('../userLevel/index');
+const organization_model = require('../organization/index');
 //imports for sending mail are as following
-const group_model = require("../group/index");
-const track_Model = require("../Track/index");
-const nodemailer = require("nodemailer");
-const CronJob = require("cron").CronJob;
+const group_model = require('../group/index');
+const track_Model = require('../Track/index');
+const nodemailer = require('nodemailer');
+const CronJob = require('cron').CronJob;
 
 const updateTrackStatus = async (learnerId, trackId) => {
   try {
@@ -21,28 +21,27 @@ const updateTrackStatus = async (learnerId, trackId) => {
       let levelStatus = await userLevelInfo_model
         .findOne({ learnerId, levelId: fetchAllTrackLevels[i]._id })
         .lean();
-      levelStatus === null ? "" : learnerLevelStatus.push(levelStatus);
+      levelStatus === null ? '' : learnerLevelStatus.push(levelStatus);
       levelStatus === null
-        ? ""
-        : levelStatus.attemptStatus === "completed"
+        ? ''
+        : levelStatus.attemptStatus === 'completed'
         ? completedLevels.push(levelStatus)
-        : "";
+        : '';
       levelStatus === null
-        ? ""
-        : levelStatus.attemptStatus === "active"
+        ? ''
+        : levelStatus.attemptStatus === 'active'
         ? activeLevels.push(levelStatus)
-        : "";
+        : '';
     }
     //logic to assign track status and score
     if (completedLevels.length === 0) {
       score = activeLevels.length;
-      status = "inProgress";
+      status = 'inProgress';
     } else {
-      let completedScore =
-        (completedLevels.length / fetchAllTrackLevels.length) * 100;
+      let completedScore = (completedLevels.length / fetchAllTrackLevels.length) * 100;
       let activeScore = activeLevels.length;
       score = completedScore + activeScore;
-      status = score === 100 ? "completed" : "inProgress";
+      status = score === 100 ? 'completed' : 'inProgress';
     }
     // logic to first check whether the user track data already is present if not then create one
     let learnerTrackStatus = await userTrackInfo_model
@@ -70,7 +69,7 @@ const updateTrackStatus = async (learnerId, trackId) => {
 };
 
 let transport = nodemailer.createTransport({
-  host: "smtp.gmail.com",
+  host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
@@ -91,7 +90,7 @@ verify();
 
 const nodeMailerSendMail = async (email, subject, html) => {
   let status = await transport.sendMail({
-    from: "support@padboat.com",
+    from: 'support@padboat.com',
     to: email,
     subject: subject,
     html: html,
@@ -111,13 +110,11 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
       let fetchGroupData = await group_model
         .findOne({ _id: trackData.groupId[i] }, { employees: 1 })
         .populate({
-          path: "employees",
-          select: "name email employeeId",
+          path: 'employees',
+          select: 'name email employeeId',
         })
         .lean();
-      fetchGroupData === null
-        ? ""
-        : (groupData = [...groupData, ...fetchGroupData.employees]);
+      fetchGroupData === null ? '' : (groupData = [...groupData, ...fetchGroupData.employees]);
     }
     // console.log(groupData);
     //logic to access that perticular email and send email
@@ -177,7 +174,7 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
             await userTrackInfo_model.create(userTrackData);
           }
         } else {
-          console.log("mail already send before");
+          console.log('mail already send before');
         }
       }
     }
@@ -195,23 +192,21 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
   let fetchAllTrackData = await track_Model
     .find({})
     .populate({
-      path: "groupId",
-      select: "employees -_id",
+      path: 'groupId',
+      select: 'employees -_id',
       populate: {
-        path: "employees",
-        select: "name email _id",
+        path: 'employees',
+        select: 'name email _id',
         populate: {
-          path: "organization",
-          select: "domain -_id",
+          path: 'organization',
+          select: 'domain -_id',
         },
       },
     })
     .lean();
 
   let filterAllTrackData = fetchAllTrackData
-    .filter(
-      (element) => element.groupId !== null && element.groupId.length !== 0
-    )
+    .filter((element) => element.groupId !== null && element.groupId.length !== 0)
     .map((element) => {
       return {
         _id: element._id,
@@ -221,14 +216,10 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
     });
 
   for (let i = 0; i < filterAllTrackData.length; i++) {
-    let allLevelData = await level_model
-      .find({ trackId: filterAllTrackData[i]._id })
-      .lean();
+    let allLevelData = await level_model.find({ trackId: filterAllTrackData[i]._id }).lean();
     //this condition statisfy for track created without levels
     if (allLevelData.length !== 0) {
-      let filterAllLevelData = allLevelData.filter(
-        (element) => element.dueDate !== undefined
-      );
+      let filterAllLevelData = allLevelData.filter((element) => element.dueDate !== undefined);
       for (let j = 0; j < filterAllLevelData.length; j++) {
         for (let k = 0; k < filterAllTrackData[i].groupId[0].length; k++) {
           let todaysDate = new Date();
@@ -258,19 +249,16 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
               //hence checking
               if (
                 userLevelData !== null &&
-                (userLevelData.dueDateReminder === undefined ||
-                  userLevelData.dueDateReminder === 0)
+                (userLevelData.dueDateReminder === undefined || userLevelData.dueDateReminder === 0)
               ) {
-                console.log("inside inside inside");
-                if (userLevelData.levelStatus !== "pass") {
+                console.log('inside inside inside');
+                if (userLevelData.levelStatus !== 'pass') {
                   //if user has not passed the level
                   //send mail
                   const email = filterAllTrackData[i].groupId[0][k].email;
-                  const subject = "Deadline approaching soon";
+                  const subject = 'Deadline approaching soon';
                   const html = `
-                  <p><span>Hey there <b>${
-                    filterAllTrackData[i].groupId[0][k].name
-                  }!</b></span></p>
+                  <p><span>Hey there <b>${filterAllTrackData[i].groupId[0][k].name}!</b></span></p>
                   <p><span>We thought we&rsquo;d drop by here and remind you about completing ${
                     filterAllLevelData[j].levelName
                   } which is due soon/is due by <b>${levelDueDate.getDate()}/${
@@ -278,9 +266,7 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
                   }/${levelDueDate.getFullYear()}.</b></span></p>
                   <p><span>Head over to https://${
                     filterAllTrackData[i].groupId[0][k].organization.domain
-                  }.padboat.com/tracks/${
-                    filterAllTrackData[i]._id
-                  }/level-view to complete ${
+                  }.padboat.com/tracks/${filterAllTrackData[i]._id}/level-view to complete ${
                     filterAllLevelData[j].levelName
                   } and continue on your learning journey!</span></p>
                   <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
@@ -294,11 +280,9 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
                 //if no userLevelData available
                 //send mail
                 const email = filterAllTrackData[i].groupId[0][k].email;
-                const subject = "Deadline approaching soon";
+                const subject = 'Deadline approaching soon';
                 const html = `
-                <p><span>Hey there <b>${
-                  filterAllTrackData[i].groupId[0][k].name
-                }!</b></span></p>
+                <p><span>Hey there <b>${filterAllTrackData[i].groupId[0][k].name}!</b></span></p>
                 <p><span>We thought we&rsquo;d drop by here and remind you about completing ${
                   filterAllLevelData[j].levelName
                 } which is due soon/is due by <b>${levelDueDate.getDate()}/${
@@ -306,16 +290,14 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
                 }/${levelDueDate.getFullYear()}.</b></span></p>
                 <p><span>Head over to https://${
                   filterAllTrackData[i].groupId[0][k].organization.domain
-                }.padboat.com/tracks/${
-                  filterAllTrackData[i]._id
-                }/level-view to complete ${
+                }.padboat.com/tracks/${filterAllTrackData[i]._id}/level-view to complete ${
                   filterAllLevelData[j].levelName
                 } and continue on your learning journey!</span></p>
                 <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
                 <p><span>Thanks,</span></p>
                 <p><span>Team PaddleBoat</span></p>
                 `;
-                console.log("hence send mail to");
+                console.log('hence send mail to');
                 // let emailStatus = await nodeMailerSendMail(email,subject,html)
                 learnerDetails.push({ email, subject, html });
               }
@@ -328,16 +310,17 @@ const dueDateReminderSendMailToUsers = async (req, res) => {
   //writing logic to remove duplicate email id
 
   let removedDuplicateEmail = learnerDetails.filter(
-    (value, index, self) =>
-      index === self.findIndex((t) => t.email === value.email)
+    (value, index, self) => index === self.findIndex((t) => t.email === value.email)
   );
 
-  removedDuplicateEmail.forEach(element=>nodeMailerSendMail(element.email,element.subject,element.html))
+  removedDuplicateEmail.forEach((element) =>
+    nodeMailerSendMail(element.email, element.subject, element.html)
+  );
 
   res.status(200).json({
     status: 200,
     success: true,
-    data: "cron job ran successfully",
+    data: 'cron job ran successfully',
   });
 };
 

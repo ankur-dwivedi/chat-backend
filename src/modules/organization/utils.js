@@ -1,30 +1,30 @@
-const { ROLE } = require("../../models/user/constants");
+const { ROLE } = require('../../models/user/constants');
 
 const userKeys = {
-  email: "",
-  name: "",
-  role: "",
-  employeeId: "",
+  email: '',
+  name: '',
+  role: '',
+  employeeId: '',
   phoneNumber: 123457,
   employeeData: [],
-  password: "",
+  password: '',
   groups: [],
-  organization: "",
+  organization: '',
 };
 exports.createUserObject = (org, userData, role) => {
-  userData["employeeData"] = [];
-  userData["organization"] = org;
-  if (role) userData["role"] = role;
+  userData['employeeData'] = [];
+  userData['organization'] = org;
+  if (role) userData['role'] = role;
   Object.keys(userData).map((value) => {
     if (!(value in userKeys)) {
-      userData["employeeData"].push({
+      userData['employeeData'].push({
         name: value,
         value: userData[value],
       });
       delete userData[value];
     }
   });
-  if (!userData["role"]) userData["role"] = ROLE.LEARNER;
+  if (!userData['role']) userData['role'] = ROLE.LEARNER;
   return userData;
 };
 

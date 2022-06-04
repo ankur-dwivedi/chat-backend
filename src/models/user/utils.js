@@ -1,4 +1,4 @@
-const { Schema, Types } = require("mongoose");
+const { Schema, Types } = require('mongoose');
 
 exports.EmployeeDataSchema = new Schema({
   name: { type: String, required: true },
@@ -11,9 +11,9 @@ exports.OtpSchema = new Schema({
 });
 
 exports.CurrentStateSchema = new Schema({
-  track: { type: Schema.Types.ObjectId, trim: true, ref: "track", required: true },
-  level: { type: Schema.Types.ObjectId, trim: true, ref: "level", required: true },
-  template: { type: Schema.Types.ObjectId, trim: true, ref: "template", required: true },
+  track: { type: Schema.Types.ObjectId, trim: true, ref: 'track', required: true },
+  level: { type: Schema.Types.ObjectId, trim: true, ref: 'level', required: true },
+  template: { type: Schema.Types.ObjectId, trim: true, ref: 'template', required: true },
   completed: { type: Boolean, default: false, required: true },
   timeSpend: { type: Number, default: 0, required: true },
 });

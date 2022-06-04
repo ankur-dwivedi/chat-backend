@@ -1,5 +1,4 @@
-exports.validate = (type,schema) => {
-
+exports.validate = (type, schema) => {
   return async (req, res, next) => {
     try {
       const submitData = req[type];

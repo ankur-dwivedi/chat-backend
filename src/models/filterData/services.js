@@ -1,6 +1,6 @@
-const { generateError } = require("../../utils/error");
-const FilterData = require(".");
-const { Types } = require("mongoose");
+const { generateError } = require('../../utils/error');
+const FilterData = require('.');
+const { Types } = require('mongoose');
 
 exports.get = async (query) =>
   query.organization

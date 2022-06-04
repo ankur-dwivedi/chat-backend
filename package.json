@@ -7,18 +7,14 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon ./src/index.js",
     "dev": "nodemon ./src/index.js",
-    "prettier-format": "prettier --config --ignore-path .gitignore .prettierrc './**.ts' --write && git add ."
-
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
+    "prettier-format": "prettier --config --ignore-path .gitignore .prettierrc './**.js' --write && git add .",
+    "prepare": "husky install"
   },
   "lint-staged": {
-    "*.+(ts|js|json|css|html|md)": [
+    "*.+(js|json|css|html|md)": [
       "npm run prettier-format"
-    ]
+    ],
+    "*.{js,css,md}": "prettier --write"
   },
   "author": "",
   "license": "ISC",
@@ -49,6 +45,9 @@
     "request": "^2.88.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.15"
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.0",
+    "nodemon": "^2.0.15",
+    "prettier": "^2.6.2"
   }
 }

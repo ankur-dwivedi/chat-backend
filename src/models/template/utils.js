@@ -1,5 +1,5 @@
-const { Schema } = require("mongoose");
-const { MediaTypeEnum } = require("./constants");
+const { Schema } = require('mongoose');
+const { MediaTypeEnum } = require('./constants');
 
 exports.QuestionSchema = new Schema({
   value: { type: String },

@@ -1,5 +1,5 @@
-const { generateError } = require("../../utils/error");
-const UserLevel = require(".");
+const { generateError } = require('../../utils/error');
+const UserLevel = require('.');
 
 exports.get = async (query) =>
   query.id

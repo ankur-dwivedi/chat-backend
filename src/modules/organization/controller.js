@@ -4,18 +4,18 @@ const {
   create,
   deleteOrganization,
   getRestrictedInfo,
-} = require("../../models/organization/services");
+} = require('../../models/organization/services');
 const {
   create: userCreate,
   countEmployeeInOrg,
   findIdByEmloyeeId,
   createUserAfterReplace,
-} = require("../../models/user/services");
-const { uploadFiles } = require(".././../libs/aws/upload");
-const { csvToJson, csvToJsonByStream } = require("../../utils/general");
-const { createUserObject, removeDuplicates } = require("./utils");
-const User = require("../../models/user");
-const { get: getFilterData } = require("../../models/filterData/services");
+} = require('../../models/user/services');
+const { uploadFiles } = require('.././../libs/aws/upload');
+const { csvToJson, csvToJsonByStream } = require('../../utils/general');
+const { createUserObject, removeDuplicates } = require('./utils');
+const User = require('../../models/user');
+const { get: getFilterData } = require('../../models/filterData/services');
 
 exports.getOrganizations = async (req, res) =>
   get(req.query).then((organization) =>
@@ -42,31 +42,28 @@ exports.create = async (req, res) =>
 exports.deleteOrganization = async (req, res) =>
   deleteOrganization(req.body.id).then((organization) =>
     organization.deletedCount
-      ? res.send("Organization deleted")
-      : res.send("Organization aleready deleted or doesnt exist")
+      ? res.send('Organization deleted')
+      : res.send('Organization aleready deleted or doesnt exist')
   );
 
 exports.update = async (req, res) => {
   const queryObject = { $and: [{ _id: req.body.id }] };
   const updateObject = { ...req.body, updatedAt: new Date() };
   delete updateObject.id;
-  const updateOrganization = await update(queryObject, updateObject).then(
-    (organization) => ({
-      status: 200,
-      success: true,
-      data: organization,
-    })
-  );
+  const updateOrganization = await update(queryObject, updateObject).then((organization) => ({
+    status: 200,
+    success: true,
+    data: organization,
+  }));
   return res.send(updateOrganization);
 };
 
 exports.uploadLogo = async function (req, res) {
   try {
     const { files } = req;
-    if (!files.length) res.status(400).send("No file uploaded.");
+    if (!files.length) res.status(400).send('No file uploaded.');
 
-    let finalbucket =
-      `${process.env.AWS_BUCKET_NAME}` + "/" + `${req.query.org}` + "/logo";
+    let finalbucket = `${process.env.AWS_BUCKET_NAME}` + '/' + `${req.query.org}` + '/logo';
     let uploadedFiles = await uploadFiles(finalbucket, files);
     const queryObject = { $and: [{ _id: req.query.org }] };
     const updateObject = {
@@ -74,12 +71,10 @@ exports.uploadLogo = async function (req, res) {
       updatedAt: new Date(),
     };
     delete updateObject.id;
-    await update(queryObject, updateObject).then(
-      (organization) => organization
-    );
+    await update(queryObject, updateObject).then((organization) => organization);
     res.status(200).send({
-      status: "success",
-      message: "files uploaded successfully",
+      status: 'success',
+      message: 'files uploaded successfully',
       uploadedFiles: uploadedFiles,
     });
   } catch (error) {
@@ -90,12 +85,9 @@ exports.uploadLogo = async function (req, res) {
 exports.uploadEmployeeData = async function (req, res) {
   try {
     const { files } = req;
-    if (!files.length) return res.status(400).send("No file uploaded.");
+    if (!files.length) return res.status(400).send('No file uploaded.');
     const finalbucket =
-      `${process.env.AWS_BUCKET_NAME}` +
-      "/" +
-      `${req.query.org}` +
-      "/employee-data";
+      `${process.env.AWS_BUCKET_NAME}` + '/' + `${req.query.org}` + '/employee-data';
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
     const updatedData = employeeData.map((value) =>
@@ -108,12 +100,12 @@ exports.uploadEmployeeData = async function (req, res) {
         // if (!value.phoneNumber && !value.email) userNotCreated.push(value);
         if (Number(value.phoneNumber) === 0) {
           delete value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           const cre = await userCreate({ ...value });
           userCreated.push(cre);
         } else {
           const num = value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           const cre = await userCreate({ ...value, phoneNumber: Number(num) });
           userCreated.push(cre);
         }
@@ -123,8 +115,8 @@ exports.uploadEmployeeData = async function (req, res) {
       }
     }
     return res.status(200).send({
-      status: "success",
-      message: "files uploaded successfully",
+      status: 'success',
+      message: 'files uploaded successfully',
       data: { userCreated, userNotCreated },
     });
   } catch (error) {
@@ -142,8 +134,7 @@ exports.getRestrictedData = async (req, res) => {
           totalEmployees: await countEmployeeInOrg({
             organization: organization._id,
           }),
-          filterData: (await getFilterData({ organization: organization._id }))
-            .data,
+          filterData: (await getFilterData({ organization: organization._id })).data,
         };
       }
     );
@@ -158,18 +149,17 @@ exports.getRestrictedData = async (req, res) => {
 };
 
 exports.addUsersBulk = async (req, res) => {
-  console.log("api");
+  console.log('api');
   try {
     const { files } = req;
-    console.log("files", req);
+    console.log('files', req);
     const org = req.body.org ? req.body.org : req.user.organization;
     if (!files.length) {
-      res.status(400).send("No file uploaded.");
+      res.status(400).send('No file uploaded.');
     }
 
     //saving csv to AWS
-    const finalbucket =
-      `${process.env.AWS_BUCKET_NAME}` + "/" + `${org}` + "/employee-data";
+    const finalbucket = `${process.env.AWS_BUCKET_NAME}` + '/' + `${org}` + '/employee-data';
     const uploadedFiles = await uploadFiles(finalbucket, files);
     const employeeData = await csvToJson(uploadedFiles[0].Location);
 
@@ -178,9 +168,7 @@ exports.addUsersBulk = async (req, res) => {
       return res.status(400).send({ message: `Invalid file format` });
     }
 
-    const updatedData = employeeData.map((value) =>
-      createUserObject(org, value)
-    );
+    const updatedData = employeeData.map((value) => createUserObject(org, value));
     const userNotCreated = [],
       userCreated = [];
 
@@ -189,20 +177,18 @@ exports.addUsersBulk = async (req, res) => {
     const orgUpdateObject = {
       updatedAt: new Date(),
     };
-    await update(orgQueryObject, orgUpdateObject).then(
-      (organization) => organization
-    );
+    await update(orgQueryObject, orgUpdateObject).then((organization) => organization);
 
     for (value of updatedData) {
       try {
         if (Number(value.phoneNumber) === 0) {
           delete value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           const createdUser = await userCreate({ ...value });
           userCreated.push(createdUser);
         } else {
           const num = value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           const cre = await userCreate({ ...value, phoneNumber: Number(num) });
           userCreated.push(cre);
         }
@@ -212,8 +198,8 @@ exports.addUsersBulk = async (req, res) => {
       }
     }
     return res.status(200).send({
-      status: "success",
-      message: "files uploaded successfully",
+      status: 'success',
+      message: 'files uploaded successfully',
       data: { userCreated, userNotCreated },
     });
   } catch (error) {
@@ -226,7 +212,7 @@ exports.countReplaceEmployeeData = async (req, res) => {
     const { files } = req;
     const org = req.query.org ? req.query.org : req.user.organization;
     console.log(org);
-    if (!files.length) return res.status(400).send("No file uploaded.");
+    if (!files.length) return res.status(400).send('No file uploaded.');
     const employeeData = await csvToJsonByStream(files[0].path);
     const processedEmployeeData = await removeDuplicates(employeeData);
     const userNotCreated = [],
@@ -295,11 +281,11 @@ exports.countReplaceEmployeeData = async (req, res) => {
         if (!value.phoneNumber && !value.email) userNotCreated.push(value);
         if (Number(value.phoneNumber) === 0) {
           delete value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           userCreated.push(value);
         } else {
           const num = value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           // create new users for org
           userCreated.push(value);
         }
@@ -308,15 +294,14 @@ exports.countReplaceEmployeeData = async (req, res) => {
       }
     }
     return res.status(200).send({
-      status: "success",
-      message: "files uploaded successfully",
+      status: 'success',
+      message: 'files uploaded successfully',
       data: {
         newTotalUserCount: userCreated.length,
         newUserCount: newUser.length,
         existingUserCount: existingUser.length,
         invalidUserCount:
-          userNotCreated.length +
-          (employeeData.length - processedEmployeeData.length),
+          userNotCreated.length + (employeeData.length - processedEmployeeData.length),
       },
     });
   } catch (error) {
@@ -328,7 +313,7 @@ exports.countReplaceEmployeeData = async (req, res) => {
 exports.replaceEmployeeData = async function (req, res) {
   try {
     const { files } = req;
-    if (!files.length) return res.status(400).send("No file uploaded.");
+    if (!files.length) return res.status(400).send('No file uploaded.');
     const employeeData = await csvToJsonByStream(files[0].path);
     const org = req.query.org ? req.query.org : req.user.organization;
     // upload csv to s3 bucket
@@ -391,22 +376,20 @@ exports.replaceEmployeeData = async function (req, res) {
     }
 
     // delete existing user data for org
-    await User.deleteMany({ organization: org }).then((response) =>
-      console.log({ response })
-    );
+    await User.deleteMany({ organization: org }).then((response) => console.log({ response }));
 
     for (value of updatedEmpData) {
       try {
         if (!value.phoneNumber && !value.email) userNotCreated.push(value);
         if (Number(value.phoneNumber) === 0) {
           delete value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           // create new users for org
           const cre = await createUserAfterReplace({ ...value });
           userCreated.push(cre);
         } else {
           const num = value.phoneNumber;
-          if (value.email === "") delete value.email;
+          if (value.email === '') delete value.email;
           // create new users for org
           const cre = await createUserAfterReplace({
             ...value,
@@ -424,12 +407,10 @@ exports.replaceEmployeeData = async function (req, res) {
     const orgUpdateObject = {
       updatedAt: new Date(),
     };
-    await update(orgQueryObject, orgUpdateObject).then(
-      (organization) => organization
-    );
+    await update(orgQueryObject, orgUpdateObject).then((organization) => organization);
     return res.status(200).send({
-      status: "success",
-      message: "files uploaded successfully",
+      status: 'success',
+      message: 'files uploaded successfully',
       data: { userCreated, userNotCreated },
     });
   } catch (error) {

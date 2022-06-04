@@ -1,11 +1,11 @@
-const applicant_model = require("../../models/applicant/index");
-const { uploadFiles } = require(".././../libs/aws/upload");
+const applicant_model = require('../../models/applicant/index');
+const { uploadFiles } = require('.././../libs/aws/upload');
 
 exports.addApplicant = async (req, res) => {
   try {
     await applicant_model.create(req.body);
     return res.status(201).json({
-      status: "success",
+      status: 'success',
       message: `successfully saved the data in db`,
     });
   } catch (err) {
@@ -19,7 +19,7 @@ exports.addApplicant = async (req, res) => {
     //   return;
     // }
     res.status(406).json({
-      status: "failed",
+      status: 'failed',
       message: `err.name : ${err.name}, err.message:${err.message}`,
     });
   }
@@ -28,8 +28,8 @@ exports.uploadResume = async (req, res) => {
   try {
     const { files } = req;
     console.log({ files });
-    if (!files.length) res.status(400).send("No file uploaded.");
-    const finalbucket = `${process.env.AWS_BUCKET_NAME}` + "/resumes";
+    if (!files.length) res.status(400).send('No file uploaded.');
+    const finalbucket = `${process.env.AWS_BUCKET_NAME}` + '/resumes';
     const uploadedFiles = await uploadFiles(finalbucket, files);
     return res.send({
       status: 200,
@@ -42,19 +42,19 @@ exports.uploadResume = async (req, res) => {
   }
 };
 
-exports.getApplicant = async (req,res)=>{
+exports.getApplicant = async (req, res) => {
   try {
-    let applicantData = await applicant_model.find({},{__v:0}).lean();
+    let applicantData = await applicant_model.find({}, { __v: 0 }).lean();
     return res.status(200).json({
-      success:true,
+      success: true,
       status: 200,
       data: applicantData,
     });
   } catch (err) {
     res.status(404).json({
-      success: "failed",
-      status:404,
+      success: 'failed',
+      status: 404,
       message: `err.name : ${err.name}, err.message:${err.message}`,
     });
   }
-}
+};

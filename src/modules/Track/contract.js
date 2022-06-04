@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 exports.createTrackContract = Joi.object({
   trackName: Joi.string().required(),
@@ -23,7 +23,7 @@ exports.updateTrackUsingLearnerIdContract = Joi.object({
   description: Joi.string().allow(),
   learnerIds: Joi.array().required(),
   singleGroupId: Joi.string().allow(),
-  organization: Joi.string().allow()
+  organization: Joi.string().allow(),
 });
 
 exports.transferTrackOwnerContract = Joi.object({

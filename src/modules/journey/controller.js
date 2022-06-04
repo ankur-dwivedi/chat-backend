@@ -1,13 +1,13 @@
-const journey_Model = require("../../models/journey/index");
-const Template = require("../../models/template/services");
-const UserLevel = require("../../models/userLevel/services");
-const Level = require("../../models/level/services");
-const User = require("../../models/user/services");
-const { updateUserState } = require("../template/controller");
-const { TEMPLATE_TYPE } = require("../../models/template/constants");
-const { LEVEL_TYPE } = require("../../models/level/constants");
-const { ATTEMPT_STATUS } = require("../../models/userLevel/constants");
-const { Types } = require("mongoose");
+const journey_Model = require('../../models/journey/index');
+const Template = require('../../models/template/services');
+const UserLevel = require('../../models/userLevel/services');
+const Level = require('../../models/level/services');
+const User = require('../../models/user/services');
+const { updateUserState } = require('../template/controller');
+const { TEMPLATE_TYPE } = require('../../models/template/constants');
+const { LEVEL_TYPE } = require('../../models/level/constants');
+const { ATTEMPT_STATUS } = require('../../models/userLevel/constants');
+const { Types } = require('mongoose');
 
 //template is first
 const checkIfFirstAttempt = async ({ levelId, template }) => {
@@ -18,7 +18,14 @@ const checkIfFirstAttempt = async ({ levelId, template }) => {
 };
 
 //save journey Data
-const saveJourneyData = async ({ template, user, submittedAnswer, timeSpend, anyIssue, attemptId }) => {
+const saveJourneyData = async ({
+  template,
+  user,
+  submittedAnswer,
+  timeSpend,
+  anyIssue,
+  attemptId,
+}) => {
   const data = {
     learnerId: user._id,
     trackId: template.trackId,
@@ -31,13 +38,20 @@ const saveJourneyData = async ({ template, user, submittedAnswer, timeSpend, any
     templateType: template.type,
     levelType: template.levelType,
   };
-  if (template.levelType === LEVEL_TYPE.ASSESMENT && (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)) {
-    data["isSubmittedAnswerCorrect"] = template.answer.indexOf(submittedAnswer) != -1 ? true : false;
-    data["score"] = template.answer.indexOf(submittedAnswer) != -1 ? template.importance * 10 : 0;
-    data["maxScore"] = template.importance * 10;
+  if (
+    template.levelType === LEVEL_TYPE.ASSESMENT &&
+    (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
+  ) {
+    data['isSubmittedAnswerCorrect'] =
+      template.answer.indexOf(submittedAnswer) != -1 ? true : false;
+    data['score'] = template.answer.indexOf(submittedAnswer) != -1 ? template.importance * 10 : 0;
+    data['maxScore'] = template.importance * 10;
   }
   let savedData = await journey_Model.create(data);
-  if (template.levelType !== LEVEL_TYPE.ASSESMENT && (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA))
+  if (
+    template.levelType !== LEVEL_TYPE.ASSESMENT &&
+    (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
+  )
     savedData = {
       isSubmittedAnswerCorrect: template.answer.indexOf(submittedAnswer) != -1 ? true : false,
     };
@@ -87,12 +101,15 @@ module.exports = {
           // check if  allready attempted and level is allowed to reattempt
           const levelData = await Level.get({ id: template.levelId });
           if (!levelData.allowReattempt) {
-            const userLevelData = await UserLevel.getLatestUserLevelByLevel({ levelId: template.levelId, learnerId: req.user._id });
-            if(userLevelData[0])
-            return res.status(400).json({
-              status: "failed",
-              message: `Level is not allowed to re-attempt`,
+            const userLevelData = await UserLevel.getLatestUserLevelByLevel({
+              levelId: template.levelId,
+              learnerId: req.user._id,
             });
+            if (userLevelData[0])
+              return res.status(400).json({
+                status: 'failed',
+                message: `Level is not allowed to re-attempt`,
+              });
           }
           const useLevelData = await UserLevel.create({
             learnerId: req.user._id,
@@ -113,10 +130,14 @@ module.exports = {
         const updatedUserState = await saveUserCurrentState({
           template,
           userId: req.user._id,
-          timeSpend: req.user.currentState?.timeSpend && !req.user.currentState?.completed ? req.user.currentState.timeSpend + req.body.timeSpend : req.body.timeSpend,
+          timeSpend:
+            req.user.currentState?.timeSpend && !req.user.currentState?.completed
+              ? req.user.currentState.timeSpend + req.body.timeSpend
+              : req.body.timeSpend,
         });
         if (template.levelType !== LEVEL_TYPE.ASSESMENT) {
-          if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA) return res.json({ ...saveData });
+          if (template.type === TEMPLATE_TYPE.MCQ_TEXT || template.type === TEMPLATE_TYPE.MCQ_MEDIA)
+            return res.json({ ...saveData });
           else return res.json({ message: `Template submitted successfully` });
         } else {
           if (template.information && template.type !== TEMPLATE_TYPE.DOC) {
@@ -131,13 +152,13 @@ module.exports = {
         }
       } catch (err) {
         console.log(err);
-        if (err.message.indexOf("attemptId_1_templateId_1 dup key") !== -1)
+        if (err.message.indexOf('attemptId_1_templateId_1 dup key') !== -1)
           return res.status(400).json({
-            status: "failed",
+            status: 'failed',
             message: `Template allready submitted in current attempt`,
           });
         return res.status(400).json({
-          status: "failed",
+          status: 'failed',
           message: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }
@@ -150,7 +171,10 @@ module.exports = {
           learnerId: req.user._id,
         });
         if (userLevelData) {
-          await UserLevel.update({ _id: userLevelData._id }, { attemptStatus: ATTEMPT_STATUS.CLOSED });
+          await UserLevel.update(
+            { _id: userLevelData._id },
+            { attemptStatus: ATTEMPT_STATUS.CLOSED }
+          );
           await User.update(
             { _id: Types.ObjectId(req.user._id) },
             {
@@ -164,18 +188,18 @@ module.exports = {
           return res.send({
             status: 200,
             success: true,
-            message: "Attempt closed successfully",
+            message: 'Attempt closed successfully',
             data: { ...levelCompleteData },
           });
         } else
           return res.status(400).json({
-            status: "failed",
+            status: 'failed',
             message: `Level doesn't contain any active attempt`,
           });
       } catch (err) {
         console.log(err);
         return res.status(400).json({
-          status: "failed",
+          status: 'failed',
           message: `err.name : ${err.name}, err.message:${err.message}`,
         });
       }

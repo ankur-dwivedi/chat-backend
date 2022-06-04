@@ -1,5 +1,5 @@
-const { generateError } = require("../../utils/error");
-const Journey = require(".");
+const { generateError } = require('../../utils/error');
+const Journey = require('.');
 
 exports.get = async (query) =>
   query.id

@@ -1,27 +1,27 @@
-const jwt = require("jsonwebtoken");
-const httpErrors = require("httperrors");
-const csv = require("csvtojson");
-const request = require("request");
-const Group = require("../models/group/services");
-const Track = require("../models/Track/services");
-const Level = require("../models/level/services");
-const { getLatestUserLevelByLevel } = require("../models/userLevel/services");
-const User = require("../models/user/services");
-const { LEVEL_STATUS } = require("../models/userLevel/constants");
-const { frequencyData, passFailData } = require("./constants");
-const multer = require("multer");
+const jwt = require('jsonwebtoken');
+const httpErrors = require('httperrors');
+const csv = require('csvtojson');
+const request = require('request');
+const Group = require('../models/group/services');
+const Track = require('../models/Track/services');
+const Level = require('../models/level/services');
+const { getLatestUserLevelByLevel } = require('../models/userLevel/services');
+const User = require('../models/user/services');
+const { LEVEL_STATUS } = require('../models/userLevel/constants');
+const { frequencyData, passFailData } = require('./constants');
+const multer = require('multer');
 
 exports.generateAccessToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "7d",
+    expiresIn: '7d',
   });
 
 exports.generateRefreshToken = (userId) =>
   jwt.sign({ userId: userId }, process.env.REFRESH_TOKEN_SECRET, {
-    expiresIn: "90d",
+    expiresIn: '90d',
   });
 
-exports.createUnauthorizedError = (error = "Unauthorized") => httpErrors(401, error);
+exports.createUnauthorizedError = (error = 'Unauthorized') => httpErrors(401, error);
 
 exports.csvToJson = async (csvUrl) => {
   let jsonArray = [];
@@ -65,7 +65,7 @@ const getAuthorisedUser = async ({ groupId, trackId }) => {
 
 const getEmpAttemptData = async ({ groupId, trackId, levelId }) => {
   const employees = await getAuthorisedUser({ groupId, trackId });
-  console.log("getAuthorisedUser", employees);
+  console.log('getAuthorisedUser', employees);
   let empData = employees.map(async (id) => {
     const userLevel = await getLatestUserLevelByLevel({
       levelId,
@@ -88,7 +88,7 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
   passFailData[2].unattempted = 0;
   for (let x = 0; x <= 9; x++) frequencyData[x].frequency = 0;
   const empData = await getEmpAttemptData({ groupId, trackId, levelId });
-  console.log("getEmpAttemptData", empData);
+  console.log('getEmpAttemptData', empData);
   empData.map((data) => {
     if (data !== null && data.levelStatus) {
       switch (data.levelStatus) {
@@ -141,7 +141,7 @@ exports.generateOtp = () => Math.floor(100000 + Math.random() * 900000);
 exports.upload = multer({
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
-      cb(null, "/tmp");
+      cb(null, '/tmp');
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname);

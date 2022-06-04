@@ -1,5 +1,5 @@
-const { Schema } = require("mongoose");
-const { REVENUE_SCHEME_ENUM } = require("./constants");
+const { Schema } = require('mongoose');
+const { REVENUE_SCHEME_ENUM } = require('./constants');
 
 const OrganizationSchema = new Schema(
   {

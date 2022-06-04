@@ -1,11 +1,10 @@
-const Joi = require("joi");
-
+const Joi = require('joi');
 
 exports.createUserTrackInfoContract = Joi.object({
-    isArchived:Joi.boolean().required(),
-    trackId:Joi.string().required()
-})
+  isArchived: Joi.boolean().required(),
+  trackId: Joi.string().required(),
+});
 
 exports.updateUserTrackInfoContract = Joi.object({
-    isArchived:Joi.boolean().required(),
-})
+  isArchived: Joi.boolean().required(),
+});

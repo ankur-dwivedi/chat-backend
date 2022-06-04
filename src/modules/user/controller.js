@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require('bcrypt');
 const {
   update,
   get,
@@ -11,25 +11,21 @@ const {
   getUserAndOrgByEmpId,
   passwordCompare,
   findPaginatedUsers,
-} = require("../../models/user/services");
-const { update: updateOrg } = require("../../models/organization/services");
-const { getOrgEmployee } = require("../../models/user/services");
-const { generateError } = require("../../utils/error");
+} = require('../../models/user/services');
+const { update: updateOrg } = require('../../models/organization/services');
+const { getOrgEmployee } = require('../../models/user/services');
+const { generateError } = require('../../utils/error');
 const {
   generateAccessToken,
   generateOtp,
   analyicsData,
   analyicslist,
   generateRefreshToken,
-} = require("../../utils/general");
-const md5 = require("md5");
-const { OTP_EXPIRY } = require("../../models/user/constants");
-const {
-  sendMail,
-  createDynamicQueryPagination,
-  processPaginatedResults,
-} = require("../user/util");
-var axios = require("axios");
+} = require('../../utils/general');
+const md5 = require('md5');
+const { OTP_EXPIRY } = require('../../models/user/constants');
+const { sendMail, createDynamicQueryPagination, processPaginatedResults } = require('../user/util');
+var axios = require('axios');
 
 exports.getUsers = async (req, res) =>
   getUserWithOrg({ userId: req.user._id }).then((user) =>
@@ -54,9 +50,7 @@ exports.searchUser = async (req, res) => {
 
 exports.register = async (req, res) => {
   try {
-    const org = req.body.organization
-      ? req.body.organization
-      : req.user.organization;
+    const org = req.body.organization ? req.body.organization : req.user.organization;
     query = {
       ...req.body,
       organization: org,
@@ -76,10 +70,10 @@ exports.register = async (req, res) => {
   } catch (err) {
     if (err.code === 11000) {
       const field = Object.keys(err.keyValue);
-      const processedField = field.includes("phoneNumber")
-        ? "phone number"
-        : field.includes("employeeId")
-        ? "Employee ID"
+      const processedField = field.includes('phoneNumber')
+        ? 'phone number'
+        : field.includes('employeeId')
+        ? 'Employee ID'
         : field;
       res.status(409).send({
         message: `An account with that ${processedField} already exists.`,
@@ -102,7 +96,7 @@ exports.login = (req, res, next) => {
       if (password === undefined) {
         return generateError();
       }
-      if (user.blocked) return generateError("User is blocked");
+      if (user.blocked) return generateError('User is blocked');
       // this is just nested ternary conditions which is first checking userData is present in database or not
       // then it is checking the password provided is valid or not
       return user
@@ -122,7 +116,7 @@ exports.login = (req, res, next) => {
         : generateError();
     })
     .catch((err) => {
-      if (err.message.indexOf("User is blocked") !== -1)
+      if (err.message.indexOf('User is blocked') !== -1)
         res.status(400).send({ message: err.message });
       else res.status(400).send({ message: `Invalid Employee ID or Password` });
     });
@@ -130,9 +124,7 @@ exports.login = (req, res, next) => {
 
 exports.deleteUser = async (req, res) =>
   deleteUser(req.body.id).then((user) =>
-    user.deletedCount
-      ? res.send("User deleted")
-      : res.send("User already deleted or doesn't exist")
+    user.deletedCount ? res.send('User deleted') : res.send("User already deleted or doesn't exist")
   );
 
 exports.deleteUsers = async (req, res) => {
@@ -144,9 +136,7 @@ exports.deleteUsers = async (req, res) => {
   };
   await updateOrg(orgQueryObject, orgUpdateObject);
   res.send(
-    deleteResponse.deletedCount
-      ? `${deleteResponse.deletedCount} users deleted`
-      : "Delete Failed"
+    deleteResponse.deletedCount ? `${deleteResponse.deletedCount} users deleted` : 'Delete Failed'
   );
 };
 
@@ -155,8 +145,7 @@ exports.update = async (req, res) => {
     const queryObject = { $and: [{ _id: req.body.id }] };
     const updateObject = { ...req.body };
     delete updateObject.id;
-    if (updateObject.password)
-      updateObject.password = await bcrypt.hash(updateObject.password, 10);
+    if (updateObject.password) updateObject.password = await bcrypt.hash(updateObject.password, 10);
 
     const updateUser = await update(queryObject, updateObject);
     //updating Org update time
@@ -173,10 +162,10 @@ exports.update = async (req, res) => {
   } catch (err) {
     if (err.code === 11000) {
       const field = Object.keys(err.keyValue);
-      const processedField = field.includes("phoneNumber")
-        ? "phone number"
-        : field.includes("employeeId")
-        ? "Employee ID"
+      const processedField = field.includes('phoneNumber')
+        ? 'phone number'
+        : field.includes('employeeId')
+        ? 'Employee ID'
         : field;
       res.status(409).send({
         message: `An account with that ${processedField} already exists.`,
@@ -190,7 +179,7 @@ exports.update = async (req, res) => {
 const sendOtp = (phone, otp) => {
   console.log({ phone });
   var config = {
-    method: "get",
+    method: 'get',
     url: `https://2factor.in/API/V1/${process.env.OTP_KEY}/SMS/${phone}/${otp}`,
     headers: {},
   };
@@ -211,69 +200,56 @@ exports.requestOtp = async ({ body }, res) => {
     const message = `Otp sent`;
     const User = await get({ employeeId, organization });
     if (User && User.password)
-      generateError(
-        "This ID is already registered, please go to login or forgot password"
-      );
-    if (User.blocked) return generateError("User is blocked");
+      generateError('This ID is already registered, please go to login or forgot password');
+    if (User.blocked) return generateError('User is blocked');
     await update(
       { $and: [{ employeeId: employeeId }, { organization: organization }] },
       { otp: { expiry: new Date().getTime() + OTP_EXPIRY, value: otp } }
     );
-    if (User.email) await sendMail(otp, User.email, "");
+    if (User.email) await sendMail(otp, User.email, '');
     else sendOtp(User.phoneNumber, otp);
     return res.send(message);
   } catch (err) {
-    if (err.message.indexOf("User is blocked") !== -1)
+    if (err.message.indexOf('User is blocked') !== -1)
       res.status(400).send({ message: err.message });
     res.status(400).send({ message: err.message });
   }
 };
 
 exports.verifyOtp = async ({ body }, res) =>
-  get({ employeeId: body.employeeId, organization: body.organization }).then(
-    (user) => {
-      const savedOtp = user.otp.value;
-      const { expiry } = user.otp;
-      const currentDate = new Date();
-      const difference = expiry - currentDate.getTime();
-      const status =
-        body.otp === savedOtp
-          ? difference > 0
-            ? "Success"
-            : "Otp has Expired"
-          : "Invalid OTP";
-      status === "Success"
-        ? res.send({
-            status: 200,
-            success: true,
-            data: {
-              ...JSON.parse(JSON.stringify(user)),
-              refreshToken: generateRefreshToken(user._id),
-              accessToken: generateAccessToken(user._id),
-            },
-          })
-        : res.status(400).send({
-            success: false,
-            data: null,
-            message: status,
-          });
-    }
-  );
+  get({ employeeId: body.employeeId, organization: body.organization }).then((user) => {
+    const savedOtp = user.otp.value;
+    const { expiry } = user.otp;
+    const currentDate = new Date();
+    const difference = expiry - currentDate.getTime();
+    const status =
+      body.otp === savedOtp ? (difference > 0 ? 'Success' : 'Otp has Expired') : 'Invalid OTP';
+    status === 'Success'
+      ? res.send({
+          status: 200,
+          success: true,
+          data: {
+            ...JSON.parse(JSON.stringify(user)),
+            refreshToken: generateRefreshToken(user._id),
+            accessToken: generateAccessToken(user._id),
+          },
+        })
+      : res.status(400).send({
+          success: false,
+          data: null,
+          message: status,
+        });
+  });
 
 exports.forgetPassword = async (req, res) => {
   try {
     const { employeeId, organization } = req.body;
     const user = await getUserAndOrgByEmpId({ employeeId, organization });
     if (user.email)
-      await sendMail(
-        0,
-        user.email,
-        generateAccessToken(user._id),
-        user.organization.domain
-      );
+      await sendMail(0, user.email, generateAccessToken(user._id), user.organization.domain);
     else sendOtp(user.phoneNumber, otp);
 
-    res.send({ message: "link sent to registered email" });
+    res.send({ message: 'link sent to registered email' });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
@@ -288,9 +264,7 @@ exports.resetpass = async (req, res, next) => {
     }
   )
     .then((user) =>
-      user
-        ? res.send("Password Reset Succesfully")
-        : generateError("Unable to reset Password")
+      user ? res.send('Password Reset Succesfully') : generateError('Unable to reset Password')
     )
     .catch((err) => {
       res.status(400).send({ message: `${err.message} Already exists` });
@@ -310,12 +284,8 @@ exports.getFilteredEmp = async (req, res) => {
             filterObject[empData.name] &&
             filterObject[empData.name].indexOf(empData.value) === -1
           )
-            filterObject[empData.name] = [
-              ...filterObject[empData.name],
-              empData.value,
-            ];
-          else if (!filterObject[empData.name])
-            filterObject[empData.name] = [empData.value];
+            filterObject[empData.name] = [...filterObject[empData.name], empData.value];
+          else if (!filterObject[empData.name]) filterObject[empData.name] = [empData.value];
         }
       }
       for (let data in filterObject) {
@@ -324,8 +294,7 @@ exports.getFilteredEmp = async (req, res) => {
           value: filterObject[data],
         });
       }
-    } else
-      employees = await getOrgEmployee({ organization: req.user.organization });
+    } else employees = await getOrgEmployee({ organization: req.user.organization });
     employees = employees.map((data) => {
       const ob = {
         ...JSON.parse(JSON.stringify(data)),
@@ -353,7 +322,7 @@ exports.setSession = async (req, res) => {
       success: true,
       data: user,
     }));
-    return res.send({ message: "session set successfully" });
+    return res.send({ message: 'session set successfully' });
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
