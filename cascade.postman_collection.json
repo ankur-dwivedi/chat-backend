@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1605a056-4b6b-41d7-8214-d58377e96f13",
+		"_postman_id": "2344a589-d99b-46bc-898f-ad028db45628",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12071918"
@@ -745,6 +745,16 @@
 				{
 					"name": "replace employee data",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQyODA0NDEsImV4cCI6MTY1NDg4NTI0MX0.tL9Uj-QifTliIyirrfxBqM30uCK3-B05OAHjYEjQEW0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -753,28 +763,18 @@
 								{
 									"key": "files",
 									"type": "file",
-									"src": "/Users/saswatmishra/Downloads/employeeData.csv"
+									"src": "/Users/saswatmishra/Downloads/replace_org_data_final.csv"
 								}
 							]
 						},
 						"url": {
-							"raw": "{{baseUrl}}/organization/replace-employee-data?org=61b064bee20da142b8dea48c&role=creator",
+							"raw": "{{baseUrl}}/organization/replace-employee-data",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"organization",
 								"replace-employee-data"
-							],
-							"query": [
-								{
-									"key": "org",
-									"value": "61b064bee20da142b8dea48c"
-								},
-								{
-									"key": "role",
-									"value": "creator"
-								}
 							]
 						}
 					},
@@ -813,6 +813,44 @@
 							"path": [
 								"organization",
 								"add-users-bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count replace employee data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQyODA0NDEsImV4cCI6MTY1NDg4NTI0MX0.tL9Uj-QifTliIyirrfxBqM30uCK3-B05OAHjYEjQEW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/Replace_PaddleBoat_employee_data.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/count-replace-employee-data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"count-replace-employee-data"
 							]
 						}
 					},

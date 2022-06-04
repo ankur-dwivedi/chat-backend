@@ -19,6 +19,6 @@ exports.deleteContract = Joi.object({
 });
 
 exports.replaceOrganizationContract = Joi.object({
-  org: Joi.string().required(),
+  org: Joi.string(),
   role: Joi.string().allow(""),
 });

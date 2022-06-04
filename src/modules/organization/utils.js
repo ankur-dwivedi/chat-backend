@@ -27,3 +27,25 @@ exports.createUserObject = (org, userData, role) => {
   if (!userData["role"]) userData["role"] = ROLE.LEARNER;
   return userData;
 };
+
+exports.removeDuplicates = async (empData) => {
+  const empDataSet = {
+    employeeId: new Set(),
+    phoneNumber: new Set(),
+    email: new Set(),
+  };
+  const processedEmpData = empData.filter((emp) => {
+    if (
+      empDataSet.employeeId.has(emp.employeeId) ||
+      empDataSet.phoneNumber.has(emp.phoneNumber) ||
+      empDataSet.email.has(emp.email)
+    ) {
+      return false;
+    }
+    empDataSet.employeeId.add(emp.employeeId);
+    empDataSet.phoneNumber.add(emp.phoneNumber);
+    empDataSet.email.add(emp.email);
+    return true;
+  });
+  return processedEmpData;
+};
