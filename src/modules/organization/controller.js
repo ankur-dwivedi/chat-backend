@@ -13,7 +13,7 @@ const {
 } = require('../../models/user/services');
 const { uploadFiles } = require('.././../libs/aws/upload');
 const { csvToJson, csvToJsonByStream } = require('../../utils/general');
-const { createUserObject, removeDuplicates } = require('./utils');
+const { createUserObject, validateOrgDataSchema, removeDuplicates } = require('./utils');
 const User = require('../../models/user');
 const { get: getFilterData } = require('../../models/filterData/services');
 
@@ -211,9 +211,10 @@ exports.countReplaceEmployeeData = async (req, res) => {
   try {
     const { files } = req;
     const org = req.query.org ? req.query.org : req.user.organization;
-    console.log(org);
     if (!files.length) return res.status(400).send('No file uploaded.');
     const employeeData = await csvToJsonByStream(files[0].path);
+    const isValidFile = await validateOrgDataSchema(employeeData[0])
+    if(!isValidFile) return res.status(406).send("Invalid Schema")
     const processedEmployeeData = await removeDuplicates(employeeData);
     const userNotCreated = [],
       userCreated = [],
