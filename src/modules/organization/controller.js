@@ -16,6 +16,7 @@ const { csvToJson, csvToJsonByStream } = require('../../utils/general');
 const { createUserObject, validateOrgDataSchema, removeDuplicates } = require('./utils');
 const User = require('../../models/user');
 const { get: getFilterData } = require('../../models/filterData/services');
+const FilterData = require('../../models/filterData');
 
 exports.getOrganizations = async (req, res) =>
   get(req.query).then((organization) =>
@@ -213,8 +214,8 @@ exports.countReplaceEmployeeData = async (req, res) => {
     const org = req.query.org ? req.query.org : req.user.organization;
     if (!files.length) return res.status(400).send('No file uploaded.');
     const employeeData = await csvToJsonByStream(files[0].path);
-    const isValidFile = await validateOrgDataSchema(employeeData[0])
-    if(!isValidFile) return res.status(406).send("Invalid Schema")
+    const isValidFile = await validateOrgDataSchema(employeeData[0]);
+    if (!isValidFile) return res.status(406).send('Invalid Schema');
     const processedEmployeeData = await removeDuplicates(employeeData);
     const userNotCreated = [],
       userCreated = [],
@@ -378,6 +379,9 @@ exports.replaceEmployeeData = async function (req, res) {
 
     // delete existing user data for org
     await User.deleteMany({ organization: org }).then((response) => console.log({ response }));
+    await FilterData.deleteMany({ organization: org }).then((response) =>
+      console.log({ response })
+    );
 
     for (value of updatedEmpData) {
       try {
