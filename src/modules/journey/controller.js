@@ -106,7 +106,7 @@ module.exports = {
               learnerId: req.user._id,
             });
             if (userLevelData[0])
-              return res.status(400).json({
+              return res.status(401).json({
                 status: 'failed',
                 message: `Level is not allowed to re-attempt`,
               });
