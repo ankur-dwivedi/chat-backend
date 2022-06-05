@@ -28,6 +28,13 @@ exports.createUserObject = (org, userData, role) => {
   return userData;
 };
 
+exports.validateOrgDataSchema = async (firstRow) => {
+  mandatoryColumns = ['employeeId', 'name', 'phoneNumber', 'email']
+  csvHeaders = Object.keys(firstRow)
+  return mandatoryColumns.every(column=>csvHeaders.includes(column))
+  
+}
+
 exports.removeDuplicates = async (empData) => {
   const empDataSet = {
     employeeId: new Set(),
