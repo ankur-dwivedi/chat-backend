@@ -346,7 +346,7 @@ exports.replaceEmployeeData = async function (req, res) {
           $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
         });
       if (user) {
-        if (user.employeeId === emp.employeeId && user.organization === org) {
+        if (user.employeeId === emp.employeeId) {
           updateUser = {
             _id: user._id,
             organization: user?.organization,

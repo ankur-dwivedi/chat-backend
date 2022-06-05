@@ -202,7 +202,6 @@ exports.countEmployeeInOrg = ({ organization }) => {
   User.find({ organization })
     .count()
     .then((response) => {
-      console.log(response);
       return response;
     });
   return User.find({ organization })
