@@ -1,4 +1,5 @@
 const { ROLE } = require('../../models/user/constants');
+const { get: getFilterData } = require('../../models/filterData/services');
 
 const userKeys = {
   email: '',
@@ -28,9 +29,14 @@ exports.createUserObject = (org, userData, role) => {
   return userData;
 };
 
-exports.validateOrgDataSchema = async (firstRow) => {
-  mandatoryColumns = ['employeeId', 'name', 'phoneNumber', 'email'];
+exports.validateOrgDataSchema = async (firstRow, orgFilterCheck=false, orgId='') => {
+  let mandatoryColumns = ['employeeId', 'name', 'phoneNumber', 'email'];
   csvHeaders = Object.keys(firstRow);
+  if(orgFilterCheck){
+    const orgFilter = (await getFilterData({ organization: orgId})).data
+    const mandatoryFilters = orgFilter.map((filter)=>filter.name)
+    mandatoryColumns = mandatoryColumns.concat(mandatoryFilters)
+  }
   return mandatoryColumns.every((column) => csvHeaders.includes(column));
 };
 

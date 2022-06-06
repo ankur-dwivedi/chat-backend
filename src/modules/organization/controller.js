@@ -149,36 +149,93 @@ exports.getRestrictedData = async (req, res) => {
   }
 };
 
-exports.addUsersBulk = async (req, res) => {
-  console.log('api');
+exports.countAddUsersBulk = async (req, res) => {
   try {
     const { files } = req;
-    console.log('files', req);
+    const org = req.body.org ? req.body.org : req.user.organization;
+    if (!files.length) {
+      return res.status(406).send('No file uploaded.');
+    }
+    const employeeData = await csvToJsonByStream(files[0].path);
+    // check for right file type
+    if (!employeeData.length) {
+      return res.status(406).send({ message: `Invalid file format` });
+    }
+
+    const isValidFile = await validateOrgDataSchema(employeeData[0], orgFilterCheck=true, orgId=org);
+    if (!isValidFile) return res.status(406).send('Invalid Schema');
+    const processedEmployeeData = await removeDuplicates(employeeData);
+
+    const userNotCreated= [],
+      userCreated = [];
+
+      for (emp of processedEmployeeData) {
+        let user = {}
+        //  check existing data 
+        if (emp.email && emp.phoneNumber)
+          user = await User.findOne({
+            $or: [
+              { $and: [{ email: emp.email }, { organization: org }] },
+              {
+                $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
+              },
+            ],
+          });
+        else if (emp.email)
+          user = await User.findOne({
+            $and: [{ email: emp.email }, { organization: org }],
+          });
+        else if (emp.phoneNumber)
+          user = await User.findOne({
+            $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
+          });
+        if (user) {
+          userNotCreated.push(user);
+        } else {
+          try {
+            if (!emp.phoneNumber && !emp.email) userNotCreated.push(emp);
+            if (Number(emp.phoneNumber) === 0) {
+              delete emp.phoneNumber;
+              if (emp.email === '') delete emp.email;
+              userCreated.push(emp);
+            } else {
+              const num = emp.phoneNumber;
+              if (emp.email === '') delete emp.email;
+              // create new users for org
+              userCreated.push(emp);
+            }
+          } catch (err) {
+            userNotCreated.push(emp);
+          }
+        }
+      }
+    return res.status(200).send({
+      status: 'success',
+      message: 'file validated successfully',
+      data: { newUserCount: userCreated.length, 
+        invalidUserCount: userNotCreated.length + (employeeData.length - processedEmployeeData.length) }
+    });
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+}
+
+exports.addUsersBulk = async (req, res) => {
+  try {
+    const { files } = req;
     const org = req.body.org ? req.body.org : req.user.organization;
     if (!files.length) {
       res.status(400).send('No file uploaded.');
     }
-
-    //saving csv to AWS
-    const finalbucket = `${process.env.AWS_BUCKET_NAME}` + '/' + `${org}` + '/employee-data';
-    const uploadedFiles = await uploadFiles(finalbucket, files);
-    const employeeData = await csvToJson(uploadedFiles[0].Location);
-
+    const employeeData = await csvToJsonByStream(files[0].path);
     // check for right file type
-    if (!employeeData.length || !employeeData[0].employeeId) {
-      return res.status(400).send({ message: `Invalid file format` });
+    if (!employeeData.length) {
+      return res.status(406).send({ message: `Invalid file format` });
     }
-
+ 
     const updatedData = employeeData.map((value) => createUserObject(org, value));
     const userNotCreated = [],
       userCreated = [];
-
-    //updating Org update time
-    const orgQueryObject = { $and: [{ _id: org }] };
-    const orgUpdateObject = {
-      updatedAt: new Date(),
-    };
-    await update(orgQueryObject, orgUpdateObject).then((organization) => organization);
 
     for (value of updatedData) {
       try {
@@ -198,10 +255,16 @@ exports.addUsersBulk = async (req, res) => {
         userNotCreated.push(value);
       }
     }
+    //updating Org update time
+    const orgQueryObject = { $and: [{ _id: org }] };
+    const orgUpdateObject = {
+      updatedAt: new Date(),
+    };
+    await update(orgQueryObject, orgUpdateObject).then((organization) => organization);
     return res.status(200).send({
       status: 'success',
       message: 'files uploaded successfully',
-      data: { userCreated, userNotCreated },
+      data: { newUserCount: userCreated, invalidUserCount: userNotCreated},
     });
   } catch (error) {
     res.status(400).send({ message: error.message });
