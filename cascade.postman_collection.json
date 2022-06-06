@@ -533,7 +533,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/organization/?domain=indutch",
+							"raw": "{{baseUrl}}/organization/?domain=content",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -544,7 +544,7 @@
 							"query": [
 								{
 									"key": "domain",
-									"value": "indutch"
+									"value": "content"
 								}
 							]
 						}
@@ -788,7 +788,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM1ODAzNjUsImV4cCI6MTY1NDE4NTE2NX0.QrY4DiRjNDe-WwGbWXnCayAEseXNi_RtPrI06RfQ_gk",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQ1MTg2MDYsImV4cCI6MTY1NTEyMzQwNn0.nRyTYbE0kpLb965BuIUhs1OTEZ9YededApR8XVSk_1I",
 									"type": "string"
 								}
 							]
@@ -801,7 +801,7 @@
 								{
 									"key": "files",
 									"type": "file",
-									"src": "/Users/saswatmishra/Downloads/employeeData.csv"
+									"src": "/Users/saswatmishra/Downloads/replace_org_data - Sheet1.csv"
 								}
 							]
 						},
@@ -839,7 +839,7 @@
 								{
 									"key": "files",
 									"type": "file",
-									"src": "/Users/saswatmishra/Downloads/Replace_PaddleBoat_employee_data.csv"
+									"src": "/Users/saswatmishra/Downloads/replace_org_data - Sheet1 (1).csv"
 								}
 							]
 						},
@@ -851,6 +851,44 @@
 							"path": [
 								"organization",
 								"count-replace-employee-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count add users bulk",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQ1MTg2MDYsImV4cCI6MTY1NTEyMzQwNn0.nRyTYbE0kpLb965BuIUhs1OTEZ9YededApR8XVSk_1I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/replace_org_data_final.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/count-add-users-bulk",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"count-add-users-bulk"
 							]
 						}
 					},
