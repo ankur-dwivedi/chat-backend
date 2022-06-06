@@ -29,12 +29,17 @@ exports.createUserObject = (org, userData, role) => {
   return userData;
 };
 
+
 exports.validateOrgDataSchema = async (firstRow, orgFilterCheck=false, orgId='') => {
   let mandatoryColumns = ['employeeId', 'name', 'phoneNumber', 'email'];
-  csvHeaders = Object.keys(firstRow);
+  const csvHeaders = Object.keys(firstRow);
   if(orgFilterCheck){
+    const csvFilters = csvHeaders.filter((filter)=>!(mandatoryColumns.includes(filter)|| filter === 'role'))
     const orgFilter = (await getFilterData({ organization: orgId})).data
     const mandatoryFilters = orgFilter.map((filter)=>filter.name)
+    if(mandatoryFilters.length !== csvFilters.length ){
+      return false
+    }
     mandatoryColumns = mandatoryColumns.concat(mandatoryFilters)
   }
   return mandatoryColumns.every((column) => csvHeaders.includes(column));
