@@ -162,63 +162,70 @@ exports.countAddUsersBulk = async (req, res) => {
       return res.status(406).send({ message: `Invalid file format` });
     }
 
-    const isValidFile = await validateOrgDataSchema(employeeData[0], orgFilterCheck=true, orgId=org);
+    const isValidFile = await validateOrgDataSchema(
+      employeeData[0],
+      (orgFilterCheck = true),
+      (orgId = org)
+    );
     if (!isValidFile) return res.status(406).send('Invalid Schema');
     const processedEmployeeData = await removeDuplicates(employeeData);
 
-    const userNotCreated= [],
+    const userNotCreated = [],
       userCreated = [];
 
-      for (emp of processedEmployeeData) {
-        let user = {}
-        //  check existing data 
-        if (emp.email && emp.phoneNumber)
-          user = await User.findOne({
-            $or: [
-              { $and: [{ email: emp.email }, { organization: org }] },
-              {
-                $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
-              },
-            ],
-          });
-        else if (emp.email)
-          user = await User.findOne({
-            $and: [{ email: emp.email }, { organization: org }],
-          });
-        else if (emp.phoneNumber)
-          user = await User.findOne({
-            $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
-          });
-        if (user) {
-          userNotCreated.push(user);
-        } else {
-          try {
-            if (!emp.phoneNumber && !emp.email) userNotCreated.push(emp);
-            if (Number(emp.phoneNumber) === 0) {
-              delete emp.phoneNumber;
-              if (emp.email === '') delete emp.email;
-              userCreated.push(emp);
-            } else {
-              const num = emp.phoneNumber;
-              if (emp.email === '') delete emp.email;
-              // create new users for org
-              userCreated.push(emp);
-            }
-          } catch (err) {
-            userNotCreated.push(emp);
+    for (emp of processedEmployeeData) {
+      let user = {};
+      //  check existing data
+      if (emp.email && emp.phoneNumber)
+        user = await User.findOne({
+          $or: [
+            { $and: [{ email: emp.email }, { organization: org }] },
+            {
+              $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
+            },
+          ],
+        });
+      else if (emp.email)
+        user = await User.findOne({
+          $and: [{ email: emp.email }, { organization: org }],
+        });
+      else if (emp.phoneNumber)
+        user = await User.findOne({
+          $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
+        });
+      if (user) {
+        userNotCreated.push(user);
+      } else {
+        try {
+          if (!emp.phoneNumber && !emp.email) userNotCreated.push(emp);
+          if (Number(emp.phoneNumber) === 0) {
+            delete emp.phoneNumber;
+            if (emp.email === '') delete emp.email;
+            userCreated.push(emp);
+          } else {
+            const num = emp.phoneNumber;
+            if (emp.email === '') delete emp.email;
+            // create new users for org
+            userCreated.push(emp);
           }
+        } catch (err) {
+          userNotCreated.push(emp);
         }
       }
+    }
     return res.status(200).send({
       status: 'success',
       message: 'file validated successfully',
-      data: { newUserCount: userCreated.length, 
-        invalidUserCount: userNotCreated.length + (employeeData.length - processedEmployeeData.length) }
+      data: {
+        newUserCount: userCreated.length,
+        invalidUserCount:
+          userNotCreated.length + (employeeData.length - processedEmployeeData.length),
+      },
     });
   } catch (error) {
     res.status(400).send({ message: error.message });
   }
-}
+};
 
 exports.addUsersBulk = async (req, res) => {
   try {
@@ -232,7 +239,7 @@ exports.addUsersBulk = async (req, res) => {
     if (!employeeData.length) {
       return res.status(406).send({ message: `Invalid file format` });
     }
- 
+
     const updatedData = employeeData.map((value) => createUserObject(org, value));
     const userNotCreated = [],
       userCreated = [];
@@ -264,7 +271,7 @@ exports.addUsersBulk = async (req, res) => {
     return res.status(200).send({
       status: 'success',
       message: 'files uploaded successfully',
-      data: { newUserCount: userCreated, invalidUserCount: userNotCreated},
+      data: { newUserCount: userCreated, invalidUserCount: userNotCreated },
     });
   } catch (error) {
     res.status(400).send({ message: error.message });

@@ -41,7 +41,12 @@ organizationRouter.delete('/', validate('body', deleteContract), deleteOrganizat
 organizationRouter.patch('/', validate('body', editOrganizationContract), update);
 organizationRouter.post('/upload-logo', upload.array('files'), uploadLogo);
 organizationRouter.post('/upload-employee-data', upload.array('files'), uploadEmployeeData);
-organizationRouter.post('/count-add-users-bulk', withAdminAccess, upload.array('files'), countAddUsersBulk);
+organizationRouter.post(
+  '/count-add-users-bulk',
+  withAdminAccess,
+  upload.array('files'),
+  countAddUsersBulk
+);
 organizationRouter.post('/add-users-bulk', withAdminAccess, upload.array('files'), addUsersBulk);
 organizationRouter.post(
   '/count-replace-employee-data',
@@ -58,6 +63,5 @@ organizationRouter.post(
 );
 
 organizationRouter.get('/restricted-data', withAdminAccess, getRestrictedData);
-
 
 module.exports = organizationRouter;
