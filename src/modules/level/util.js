@@ -1,15 +1,15 @@
-const { getUsersByTrackId } = require("../../models/Track/services");
-const nodemailer = require("nodemailer");
-const { generateError } = require("../../utils/error");
-const { get } = require("../../models/user/services.js");
-const { Types } = require("mongoose");
+const { getUsersByTrackId } = require('../../models/Track/services');
+const nodemailer = require('nodemailer');
+const { generateError } = require('../../utils/error');
+const { get } = require('../../models/user/services.js');
+const { Types } = require('mongoose');
 const sendMail = async (from, email, subject, body) => {
   return new Promise(async (resolve, reject) => {
     const transporter = await nodemailer.createTransport({
-      service: "gmail",
+      service: 'gmail',
       auth: {
-        user: "signtalklearnisl@gmail.com", // add credentials
-        pass: "testing@SIGNTALK1",
+        user: 'signtalklearnisl@gmail.com', // add credentials
+        pass: 'testing@SIGNTALK1',
       },
     });
 
@@ -25,7 +25,7 @@ const sendMail = async (from, email, subject, body) => {
         console.log(error);
         resolve(false);
       } else {
-        console.log("Email sent: " + info.response);
+        console.log('Email sent: ' + info.response);
         resolve(true);
       }
     });
@@ -36,7 +36,7 @@ module.exports = {
   sendLevelCreationMailsToUsers: async (trackId, levelName, creatorId) => {
     const data = await getUsersByTrackId({ id: trackId });
     const users = data.groupId.employees;
-    const from = "Notification<himalig11@gmail.com>";
+    const from = 'Notification<himalig11@gmail.com>';
     let subject = `A New level ${levelName} has been added to track ${data.trackName}`;
     let usersEmailSent = [];
     let usersEmailFailed = [];
@@ -59,14 +59,9 @@ module.exports = {
     const creatorData = await get({ id: creatorId });
     subject = `User Email Stats for level ${levelName} Creation`;
     let body = `Following users could not be notified : \n\n${usersEmailFailed}`;
-    let creatorMailingStatus = await sendMail(
-      "cascade<>",
-      creatorData.email,
-      subject,
-      body
-    );
+    let creatorMailingStatus = await sendMail('cascade<>', creatorData.email, subject, body);
     if (creatorMailingStatus) {
-      console.log("Creator Notified of user mails");
+      console.log('Creator Notified of user mails');
     } else {
       console.log(
         `creator could not be notified of user mails for level creation\n Following users could not be notified ${usersEmailFailed}`

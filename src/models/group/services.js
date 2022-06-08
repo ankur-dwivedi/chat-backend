@@ -1,11 +1,11 @@
-const { generateError } = require("../../utils/error");
-const Group = require(".");
+const { generateError } = require('../../utils/error');
+const Group = require('.');
 
 exports.get = async (query) =>
   query.id && query.createdBy
     ? Group.findOne({ $and: [{ _id: query.id }, { createdBy: query.createdBy }] })
-        .populate({ path: "employees", select: ["name", "employeeId"] })
-        .select(["name", "description", "employees"])
+        .populate({ path: 'employees', select: ['name', 'employeeId'] })
+        .select(['name', 'description', 'employees'])
         .then((response) => (response ? response : generateError()))
         .catch((error) => error)
     : query.createdBy
@@ -16,7 +16,7 @@ exports.get = async (query) =>
           name: 1,
           description: 1,
           createdBy: 1,
-          employees: { $size: "$employees" },
+          employees: { $size: '$employees' },
         })
     : query.id
     ? Group.findOne({ _id: query.id })

@@ -1,13 +1,13 @@
-const Template = require("../template/services");
-const UserLevel = require("../userLevel/services");
-const Level = require("../level/services");
-const { LEVEL_STATUS, ATTEMPT_STATUS } = require("../userLevel/constants");
-const { TEMPLATE_TYPE } = require("../template/constants");
-const { LEVEL_TYPE } = require("../level/constants");
-const { updateTrackStatus } = require("../userTrack/services");
+const Template = require('../template/services');
+const UserLevel = require('../userLevel/services');
+const Level = require('../level/services');
+const { LEVEL_STATUS, ATTEMPT_STATUS } = require('../userLevel/constants');
+const { TEMPLATE_TYPE } = require('../template/constants');
+const { LEVEL_TYPE } = require('../level/constants');
+const { updateTrackStatus } = require('../userTrack/services');
 
 exports.initHooks = (JourneySchema) => {
-  JourneySchema.post("save", async (docs) => {
+  JourneySchema.post('save', async (docs) => {
     const { attemptId, levelId, templateType, levelType, templateId } = docs;
     if (
       levelType === LEVEL_TYPE.ASSESMENT &&
@@ -33,8 +33,9 @@ exports.initHooks = (JourneySchema) => {
       //get level passing score
       const levelData = await Level.get({ id: levelId });
       let passStatus = {};
-      if (levelData.passingScore)// && templateData.length === userLevelData.templateAttempted + 1)
-        passStatus["levelStatus"] =
+      if (levelData.passingScore)
+        // && templateData.length === userLevelData.templateAttempted + 1)
+        passStatus['levelStatus'] =
           levelData.passingScore <= percentageScore ? LEVEL_STATUS.PASS : LEVEL_STATUS.FAIL;
       //update score in userLevel
       console.log({ templateData, userLevelData, percentageScore, maxScore, docs });
@@ -62,8 +63,9 @@ exports.initHooks = (JourneySchema) => {
       const userLevelData = await UserLevel.get({ id: attemptId });
       const levelData = await Level.get({ id: levelId });
       let passStatus = {};
-      if (levelData.passingScore)// && templateData.length === userLevelData.templateAttempted + 1)
-        passStatus["levelStatus"] =
+      if (levelData.passingScore)
+        // && templateData.length === userLevelData.templateAttempted + 1)
+        passStatus['levelStatus'] =
           levelData.passingScore <= userLevelData.levelScore
             ? LEVEL_STATUS.PASS
             : LEVEL_STATUS.FAIL;

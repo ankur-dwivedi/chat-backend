@@ -1,7 +1,7 @@
-const FilterData = require("../filterData/services");
+const FilterData = require('../filterData/services');
 
 exports.initHooks = (UserSchema) => {
-  UserSchema.post("save", async (docs) => {
+  UserSchema.post('save', async (docs) => {
     const { organization, employeeData } = docs;
     const filterData = await FilterData.get({ organization });
     if (filterData) {

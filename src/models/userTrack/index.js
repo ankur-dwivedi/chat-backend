@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const userTrackSchema = require("./schema");
+const mongoose = require('mongoose');
+const userTrackSchema = require('./schema');
 
-const userTrack = mongoose.model("userTrack", userTrackSchema);
+const userTrack = mongoose.model('userTrack', userTrackSchema);
 
 module.exports = userTrack;

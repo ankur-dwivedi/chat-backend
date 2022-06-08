@@ -1,8 +1,8 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 exports.registerUserContract = Joi.object({
-  phoneNumber: Joi.number().allow(""),
-  email: Joi.string().allow(""),
+  phoneNumber: Joi.number().allow(''),
+  email: Joi.string().allow(''),
   name: Joi.string().required(),
   employeeId: Joi.string().required(),
   employeeData: Joi.array()
@@ -11,9 +11,8 @@ exports.registerUserContract = Joi.object({
       value: Joi.string().required(),
     })
     .required(),
-  organization: Joi.string().allow(""),
+  organization: Joi.string().allow(''),
   role: Joi.string().required(),
-  password: Joi.string().required(),
 });
 
 exports.loginContract = Joi.object({
@@ -39,11 +38,16 @@ exports.verifyOtpContract = Joi.object({
 
 exports.editUserContract = Joi.object({
   id: Joi.string().required(),
-  employeeId: Joi.string().allow(""),
+  employeeId: Joi.string().allow(''),
   phoneNumber: Joi.number(),
   email: Joi.string(),
   name: Joi.string(),
   role: Joi.string(),
+  employeeData: Joi.array().items({
+    name: Joi.string().required(),
+    value: Joi.string().required(),
+  }),
+  blocked: Joi.boolean(),
   password: Joi.string(),
 });
 

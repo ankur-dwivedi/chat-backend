@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "02b7ca93-7ec0-49ba-b820-775bf4b897f8",
+		"_postman_id": "2344a589-d99b-46bc-898f-ad028db45628",
 		"name": "cascade",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "12071918"
@@ -17,7 +17,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTMzOTQ4NjMsImV4cCI6MTY1Mzk5OTY2M30.m_kkxq3Die70-Q1JFO7lqFJ6FNJ5Ho-8J6QpOmTkZHY",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM0ODk3NjgsImV4cCI6MTY1NDA5NDU2OH0.J3o1-WxVEuJcDB8eGL4Z7-_Y00SZhFec_-wE6ppEGQs",
 									"type": "string"
 								}
 							]
@@ -26,7 +26,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"email\":\"abcd@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"em-212\",\r\n    \"phoneNumber\":123456,\r\n    \"employeeData\":[{\r\n        \"name\":\"band\",\r\n        \"value\":\"SDE3\"\r\n    },\r\n    {\r\n        \"name\":\"department1\",\r\n        \"value\":\"IT\"\r\n    }],\r\n    \"password\":\"123\"\r\n}",
+							"raw": "{\r\n    \"email\":\"test1@padboat.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"creator\",\r\n    \"employeeId\":\"PB012\",\r\n    \"phoneNumber\":1234567892,\r\n    \"employeeData\":[{\r\n        \"name\":\"department\",\r\n        \"value\":\"SDE3\"\r\n    }],\r\n    \"organization\": \"626868b71783c300209f287b\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -104,11 +104,21 @@
 				{
 					"name": "update user",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTM1MTYwMzgsImV4cCI6MTY1NDEyMDgzOH0.NYU7PzM5C9bOWmF5q6KLa9oTJQrP_h5U6a2j0NnAL_0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PATCH",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\":\"61a6b74fa7b8f428a8000418\",\r\n    \"username\":\"abc\",\r\n    \"email\":\"abc@gmail.com\",\r\n    \"name\":\"abc\",\r\n    \"role\":\"admin\",\r\n    \"password\":\"123\"\r\n}",
+							"raw": "{\r\n    \"id\":\"628e4a6c4f5d00006bb2dc1b\",\r\n    \"employeeId\":\"Test1\",\r\n    \"phoneNumber\": \"12345\",\r\n    \"email\":\"test@gmail.com\",\r\n    \"name\":\"API-TEST\",\r\n    \"role\":\"learner\",\r\n    \"employeeData\": [{\r\n        \"name\": \"Designation\",\r\n        \"value\": \"Software\"\r\n    }],\r\n    \"password\":\"123\",\r\n    \"blocked\": true\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -523,7 +533,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/organization/?domain=indutch",
+							"raw": "{{baseUrl}}/organization/?domain=content",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -534,7 +544,7 @@
 							"query": [
 								{
 									"key": "domain",
-									"value": "indutch"
+									"value": "content"
 								}
 							]
 						}
@@ -727,6 +737,158 @@
 							"path": [
 								"organization",
 								"restricted-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "replace employee data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQyODA0NDEsImV4cCI6MTY1NDg4NTI0MX0.tL9Uj-QifTliIyirrfxBqM30uCK3-B05OAHjYEjQEW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/replace_org_data_final.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/replace-employee-data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"replace-employee-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add users bulk",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQ1MTg2MDYsImV4cCI6MTY1NTEyMzQwNn0.nRyTYbE0kpLb965BuIUhs1OTEZ9YededApR8XVSk_1I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/replace_org_data - Sheet1.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/add-users-bulk",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"add-users-bulk"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count replace employee data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQyODA0NDEsImV4cCI6MTY1NDg4NTI0MX0.tL9Uj-QifTliIyirrfxBqM30uCK3-B05OAHjYEjQEW0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/replace_org_data - Sheet1 (1).csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/count-replace-employee-data",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"count-replace-employee-data"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "count add users bulk",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQ1MTg2MDYsImV4cCI6MTY1NTEyMzQwNn0.nRyTYbE0kpLb965BuIUhs1OTEZ9YededApR8XVSk_1I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": "/Users/saswatmishra/Downloads/replace_org_data_final.csv"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseUrl}}/organization/count-add-users-bulk",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"organization",
+								"count-add-users-bulk"
 							]
 						}
 					},
@@ -2490,7 +2652,7 @@
 							"query": [
 								{
 									"key": "",
-									"value": null,
+									"value": "",
 									"disabled": true
 								}
 							]

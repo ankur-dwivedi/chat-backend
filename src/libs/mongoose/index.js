@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+const mongoose = require('mongoose');
+const dotenv = require('dotenv');
 dotenv.config();
 const connectToDB = () =>
   mongoose
@@ -8,7 +8,7 @@ const connectToDB = () =>
       useNewUrlParser: true,
       useFindAndModify: false,
     })
-    .then(() => console.log("connected to mongodb"))
+    .then(() => console.log('connected to mongodb'))
     .catch(console.error);
 
 module.exports = connectToDB;

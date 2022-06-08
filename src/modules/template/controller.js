@@ -5,19 +5,19 @@ const {
   countTemplateInLevel,
   updateTemplateOrder,
   update,
-} = require("../../models/template/services");
-const UserLevel = require("../../models/userLevel/services");
-const { generateError } = require("../../utils/error");
-const { uploadFiles } = require(".././../libs/aws/upload");
-const User = require("../../models/user/services");
-const { Types } = require("mongoose");
-const { LEVEL_TYPE } = require("../../models/level/constants");
-const Level = require("../../models/level/services");
-const Feedback = require("../../models/feedback/services");
-const { ATTEMPT_STATUS } = require("../../models/userLevel/constants");
-const Journey = require("../../models/journey/services");
+} = require('../../models/template/services');
+const UserLevel = require('../../models/userLevel/services');
+const { generateError } = require('../../utils/error');
+const { uploadFiles } = require('.././../libs/aws/upload');
+const User = require('../../models/user/services');
+const { Types } = require('mongoose');
+const { LEVEL_TYPE } = require('../../models/level/constants');
+const Level = require('../../models/level/services');
+const Feedback = require('../../models/feedback/services');
+const { ATTEMPT_STATUS } = require('../../models/userLevel/constants');
+const Journey = require('../../models/journey/services');
 
-const updateUserState = async ({ id, template, completed,timeSpend }) => {
+const updateUserState = async ({ id, template, completed, timeSpend }) => {
   return await User.update(
     { _id: Types.ObjectId(id) },
     {
@@ -26,7 +26,7 @@ const updateUserState = async ({ id, template, completed,timeSpend }) => {
         track: template.trackId,
         template: template._id,
         completed: completed ? completed : false,
-        timeSpend
+        timeSpend,
       },
     }
   );
@@ -59,7 +59,12 @@ const getTemplates = async (req, res) => {
             return res.send({
               status: 200,
               success: true,
-              data: [{...JSON.parse(JSON.stringify(template[0])),timeSpend:req.user.currentState?.timeSpend}],
+              data: [
+                {
+                  ...JSON.parse(JSON.stringify(template[0])),
+                  timeSpend: req.user.currentState?.timeSpend,
+                },
+              ],
             });
           else {
             //update current state  completed property of user
@@ -67,7 +72,7 @@ const getTemplates = async (req, res) => {
               id: req.user._id,
               template: prevTemplate,
               completed: true,
-              timeSpend:0
+              timeSpend: 0,
             });
             req.user.currentState = updatedUserState.currentState;
             const levelCompleteData = await levelComplete({
@@ -77,7 +82,7 @@ const getTemplates = async (req, res) => {
             return res.send({
               status: 200,
               success: true,
-              message: "level completed",
+              message: 'level completed',
               data: { ...levelCompleteData },
             });
           }
@@ -87,13 +92,18 @@ const getTemplates = async (req, res) => {
             return res.send({
               status: 200,
               success: true,
-              data: [{...JSON.parse(JSON.stringify(template[0])),timeSpend:req.user.currentState?.timeSpend}],
+              data: [
+                {
+                  ...JSON.parse(JSON.stringify(template[0])),
+                  timeSpend: req.user.currentState?.timeSpend,
+                },
+              ],
             });
           else
             return res.send({
               status: 200,
               success: true,
-              message: "no templates in level",
+              message: 'no templates in level',
               data: {},
             });
         }
@@ -103,17 +113,22 @@ const getTemplates = async (req, res) => {
           return res.send({
             status: 200,
             success: true,
-            data: [{...JSON.parse(JSON.stringify(template[0])),timeSpend:req.user.currentState?.timeSpend}],
+            data: [
+              {
+                ...JSON.parse(JSON.stringify(template[0])),
+                timeSpend: req.user.currentState?.timeSpend,
+              },
+            ],
           });
         } else
           return res.send({
             status: 200,
             success: true,
-            message: "no templates in level",
+            message: 'no templates in level',
             data: {},
           });
       }
-    } else generateError("levelId is required");
+    } else generateError('levelId is required');
   } catch (err) {
     console.log(err);
     res.status(400).send(err.message);
@@ -189,22 +204,22 @@ exports.create = async (req, res) => {
 exports.deleteTemplate = async (req, res) =>
   deleteTemplate(req.body.id).then((template) =>
     template.deletedCount
-      ? res.send("Template deleted")
-      : res.send("Template aleready deleted or doesnt exist")
+      ? res.send('Template deleted')
+      : res.send('Template aleready deleted or doesnt exist')
   );
 
 exports.uploadTemplateMedia = async (req, res) => {
   try {
     const { files } = req;
     console.log({ files });
-    if (!files.length) res.status(400).send("No file uploaded.");
+    if (!files.length) res.status(400).send('No file uploaded.');
     const finalbucket =
       `${process.env.AWS_BUCKET_NAME}` +
-      "/" +
+      '/' +
       `${req.user.organization}` +
       `${req.query.track}` +
       `${req.query.level}` +
-      "/template";
+      '/template';
     const uploadedFiles = await uploadFiles(finalbucket, files);
     return res.send({
       status: 200,

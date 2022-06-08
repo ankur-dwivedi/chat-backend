@@ -1,7 +1,7 @@
-const { generateError } = require("../../utils/error");
-const Template = require(".");
-const { Types } = require("mongoose");
-const { TEMPLATE_TYPE } = require("./constants");
+const { generateError } = require('../../utils/error');
+const Template = require('.');
+const { Types } = require('mongoose');
+const { TEMPLATE_TYPE } = require('./constants');
 
 exports.get = async (query) =>
   query.id
@@ -27,18 +27,18 @@ exports.get = async (query) =>
           information: {
             $cond: {
               if: {
-                $eq: ["$type", TEMPLATE_TYPE.DOC],
+                $eq: ['$type', TEMPLATE_TYPE.DOC],
               },
-              then: "$information",
+              then: '$information',
               else: null,
             },
           },
           answer: {
             $cond: {
               if: {
-                $eq: ["$revealOption", true],
+                $eq: ['$revealOption', true],
               },
-              then: "$answer",
+              then: '$answer',
               else: null,
             },
           },
@@ -68,7 +68,7 @@ exports.countTemplateInLevel = ({ levelId }) =>
 exports.updateTemplateOrder = ({ bulkOps }) => {
   console.log({ bulkOps });
   return Template.bulkWrite(bulkOps).then((bulkWriteOpResult) => {
-    console.log("BULK update OK");
+    console.log('BULK update OK');
     console.log(JSON.stringify(bulkWriteOpResult, null, 2));
     return bulkWriteOpResult;
   });

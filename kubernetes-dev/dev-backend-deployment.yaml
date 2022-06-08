@@ -6,14 +6,14 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: backend
+      app: dev-backend
   template:
     metadata:
       labels:
-        app: backend
+        app: dev-backend
     spec:
       containers:
-        - name: backend
+        - name: dev-backend
           image: ankurdwivedi/padboat-backend:latest
           env:
             - name: AWS_ID
@@ -55,7 +55,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: mysecret
-                  key: MONGO_URL
+                  key: DEV_MONGO_URL
             - name: OTP_KEY
               valueFrom:
                 secretKeyRef:

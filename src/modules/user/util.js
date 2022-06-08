@@ -1,9 +1,9 @@
-const nodemailer = require("nodemailer");
-const { generateError } = require("../../utils/error");
+const nodemailer = require('nodemailer');
+const { generateError } = require('../../utils/error');
 
 const sendMail = async (otp, email, token, domain) => {
   const transporter = await nodemailer.createTransport({
-    service: "gmail",
+    service: 'gmail',
     auth: {
       user: process.env.GMAIL_USER,
       pass: process.env.GMAIL_PASS, // naturally, replace both with your real credentials or an application-specific password
@@ -11,9 +11,9 @@ const sendMail = async (otp, email, token, domain) => {
   });
 
   let mailOptions = {
-    from: "support@padboat.com",
+    from: 'support@padboat.com',
     to: `${email}`,
-    subject: "OTP for SignUp verification with PaddleBoat",
+    subject: 'OTP for SignUp verification with PaddleBoat',
     html: `Welcome!
     <br/>
     <br/>
@@ -29,17 +29,14 @@ const sendMail = async (otp, email, token, domain) => {
   mailOptions =
     otp == 0
       ? {
-          from: "support@padboat.com",
+          from: 'support@padboat.com',
           to: `${email}`,
-          subject: "Reset Password for PaddleBoat",
+          subject: 'Reset Password for PaddleBoat',
           html: `Hi there!<br/><br/>
 
           We noticed you wanted to reset your password for PaddleBoat. 
           Head over to this <a href=${
-            "https://www." +
-            domain +
-            ".padboat.com/reset-password/?token=" +
-            token
+            'https://www.' + domain + '.padboat.com/reset-password/?token=' + token
           }>link</a>  to quickly set up a new one!
           <br/><br/>
           Thanks,<br/>
@@ -50,20 +47,15 @@ const sendMail = async (otp, email, token, domain) => {
   await transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
-      generateError("message not sent ", error);
+      generateError('message not sent ', error);
     } else {
-      console.log("Email sent: " + info.response);
-      return { message: "message  sent succesfuly" };
+      console.log('Email sent: ' + info.response);
+      return { message: 'message  sent succesfuly' };
     }
   });
 };
 
-const createDynamicQueryPagination = (
-  search,
-  filterCreator,
-  filterInactive,
-  organization
-) => {
+const createDynamicQueryPagination = (search, filterCreator, filterInactive, organization) => {
   // Ensure query happens within organization
   let dynamicQuery = {
     $and: [
@@ -80,14 +72,14 @@ const createDynamicQueryPagination = (
           {
             $and: [
               {
-                employeeId: { $regex: search + ".*", $options: "i" },
+                employeeId: { $regex: search + '.*', $options: 'i' },
               },
               { organization: organization },
             ],
           },
           {
             $and: [
-              { name: { $regex: search + ".*", $options: "i" } },
+              { name: { $regex: search + '.*', $options: 'i' } },
               { organization: organization },
             ],
           },
@@ -97,7 +89,7 @@ const createDynamicQueryPagination = (
     }
     if (filterCreator) {
       const filterCreatorQuery = {
-        $and: [{ role: "creator" }, { organization: organization }],
+        $and: [{ role: 'creator' }, { organization: organization }],
       };
       dynamicQuery.$and.push(filterCreatorQuery);
     }
@@ -120,8 +112,7 @@ const processPaginatedResults = (data) => {
   // $facet always returns array
   // Add Active Status once implemented
   let processedData = {
-    totalCount:
-      data[0].totalCount.length > 0 ? data[0].totalCount[0].totalCount : 0,
+    totalCount: data[0].totalCount.length > 0 ? data[0].totalCount[0].totalCount : 0,
     data: data[0].data.map((user) => {
       return {
         _id: user._id,

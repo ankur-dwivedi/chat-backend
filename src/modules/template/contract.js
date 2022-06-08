@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require('joi');
 
 exports.createContract = Joi.object({
   type: Joi.string().required(),
@@ -10,10 +10,10 @@ exports.createContract = Joi.object({
   media: Joi.object({
     value: Joi.string().required(),
     type: Joi.string().required(),
-  }).allow(""),
+  }).allow(''),
   options: Joi.array().items({
-    value: Joi.string().allow(""),
-    type: Joi.string().allow(""),
+    value: Joi.string().allow(''),
+    type: Joi.string().allow(''),
   }),
   answer: Joi.array().items(Joi.string()),
   importance: Joi.number(),
@@ -21,7 +21,7 @@ exports.createContract = Joi.object({
     text: Joi.string(),
     media: Joi.string(),
     mediaType: Joi.string(),
-  }).allow(""),
+  }).allow(''),
   revealOption: Joi.boolean(),
   templateOrder: Joi.number().min(0),
 });
@@ -61,8 +61,8 @@ exports.updateContract = Joi.object({
     type: Joi.string().required(),
   }),
   options: Joi.array().items({
-    value: Joi.string().allow(""),
-    type: Joi.string().allow(""),
+    value: Joi.string().allow(''),
+    type: Joi.string().allow(''),
   }),
   answer: Joi.array().items(Joi.string()),
   importance: Joi.number(),

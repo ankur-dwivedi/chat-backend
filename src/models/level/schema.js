@@ -1,19 +1,15 @@
-const { Schema } = require("mongoose");
-const {
-  LEVEL_TYPE_ENUM,
-  LEVEL_STATE_ENUM,
-  LEVEL_STATE,
-} = require("./constants");
+const { Schema } = require('mongoose');
+const { LEVEL_TYPE_ENUM, LEVEL_STATE_ENUM, LEVEL_STATE } = require('./constants');
 
 const levelSchema = new Schema(
   {
     creatorUserId: {
       type: Schema.Types.ObjectId,
       trim: true,
-      ref: "user",
+      ref: 'user',
       required: true,
     },
-    trackId: { type: Schema.Types.ObjectId, trim: true, ref: "track" },
+    trackId: { type: Schema.Types.ObjectId, trim: true, ref: 'track' },
     levelName: { type: String, trim: true, required: true },
     levelDescription: { type: String, trim: true, required: true },
     levelState: {
@@ -36,7 +32,7 @@ const levelSchema = new Schema(
       type: Schema.Types.ObjectId,
       required: true,
       trim: true,
-      ref: "organization",
+      ref: 'organization',
     },
     isLocked: { type: Boolean, default: false },
     allowReattempt: { type: Boolean, default: false }, // for assesment type

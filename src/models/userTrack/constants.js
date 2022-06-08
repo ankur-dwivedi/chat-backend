@@ -1,3 +1,3 @@
-const trackStateEnums = ['unattemped','inProgress','completed']
+const trackStateEnums = ['unattemped', 'inProgress', 'completed'];
 
-module.exports={trackStateEnums}
+module.exports = { trackStateEnums };

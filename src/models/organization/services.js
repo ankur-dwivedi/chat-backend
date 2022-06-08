@@ -1,5 +1,5 @@
-const { generateError } = require("../../utils/error");
-const Organization = require("./");
+const { generateError } = require('../../utils/error');
+const Organization = require('./');
 
 exports.get = async (query) =>
   query.id

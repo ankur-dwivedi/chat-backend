@@ -1,5 +1,5 @@
-const { get } = require("../../models/filterData/services");
-const { countEmployeeInOrg } = require("../../models/user/services");
+const { get } = require('../../models/filterData/services');
+const { countEmployeeInOrg } = require('../../models/user/services');
 
 exports.getFilterData = async (req, res) =>
   get({ organization: req.user.organization }).then(async (filterData) =>
