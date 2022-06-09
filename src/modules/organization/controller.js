@@ -174,9 +174,13 @@ exports.countAddUsersBulk = async (req, res) => {
       userCreated = [];
 
     for (emp of processedEmployeeData) {
-      let user = {};
+      let user = null;
       //  check existing data
-      if (emp.email && emp.phoneNumber)
+      if(emp.employeeId)
+        user = await User.findOne({
+          $and: [{ employeeId: emp.employeeId }, { organization: org }]
+          })  
+      if (!user && emp.email && emp.phoneNumber)
         user = await User.findOne({
           $or: [
             { $and: [{ email: emp.email }, { organization: org }] },
@@ -185,11 +189,11 @@ exports.countAddUsersBulk = async (req, res) => {
             },
           ],
         });
-      else if (emp.email)
+      else if (!user && emp.email)
         user = await User.findOne({
           $and: [{ email: emp.email }, { organization: org }],
         });
-      else if (emp.phoneNumber)
+      else if (!user && emp.phoneNumber)
         user = await User.findOne({
           $and: [{ phoneNumber: emp.phoneNumber }, { organization: org }],
         });
@@ -217,6 +221,8 @@ exports.countAddUsersBulk = async (req, res) => {
       status: 'success',
       message: 'file validated successfully',
       data: {
+        newUser: userCreated,
+        invalidUser: userNotCreated,
         newUserCount: userCreated.length,
         invalidUserCount:
           userNotCreated.length + (employeeData.length - processedEmployeeData.length),
