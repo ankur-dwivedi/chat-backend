@@ -221,8 +221,6 @@ exports.countAddUsersBulk = async (req, res) => {
       status: 'success',
       message: 'file validated successfully',
       data: {
-        newUser: userCreated,
-        invalidUser: userNotCreated,
         newUserCount: userCreated.length,
         invalidUserCount:
           userNotCreated.length + (employeeData.length - processedEmployeeData.length),
