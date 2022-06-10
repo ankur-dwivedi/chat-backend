@@ -9,6 +9,7 @@ const {
   searchByEmp,
   getUserWithOrg,
   getUserAndOrgByEmpId,
+  getEmpBempIdOrg,
   passwordCompare,
   findPaginatedUsers,
 } = require('../../models/user/services');
@@ -47,6 +48,25 @@ exports.searchUser = async (req, res) => {
     )
     .catch((error) => res.status(400).send({ message: error }));
 };
+
+exports.findUserByEmpId = async (req, res) => {
+  try{
+    const query = {employeeId: req.query.employeeId, organization: req.query.organization}
+    const userData = await getEmpBempIdOrg(query)
+    if(userData){
+      res.send({
+        status: 200, 
+        success:true, 
+        data: userData
+      })
+    } else{
+      generateError("Employee ID not found for this organization.")
+    }
+    
+  } catch(err){
+    res.status(400).send({ message: err.message });
+  }
+}
 
 exports.register = async (req, res) => {
   try {
