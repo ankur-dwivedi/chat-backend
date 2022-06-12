@@ -7,7 +7,7 @@ phases:
     commands:
       - echo Installing app dependencies...
       - echo Run "yarn install"...
-      - yarn install
+      - npm install
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 7) 
   pre_build:
     commands:
