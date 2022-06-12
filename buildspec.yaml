@@ -15,13 +15,11 @@ phases:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
       - echo Build files...
-      - yarn clean
-      - yarn build
+      - npm cache clean -f 
   build:
     commands:
       - echo Entered the build phase...
       - echo Building the Docker image...
-      - cd docker-distribution
       - docker build -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$ENV -t $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME:$COMMIT_HASH .
   post_build:
     commands:
