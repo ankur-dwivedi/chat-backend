@@ -14,7 +14,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: ankurdwivedi/padboat-backend:latest
+          image: CONTAINER_IMAGE
+          imagePullPolicy: Always
           env:
             - name: AWS_ID
               valueFrom:
