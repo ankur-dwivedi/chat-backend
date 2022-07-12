@@ -376,7 +376,7 @@ module.exports = {
         }
         let data = {
           trackName: req.body.trackName,
-          groupId: req.body.groupId,
+          groupId: req.body.groupId?req.body.groupId:[],
           selectedTheme: req.body.selectedTheme,
           skillTag: req.body.skillTag,
           description: req.body.description,
