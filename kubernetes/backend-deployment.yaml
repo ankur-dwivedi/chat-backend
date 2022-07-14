@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
         - name: backend
-          image: 944617656133.dkr.ecr.ap-south-1.amazonaws.com/padboat-backend:latest
+          image: ankurdwivedi/padboat-backend:latest
+          #image: 944617656133.dkr.ecr.ap-south-1.amazonaws.com/padboat-backend:latest
           imagePullPolicy: Always
           env:
             - name: AWS_ID
