@@ -11,7 +11,14 @@ const {
   analyticsEmpData,
   getPaginatedUsers,
 } = require('./controller');
-const { requestOtp, verifyOtp, forgetPassword, resetpass, searchUser } = require('./controller');
+const {
+  requestOtp,
+  verifyOtp,
+  forgetPassword,
+  resetpass,
+  searchUser,
+  findUserByEmpId,
+} = require('./controller');
 const { getFilteredEmp } = require('./controller');
 const { withAuthUser, withNewUser, withAdminAccess } = require('../../middlewares/auth');
 const { validate } = require('../../middlewares/schema');
@@ -32,6 +39,7 @@ const userRouter = Router();
 
 userRouter.get('/', withAuthUser, getUsers);
 userRouter.get('/search', withAuthUser, searchUser);
+userRouter.get('/findByEmpId', withAdminAccess, findUserByEmpId);
 userRouter.post('/', withAdminAccess, validate('body', registerUserContract), register);
 userRouter.post('/learner-login', validate('body', loginContract), login);
 userRouter.post('/request-otp', validate('body', reqOtpForgetPassContract), requestOtp);

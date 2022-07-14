@@ -494,6 +494,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "find user by employee id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQ4OTA3NzksImV4cCI6MTY1NTQ5NTU3OX0.0iQkFFMRokuYyyJk4LAhcrSqjem7jcTAlOLS2JndYYQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/user/findByEmpId?employeeId=PB001&organization=626868b71783c300209f287b",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"findByEmpId"
+							],
+							"query": [
+								{
+									"key": "employeeId",
+									"value": "PB001"
+								},
+								{
+									"key": "organization",
+									"value": "626868b71783c300209f287b"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -533,7 +571,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{baseUrl}}/organization/?domain=content",
+							"raw": "{{baseUrl}}/organization/?domain=indutch",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -544,7 +582,7 @@
 							"query": [
 								{
 									"key": "domain",
-									"value": "content"
+									"value": "indutch"
 								}
 							]
 						}
@@ -672,43 +710,6 @@
 									"key": "role",
 									"value": "creator"
 								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "create access token",
-					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "{{token}}",
-									"type": "string"
-								}
-							]
-						},
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{baseUrl}}/user/create-access-token",
-							"host": [
-								"{{baseUrl}}"
-							],
-							"path": [
-								"user",
-								"create-access-token"
 							]
 						}
 					},
@@ -2362,7 +2363,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MjY4NjliOTE3ODNjMzAwMjA5ZjI4N2QiLCJpYXQiOjE2NTQ1OTA5NzUsImV4cCI6MTY1NTE5NTc3NX0.mGYHBeh9j-zHwzNzrnP2KRVzNWSkjw8PouXDkxOh8WE",
 									"type": "string"
 								}
 							]
@@ -2374,7 +2375,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/level/learner-level-info-id?levelId=6214c0ae6de8d66209bc02b1",
+							"raw": "{{baseUrl}}/level/learner-level-info-id?levelId=627d218845d9e50020c080e7",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -2385,7 +2386,7 @@
 							"query": [
 								{
 									"key": "levelId",
-									"value": "6214c0ae6de8d66209bc02b1"
+									"value": "627d218845d9e50020c080e7"
 								}
 							]
 						}
@@ -2655,6 +2656,48 @@
 									"value": "",
 									"disabled": true
 								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "authorization",
+			"item": [
+				{
+					"name": "create access token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/create-access-token",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"create-access-token"
 							]
 						}
 					},
