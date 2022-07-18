@@ -247,7 +247,7 @@ exports.forgetPassword = async (req, res) => {
     const user = await getUserAndOrgByEmpId({ employeeId, organization });
     if (user.email)
       await sendMail(0, user.email, generateAccessToken(user._id), user.organization.domain);
-    else sendOtp(user.phoneNumber, otp);
+    else sendOtp(user.phoneNumber, otp); //it is not decided/confirmed yet what to do in mobile
 
     res.send({ message: 'link sent to registered email' });
   } catch (error) {
