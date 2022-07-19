@@ -182,7 +182,7 @@ module.exports = {
         let userData = req.user;
         let organization = userData.organization;
         let organizationData = await user_model
-          .find({ organization, role: 'creator' }, { _id: 1, name: 1 })
+          .find({ organization, role: { $in: ['creator', 'admin'] } }, { _id: 1, name: 1 })
           .lean();
         let trackData = await track_Model
           .find(

@@ -44,12 +44,15 @@ exports.create = async (req, res) => {
       req.body.properties[0].name === 'All Employees' &&
       req.body.properties[0].value[0] === 'All Employees'
     ) {
+      //fetching employees from the organization then adding it into the groups
       employees = await User.getEmpByOrg({ organization: req.user.organization });
       const employeeIds = employees.map((value) => value._id);
+      //updating group schema
       await update({ $and: [{ _id: group._id }] }, { employees: employeeIds });
       const temp = employeeIds.map((data) => {
         return { _id: data };
       });
+      //adding groupId inside user schema
       await addGroupId({ $or: temp }, group._id);
       return res.send({
         status: 200,
@@ -57,6 +60,7 @@ exports.create = async (req, res) => {
         data: { group },
       });
     } else {
+      //fetching employees from userSchema
       employees = await getGroupEmployee(req.user.organization, req.body.properties);
       const employeeIds = employees.map((value) => value._id);
       await update({ $and: [{ _id: group._id }] }, { employees: employeeIds });

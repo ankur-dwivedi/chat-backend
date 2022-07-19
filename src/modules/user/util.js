@@ -6,7 +6,7 @@ const sendMail = async (otp, email, token, domain) => {
     service: 'gmail',
     auth: {
       user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_PASS, // naturally, replace both with your real credentials or an application-specific password
+      pass: process.env.GMAIL_PASS,
     },
   });
 
