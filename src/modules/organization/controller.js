@@ -19,13 +19,14 @@ const { get: getFilterData } = require('../../models/filterData/services');
 const FilterData = require('../../models/filterData');
 
 exports.getOrganizations = async (req, res) =>
-  get(req.query).then((organization) =>
-    res.send({
+  get(req.query).then((organization) => {
+    console.log({ ip: req?.socket?.remoteAddress });
+    return res.send({
       status: 200,
       success: true,
-      data: { ...organization, ip: req?.socket?.remoteAddress },
-    })
-  );
+      data: organization,
+    });
+  });
 
 exports.create = async (req, res) =>
   create({ ...req.body })
