@@ -6,3 +6,4 @@ jenkins/
 data/
 backup-local/
 aws-auth.yaml
+prod-backup/
