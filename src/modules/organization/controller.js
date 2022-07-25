@@ -23,7 +23,7 @@ exports.getOrganizations = async (req, res) =>
     res.send({
       status: 200,
       success: true,
-      data: { ...organization, ip: request?.socket?.remoteAddress },
+      data: { ...organization, ip: req?.socket?.remoteAddress },
     })
   );
 
