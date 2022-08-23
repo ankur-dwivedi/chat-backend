@@ -505,7 +505,7 @@ module.exports = {
               updateTrackData.ok === 1
             ){
           //this should send the onBoarding email to new user 
-          sendMailToUsersAssignedToTracks({
+          sendMailToUsersAssignedToTracks2({
             _id: trackId,
             learnerIds,
             trackName: oldTrackData.trackName,
