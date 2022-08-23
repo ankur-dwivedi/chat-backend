@@ -5,7 +5,7 @@ const level_Model = require('../../models/level/index');
 const randomstring = require('randomstring');
 const user_model = require('../../models/user/index');
 const { addGroupId } = require('../../models/user/services');
-const { sendMailToUsersAssignedToTracks } = require('../../models/userTrack/services');
+const { sendMailToUsersAssignedToTracks,sendMailToUsersAssignedToTracks2 } = require('../../models/userTrack/services');
 
 module.exports = {
   get: {
@@ -503,12 +503,21 @@ module.exports = {
               updateTrackData.n === 1 &&
               updateTrackData.nModified === 1 &&
               updateTrackData.ok === 1
-            )
-              return res.status(200).json({
-                status: 200,
-                success: true,
-                data: `successfully updated the data in db`,
-              });
+            ){
+          //this should send the onBoarding email to new user 
+          sendMailToUsersAssignedToTracks({
+            _id: trackId,
+            learnerIds,
+            trackName: oldTrackData.trackName,
+            creatorName: userData.name,
+            organization: oldTrackData.organization,
+          });
+          return res.status(200).json({
+            status: 200,
+            success: true,
+            data: `successfully updated the data in db`,
+          });
+            } 
             throw {
               name: 'updationError',
               message: 'something went wrong while updating data please try again or contact admin',
@@ -562,12 +571,22 @@ module.exports = {
             updateTrackData.n === 1 &&
             updateTrackData.nModified === 1 &&
             updateTrackData.ok === 1
-          )
+          ){
+            //this should send the onBoarding email to new user 
+          sendMailToUsersAssignedToTracks({
+            _id: trackId,
+            groupId: savedGroupData._id,
+            trackName: oldTrackData.trackName,
+            creatorName: userData.name,
+            organization: oldTrackData.organization,
+            // organization:userData.organization
+          });
             return res.status(200).json({
               status: 200,
               success: true,
               data: `successfully updated the data in db`,
             });
+          }
           throw {
             name: 'updationError',
             message: 'something went wrong while updating data please try again or contact admin',
