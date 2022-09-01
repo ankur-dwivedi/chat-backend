@@ -3,6 +3,7 @@ const userTrackInfo_model = require('../userTrack/index');
 const userLevelInfo_model = require('../userLevel/index');
 const organization_model = require('../organization/index');
 //imports for sending mail are as following
+const user_model = require('../user/index');
 const group_model = require('../group/index');
 const track_Model = require('../Track/index');
 const nodemailer = require('nodemailer');
@@ -102,6 +103,7 @@ const nodeMailerSendMail = async (email, subject, html) => {
   }
 };
 
+//this needs groupid 
 const sendMailToUsersAssignedToTracks = async (trackData) => {
   try {
     let groupData = [];
@@ -183,8 +185,83 @@ const sendMailToUsersAssignedToTracks = async (trackData) => {
     console.log(err.message);
   }
 };
-//seven
-//three
+//this does not need groupid only needs learner ids
+const sendMailToUsersAssignedToTracks2 = async (trackData) => {
+  try {
+    let learnerData = [];
+    //logic to fetch all the user emails
+    for (let i = 0; i < trackData.learnerIds.length; i++) {
+      let fetchUserData = await user_model
+        .findOne({ _id: trackData.learnerIds[i] })
+        .populate('organization')
+        .lean();
+      learnerData = [...learnerData,...fetchUserData];
+    }
+    //logic to access that perticular email and send email
+    for (let j = 0; j < learnerData.length; j++) {
+      let fetchUserTrackInfo = await userTrackInfo_model
+        .findOne({ creatorUserId: learnerData[j]._id, trackId: trackData._id })
+        .lean();
+      // let organizationData = await organization_model
+      //   .findOne({ _id: trackData.organization }, { domain: 1 })
+      //   .lean();
+      // console.log(organizationData.domain);
+      if (fetchUserTrackInfo === null) {
+        let learnerEmail = learnerData[j].email;
+        let learnerName = learnerData[j].name;
+        let subject = `New Learning Track assigned`;
+        let html = `<p><span>Hey there <b>${learnerName}!</b></span></p>
+        <p><span>You&rsquo;ve just been assigned a new learning track - ${trackData.trackName} by ${trackData.creatorName}.</span></p>
+        <p><span>It is always exciting to embark on a new journey! On this note, let&rsquo;s start with the newly added levels in the track.</span></p>
+        <p><span>Head over to https://${learnerData.organization.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
+        <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+        <p><span>Thanks,</span></p>
+        <p><span>Team PaddleBoat</span></p>`;
+        let status = await nodeMailerSendMail(learnerEmail, subject, html);
+        // console.log(status);
+        if (status.accepted.includes(learnerEmail)) {
+          //this means mail was send successfully
+          let userTrackData = {
+            creatorUserId: learnerData[j]._id,
+            trackId: trackData._id,
+            welcomeMailSend: true,
+          };
+          await userTrackInfo_model.create(userTrackData);
+        }
+      } else {
+        if (fetchUserTrackInfo.welcomeMailSend !== true) {
+          let learnerEmail = learnerData[j].email;
+          let learnerName = learnerData[j].name;
+          let subject = `New Learning Track assigned`;
+          let html = `<p><span>Hey there <b>${learnerName}!</b></span></p>
+          <p><span>You&rsquo;ve just been assigned a new learning track - ${trackData.trackName} by ${trackData.creatorName}.</span></p>
+          <p><span>It is always exciting to embark on a new journey! On this note, let&rsquo;s start with the newly added levels in the track.</span></p>
+          <p><span>Head over to https://${learnerData.organization.domain}.padboat.com/tracks/${trackData._id}/level-view to check out some new content!</span></p>
+          <p><span>Reach out to the system admin in case you face any difficulties.&nbsp;</span></p>
+          <p><span>Thanks,</span></p>
+          <p><span>Team PaddleBoat</span></p>`;
+          let status = await nodeMailerSendMail(learnerEmail, subject, html);
+          // console.log(status);
+          if (status.accepted.includes(learnerEmail)) {
+            //this means mail was send successfully
+            let userTrackData = {
+              creatorUserId: learnerData[j]._id,
+              trackId: trackData._id,
+              welcomeMailSend: true,
+            };
+            await userTrackInfo_model.create(userTrackData);
+          }
+        } else {
+          console.log('mail already send before');
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err.name);
+    console.log(err.message);
+  }
+};
+
 
 const dueDateReminderSendMailToUsers = async (req, res) => {
   let learnerDetails = [];
@@ -333,4 +410,5 @@ module.exports = {
   sendMailToUsersAssignedToTracks,
   nodeMailerSendMail,
   dueDateReminderSendMailToUsers,
+  sendMailToUsersAssignedToTracks2
 };
