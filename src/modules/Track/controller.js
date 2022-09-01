@@ -575,7 +575,7 @@ module.exports = {
             //this should send the onBoarding email to new user 
           sendMailToUsersAssignedToTracks({
             _id: trackId,
-            groupId: savedGroupData._id,
+            groupId: [savedGroupData._id],
             trackName: oldTrackData.trackName,
             creatorName: userData.name,
             organization: oldTrackData.organization,
