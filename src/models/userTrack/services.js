@@ -103,7 +103,7 @@ const nodeMailerSendMail = async (email, subject, html) => {
   }
 };
 
-//this needs groupid 
+//this needs groupid
 const sendMailToUsersAssignedToTracks = async (trackData) => {
   try {
     let groupData = [];
@@ -195,7 +195,7 @@ const sendMailToUsersAssignedToTracks2 = async (trackData) => {
         .findOne({ _id: trackData.learnerIds[i] })
         .populate('organization')
         .lean();
-      learnerData = [...learnerData,...fetchUserData];
+      learnerData = [...learnerData, ...fetchUserData];
     }
     //logic to access that perticular email and send email
     for (let j = 0; j < learnerData.length; j++) {
@@ -261,7 +261,6 @@ const sendMailToUsersAssignedToTracks2 = async (trackData) => {
     console.log(err.message);
   }
 };
-
 
 const dueDateReminderSendMailToUsers = async (req, res) => {
   let learnerDetails = [];
@@ -410,5 +409,5 @@ module.exports = {
   sendMailToUsersAssignedToTracks,
   nodeMailerSendMail,
   dueDateReminderSendMailToUsers,
-  sendMailToUsersAssignedToTracks2
+  sendMailToUsersAssignedToTracks2,
 };

@@ -42,7 +42,7 @@ exports.frequencyData = [
   },
   {
     bucket: 60,
-    frequency: 01,
+    frequency: 0,
   },
   {
     bucket: 70,
