@@ -102,7 +102,7 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
     } else passFailData[2].unattempted += 1;
 
     if (data !== null && data.levelScore) {
-      const index = data.levelScore===100 ? Math.floor(data.levelScore/10) -1 : Math.floor(data.levelScore)
+      const index = data.levelScore===100 ? Math.floor(data.levelScore/10) -1 : Math.floor(data.levelScore/10)
       frequencyData[index].frequency += 1;
     }
   });
