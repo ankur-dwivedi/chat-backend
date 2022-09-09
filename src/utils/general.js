@@ -103,9 +103,9 @@ exports.analyicsData = async ({ groupId, trackId, levelId }) => {
 
     if (data !== null && data.levelScore) {
       const index =
-        data.LevelScore === 100
-          ? Math.floor(data.LevelScore / 10) - 1
-          : Math.floor(data.LevelScore);
+        data.levelScore === 100
+          ? Math.floor(data.levelScore / 10) - 1
+          : Math.floor(data.levelScore);
       frequencyData[index].frequency += 1;
     }
   });
