@@ -3,13 +3,10 @@ const User = require('./');
 const bcrypt = require('bcrypt');
 
 exports.get = async (query) => {
-  return query.id
-    ? User.findOne({ _id: query.id })
-        .then((response) => (response ? response : generateError()))
-        .catch((error) => error)
-: query.email 
+  return  query?.email 
     ? User.findOne({email:query.email}).then((response) => (response ? response : generateError('Invalid User')))
     : User.find()
+      .select({name:1,email:1})
         .then((response) => response)
         .catch((error) => error);
 };
@@ -23,11 +20,8 @@ exports.create = async (userData) => {
 exports.passwordCompare = async (password, storedPassword) => {
   try {
     let match = await bcrypt.compare(password, storedPassword);
-    console.log(match);
     return match;
   } catch (err) {
-    console.log(err.name);
-    console.log(err.message);
     return { errName: err.name, errMessage: err.message };
   }
 };

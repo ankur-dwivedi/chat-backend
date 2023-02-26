@@ -9,13 +9,21 @@ const {
   generateAccessToken,
 } = require('../../utils/general');
 
-exports.getUsers = async (req, res) =>
+exports.getUserDetail = async (req, res) =>
     res.send({
       status: 200,
       success: true,
       data: req.user,
     });
 
+exports.getUsers = async (req, res) =>{
+    const userData= await get();
+    return res.send({
+      status: 200,
+      success: true,
+      data: userData,
+    });
+}
 
 exports.register = async (req, res) => {
   try {

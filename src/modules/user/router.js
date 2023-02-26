@@ -3,6 +3,7 @@ const {
   register,
   getUsers,
   login,
+  getUserDetail,
 } = require('./controller');
 
 const { withAuthUser } = require('../../middlewares/auth');
@@ -16,6 +17,7 @@ const {
 const userRouter = Router();
 
 userRouter.get('/', withAuthUser, getUsers);
+userRouter.get('/detail', withAuthUser, getUserDetail);
 userRouter.post('/', validate('body', registerUserContract), register);
 userRouter.post('/login', validate('body', loginContract), login);
 
