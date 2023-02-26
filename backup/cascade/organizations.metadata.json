@@ -1,1 +1,0 @@
-{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"domain":{"$numberInt":"1"}},"name":"domain_1","background":true,"unique":true}],"uuid":"2ee0b50acf624997978f8f41a32655b0","collectionName":"organizations","type":"collection"}

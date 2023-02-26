@@ -1,1 +1,0 @@
-exports.booleanEnum = [true, false];

@@ -2,14 +2,12 @@ const { Schema } = require('mongoose');
 
 const UserSchema = new Schema(
   {
-    email: {
+    text: {
       type: String,
-      trim: true,
-      unique: true,
       required: true,
     },
-    name: { type: String, required: true },
-    password: { type: String },
+    sender: { type: Schema.Types.ObjectId, trim: true, ref: 'user', required: true },
+    receiver: { type: Schema.Types.ObjectId, trim: true, ref: 'user', required: true },
   },
   { timestamps: true }
 );

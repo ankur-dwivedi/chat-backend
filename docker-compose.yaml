@@ -2,7 +2,7 @@ version: "3.8"
 services:
     mongodb:
         image: 'mongo'
-        container_name: mymongodb
+        container_name: chat-mongo
         ports:
           - '27017:27017'
         volumes: 
@@ -12,7 +12,7 @@ services:
         #     MONGO_INITDB_ROOT_PASSWORD: secret
     backend:
         build: ./
-        container_name: mybackend
+        container_name: chat-backend
         ports:
             - '4000:4000'
         volumes:
